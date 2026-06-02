@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Punto Remeras | Indumentaria Mayorista con Estampado</title>
+    <meta name="description" content="Fabricamos y estampamos remeras, buzos y pantalones al por mayor para empresas, colegios, clubes y eventos. Precios mayoristas desde 10 unidades. Envíos a todo el país.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        :root {
+            --primary:       #1B3A6B;
+            --primary-light: #2D5A9E;
+            --accent:        #F97316;
+            --accent-dark:   #EA6C0A;
+            --green:         #059669;
+            --purple:        #7C3AED;
+            --bg:            #FFFFFF;
+            --bg-soft:       #F8FAFC;
+            --border:        #E2E8F0;
+            --text:          #0F172A;
+            --text-muted:    #64748B;
+            --shadow:        0 1px 3px rgba(0,0,0,.10), 0 1px 2px rgba(0,0,0,.06);
+            --shadow-md:     0 4px 6px -1px rgba(0,0,0,.10), 0 2px 4px -1px rgba(0,0,0,.06);
+            --shadow-lg:     0 10px 15px -3px rgba(0,0,0,.10), 0 4px 6px -2px rgba(0,0,0,.05);
+            --shadow-xl:     0 20px 25px -5px rgba(0,0,0,.10), 0 10px 10px -5px rgba(0,0,0,.04);
+            --radius:        12px;
+            --radius-sm:     8px;
+            --radius-lg:     16px;
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* ── NAVBAR ─────────────────────────────────── */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(255,255,255,.96);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            transition: box-shadow .3s;
+        }
+        .navbar.scrolled { box-shadow: var(--shadow-md); }
+
+        .nav-container {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 72px;
+        }
+
+        .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: var(--primary); border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 18px;
+        }
+        .logo-text { font-size: 20px; font-weight: 800; color: var(--primary); letter-spacing: -.5px; }
+        .logo-text span { color: var(--accent); }
+
+        .nav-links { display: flex; align-items: center; gap: 4px; list-style: none; }
+        .nav-links a {
+            text-decoration: none; color: var(--text-muted); font-size: 15px;
+            font-weight: 500; padding: 8px 14px; border-radius: var(--radius-sm);
+            transition: all .2s;
+        }
+        .nav-links a:hover { color: var(--primary); background: var(--bg-soft); }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 10px 20px; border-radius: var(--radius-sm);
+            font-size: 15px; font-weight: 600; text-decoration: none;
+            cursor: pointer; border: none; transition: all .2s; font-family: inherit;
+        }
+        .btn-primary  { background: var(--primary); color: #fff; }
+        .btn-primary:hover  { background: var(--primary-light); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+        .btn-accent   { background: var(--accent); color: #fff; }
+        .btn-accent:hover   { background: var(--accent-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(249,115,22,.4); }
+        .btn-outline  { background: transparent; color: var(--primary); border: 2px solid var(--primary); }
+        .btn-outline:hover  { background: var(--primary); color: #fff; }
+        .btn-whatsapp { background: #25D366; color: #fff; }
+        .btn-whatsapp:hover { background: #1ebe5d; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,211,102,.4); }
+        .btn-lg { padding: 14px 28px; font-size: 17px; border-radius: var(--radius); }
+
+        .hamburger {
+            display: none; flex-direction: column; gap: 5px;
+            cursor: pointer; background: none; border: none; padding: 8px;
+        }
+        .hamburger span {
+            display: block; width: 24px; height: 2px;
+            background: var(--text); border-radius: 2px; transition: all .3s;
+        }
+        .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        /* ── MOBILE MENU ─────────────────────────────── */
+        .mobile-menu {
+            display: none;
+            position: fixed; top: 72px; left: 0; right: 0;
+            background: #fff; border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow-md); z-index: 99;
+            padding: 12px 24px 24px;
+            flex-direction: column; gap: 4px;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a {
+            text-decoration: none; color: var(--text); font-size: 16px;
+            font-weight: 500; padding: 12px 4px; border-bottom: 1px solid var(--border);
+        }
+        .mobile-menu a:last-child { border-bottom: none; }
+
+        /* ── HERO ────────────────────────────────────── */
+        .hero {
+            min-height: 100vh; padding-top: 72px;
+            background: linear-gradient(135deg, #EEF2FF 0%, #FFFFFF 50%, #FFF7ED 100%);
+            display: flex; align-items: center; position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: -200px; right: -200px;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(27,58,107,.08) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero::after {
+            content: ''; position: absolute; bottom: -100px; left: -100px;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(249,115,22,.07) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-container {
+            max-width: 1200px; margin: 0 auto; padding: 80px 24px;
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 60px; align-items: center;
+        }
+
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: rgba(27,58,107,.08); color: var(--primary);
+            padding: 6px 14px; border-radius: 100px;
+            font-size: 13px; font-weight: 600; margin-bottom: 20px;
+            letter-spacing: .5px; text-transform: uppercase;
+        }
+        .hero-badge i { color: var(--accent); }
+
+        .hero-title {
+            font-size: clamp(34px, 5vw, 58px);
+            font-weight: 900; line-height: 1.1; letter-spacing: -1.5px;
+            color: var(--text); margin-bottom: 20px;
+        }
+        .hero-title .accent { color: var(--accent); }
+        .hero-title .primary { color: var(--primary); }
+
+        .hero-subtitle {
+            font-size: 18px; color: var(--text-muted);
+            margin-bottom: 36px; line-height: 1.7; max-width: 500px;
+        }
+
+        .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 48px; }
+
+        .hero-stats {
+            display: flex; gap: 32px;
+            padding-top: 32px; border-top: 1px solid var(--border);
+        }
+        .hero-stat-value {
+            font-size: 28px; font-weight: 800;
+            color: var(--primary); letter-spacing: -1px; display: block;
+        }
+        .hero-stat-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+
+        /* Hero visual card */
+        .hero-visual { position: relative; display: flex; justify-content: center; }
+        .hero-card {
+            width: 310px; background: #fff;
+            border-radius: var(--radius-lg); box-shadow: var(--shadow-xl);
+            padding: 24px; position: relative; z-index: 2;
+        }
+        .hero-card-img {
+            width: 100%; height: 190px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            border-radius: var(--radius); display: flex; align-items: center;
+            justify-content: center; margin-bottom: 16px; position: relative; overflow: hidden;
+        }
+        .hero-card-img::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .hero-card-img i { font-size: 80px; color: rgba(255,255,255,.9); position: relative; z-index: 1; }
+        .hero-card-sub  { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+        .hero-card-name { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 12px; }
+        .tag-row { display: flex; gap: 6px; flex-wrap: wrap; }
+        .tag {
+            padding: 4px 10px; border-radius: 100px;
+            font-size: 12px; font-weight: 500;
+        }
+        .tag-blue   { background: rgba(27,58,107,.10); color: var(--primary); }
+        .tag-orange { background: rgba(249,115,22,.10); color: var(--accent); }
+        .tag-gray   { background: var(--bg-soft); color: var(--text-muted); }
+
+        .float-badge {
+            position: absolute; background: #fff;
+            border-radius: var(--radius); box-shadow: var(--shadow-lg);
+            padding: 12px 16px; display: flex; align-items: center; gap: 10px; z-index: 3;
+        }
+        .float-badge-1 { top: -18px; right: -28px; }
+        .float-badge-2 { bottom: 36px; left: -36px; }
+        .float-icon {
+            width: 36px; height: 36px; border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+        }
+        .float-icon-green  { background: rgba(37,211,102,.12); color: #25D366; }
+        .float-icon-orange { background: rgba(249,115,22,.12); color: var(--accent); }
+        .float-title { font-size: 13px; font-weight: 700; color: var(--text); }
+        .float-sub   { font-size: 12px; color: var(--text-muted); }
+
+        /* ── GENERIC SECTION UTILITIES ───────────────── */
+        section { padding: 80px 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .section-label {
+            display: inline-block; font-size: 12px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: var(--accent); margin-bottom: 10px;
+        }
+        .section-title {
+            font-size: clamp(26px, 4vw, 42px); font-weight: 800;
+            letter-spacing: -1px; color: var(--text);
+            margin-bottom: 14px; line-height: 1.2;
+        }
+        .section-sub {
+            font-size: 17px; color: var(--text-muted); line-height: 1.7; max-width: 560px;
+        }
+        .section-header         { margin-bottom: 52px; }
+        .section-header.center  { text-align: center; }
+        .section-header.center .section-sub { margin: 0 auto; }
+
+        /* ── CLIENTS BAR ─────────────────────────────── */
+        .clients-bar {
+            padding: 28px 0;
+            background: var(--bg-soft);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .clients-inner {
+            max-width: 1200px; margin: 0 auto; padding: 0 24px;
+            display: flex; align-items: center; gap: 36px; flex-wrap: wrap;
+        }
+        .clients-label {
+            font-size: 12px; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px; white-space: nowrap;
+        }
+        .clients-list { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; flex: 1; }
+        .client-item {
+            display: flex; align-items: center; gap: 7px;
+            color: var(--text-muted); font-size: 14px; font-weight: 600;
+        }
+        .client-item i { color: var(--primary); font-size: 17px; }
+
+        /* ── SERVICES / ESTAMPADO ────────────────────── */
+        .services { background: var(--bg); }
+        .services-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px;
+        }
+        .service-card {
+            background: var(--bg-soft); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 32px 24px;
+            transition: all .3s; cursor: default;
+        }
+        .service-card:hover {
+            transform: translateY(-4px); box-shadow: var(--shadow-lg);
+            border-color: var(--primary); background: #fff;
+        }
+        .service-icon {
+            width: 52px; height: 52px; border-radius: var(--radius);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 22px; margin-bottom: 20px;
+        }
+        .si-blue   { background: linear-gradient(135deg, #1B3A6B, #2D5A9E); }
+        .si-purple { background: linear-gradient(135deg, #7C3AED, #A855F7); }
+        .si-green  { background: linear-gradient(135deg, #059669, #10B981); }
+        .si-amber  { background: linear-gradient(135deg, #D97706, #F59E0B); }
+        .service-title { font-size: 18px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+        .service-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+        /* ── PRODUCTS ────────────────────────────────── */
+        .products { background: var(--bg-soft); }
+        .product-tabs {
+            display: flex; gap: 6px; margin-bottom: 40px;
+            background: #fff; padding: 6px;
+            border-radius: var(--radius); border: 1px solid var(--border); width: fit-content;
+        }
+        .tab-btn {
+            padding: 10px 22px; border-radius: var(--radius-sm);
+            font-size: 15px; font-weight: 600; border: none;
+            background: transparent; color: var(--text-muted);
+            cursor: pointer; transition: all .2s;
+            display: flex; align-items: center; gap: 7px; font-family: inherit;
+        }
+        .tab-btn.active { background: var(--primary); color: #fff; }
+        .tab-btn:hover:not(.active) { background: var(--bg-soft); color: var(--text); }
+
+        .tab-panel { display: none; }
+        .tab-panel.active {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 24px;
+        }
+
+        .product-card {
+            background: #fff; border-radius: var(--radius-lg);
+            border: 1px solid var(--border); overflow: hidden; transition: all .3s;
+        }
+        .product-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+        .product-img {
+            height: 200px; display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden;
+        }
+        .pi-blue  { background: linear-gradient(135deg, #1B3A6B 0%, #2D5A9E 100%); }
+        .pi-gray  { background: linear-gradient(135deg, #374151 0%, #4B5563 100%); }
+        .pi-green { background: linear-gradient(135deg, #065F46 0%, #059669 100%); }
+        .product-img::before {
+            content: '';
+            position: absolute; inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04' fill-rule='evenodd'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+        }
+        .product-img i { font-size: 72px; color: rgba(255,255,255,.85); position: relative; z-index: 1; }
+        .product-badge {
+            position: absolute; top: 12px; right: 12px;
+            background: rgba(255,255,255,.2); backdrop-filter: blur(4px);
+            color: #fff; padding: 4px 10px; border-radius: 100px;
+            font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .5px;
+            z-index: 2;
+        }
+        .product-info    { padding: 20px; }
+        .product-name    { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+        .product-desc    { font-size: 14px; color: var(--text-muted); margin-bottom: 14px; line-height: 1.5; }
+        .product-specs   { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
+        .product-spec    {
+            font-size: 12px; background: var(--bg-soft);
+            color: var(--text-muted); padding: 3px 9px;
+            border-radius: 100px; font-weight: 500;
+        }
+        .product-price-from { font-size: 12px; color: var(--text-muted); margin-bottom: 2px; }
+        .product-price      { font-size: 22px; font-weight: 800; color: var(--primary); }
+        .product-price small { font-size: 14px; font-weight: 400; color: var(--text-muted); }
+
+        /* ── PRICING ─────────────────────────────────── */
+        .pricing { background: var(--bg); }
+        .pricing-note {
+            background: rgba(249,115,22,.07);
+            border: 1px solid rgba(249,115,22,.2);
+            border-radius: var(--radius); padding: 14px 20px;
+            display: flex; align-items: flex-start; gap: 12px;
+            margin-bottom: 28px; font-size: 14px; color: var(--text-muted);
+        }
+        .pricing-note i { color: var(--accent); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
+
+        .table-wrap {
+            overflow-x: auto; border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md); border: 1px solid var(--border);
+        }
+        table { width: 100%; border-collapse: collapse; background: #fff; }
+        thead { background: var(--primary); color: #fff; }
+        thead th {
+            padding: 16px 20px; text-align: left;
+            font-size: 14px; font-weight: 600; white-space: nowrap;
+        }
+        thead th:not(:first-child) { text-align: center; }
+        thead th .qty { font-size: 11px; opacity: .7; display: block; font-weight: 400; margin-top: 2px; }
+        tbody tr { border-bottom: 1px solid var(--border); }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: var(--bg-soft); }
+        tbody td { padding: 16px 20px; font-size: 15px; }
+        tbody td:not(:first-child) { text-align: center; font-weight: 600; }
+        .td-product      { font-weight: 600; color: var(--text); }
+        .td-product small { display: block; font-size: 12px; font-weight: 400; color: var(--text-muted); margin-top: 2px; }
+        .td-best         { color: var(--green); background: rgba(5,150,105,.05); font-size: 16px; }
+
+        .pricing-footer {
+            margin-top: 24px; display: flex;
+            align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: 16px;
+        }
+        .pricing-footer-note { font-size: 13px; color: var(--text-muted); line-height: 1.8; }
+
+        /* ── WHO WE SERVE ────────────────────────────── */
+        .serve { background: var(--bg-soft); }
+        .serve-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;
+        }
+        .serve-card {
+            background: #fff; border-radius: var(--radius-lg);
+            border: 1px solid var(--border); padding: 28px 20px;
+            text-align: center; transition: all .3s;
+        }
+        .serve-card:hover {
+            transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--accent);
+        }
+        .serve-icon {
+            width: 60px; height: 60px; border-radius: 50%;
+            margin: 0 auto 18px;
+            display: flex; align-items: center; justify-content: center; font-size: 24px;
+        }
+        .serve-card:nth-child(1) .serve-icon { background: rgba(27,58,107,.1);  color: var(--primary); }
+        .serve-card:nth-child(2) .serve-icon { background: rgba(124,58,237,.1); color: var(--purple); }
+        .serve-card:nth-child(3) .serve-icon { background: rgba(5,150,105,.1);  color: var(--green); }
+        .serve-card:nth-child(4) .serve-icon { background: rgba(249,115,22,.1); color: var(--accent); }
+        .serve-card:nth-child(5) .serve-icon { background: rgba(220,38,38,.1);  color: #DC2626; }
+        .serve-card:nth-child(6) .serve-icon { background: rgba(6,182,212,.1);  color: #0891B2; }
+        .serve-title { font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+        .serve-desc  { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+        /* ── HOW IT WORKS ────────────────────────────── */
+        .how { background: var(--bg); }
+        .steps-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2px; background: var(--border); border-radius: var(--radius-lg); overflow: hidden;
+        }
+        .step {
+            padding: 36px 28px; text-align: center; background: #fff;
+        }
+        .step-num {
+            width: 56px; height: 56px; border-radius: 50%;
+            color: #fff; font-size: 22px; font-weight: 800;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px;
+        }
+        .step:nth-child(1) .step-num { background: var(--primary); }
+        .step:nth-child(2) .step-num { background: var(--purple); }
+        .step:nth-child(3) .step-num { background: var(--accent); }
+        .step:nth-child(4) .step-num { background: var(--green); }
+        .step-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 10px; }
+        .step-desc  { font-size: 14px; color: var(--text-muted); line-height: 1.65; }
+
+        /* ── CONTACT ─────────────────────────────────── */
+        .contact { background: var(--primary); }
+        .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 72px; align-items: center; }
+        .contact .section-label { color: rgba(255,255,255,.55); }
+        .contact .section-title { color: #fff; }
+        .contact .section-sub   { color: rgba(255,255,255,.7); }
+
+        .contact-perks { margin-top: 32px; display: flex; flex-direction: column; gap: 14px; }
+        .perk {
+            display: flex; align-items: center; gap: 12px;
+            color: rgba(255,255,255,.9); font-size: 15px;
+        }
+        .perk-icon {
+            width: 34px; height: 34px; background: rgba(255,255,255,.15);
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; flex-shrink: 0;
+        }
+        .contact-actions { margin-top: 32px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+        .form-card {
+            background: #fff; border-radius: var(--radius-lg);
+            padding: 36px; box-shadow: var(--shadow-xl);
+        }
+        .form-card h3 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 24px; }
+        .form-group { margin-bottom: 18px; }
+        .form-group label {
+            display: block; font-size: 14px; font-weight: 600;
+            color: var(--text); margin-bottom: 7px;
+        }
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%; padding: 11px 14px;
+            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            font-size: 15px; font-family: inherit; color: var(--text);
+            background: var(--bg-soft); transition: border-color .2s; outline: none;
+        }
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus { border-color: var(--primary); background: #fff; }
+        .form-group textarea { resize: vertical; min-height: 96px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+        /* ── FOOTER ──────────────────────────────────── */
+        .footer { background: #0A1628; color: rgba(255,255,255,.65); padding: 64px 0 32px; }
+        .footer-grid {
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px; margin-bottom: 48px;
+        }
+        .footer-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+        .footer-logo-icon {
+            width: 36px; height: 36px; background: var(--primary);
+            border-radius: 8px; display: flex; align-items: center;
+            justify-content: center; color: #fff; font-size: 16px;
+        }
+        .footer-logo-text { font-size: 18px; font-weight: 800; color: #fff; }
+        .footer-logo-text span { color: var(--accent); }
+        .footer-desc { font-size: 14px; line-height: 1.7; margin-bottom: 22px; }
+        .socials { display: flex; gap: 10px; }
+        .social-btn {
+            width: 36px; height: 36px; background: rgba(255,255,255,.1);
+            border-radius: var(--radius-sm);
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 16px; text-decoration: none; transition: background .2s;
+        }
+        .social-btn:hover { background: var(--accent); }
+        .footer-col h4 {
+            font-size: 13px; font-weight: 700; color: #fff;
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px;
+        }
+        .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        .footer-links a {
+            color: rgba(255,255,255,.65); text-decoration: none;
+            font-size: 14px; transition: color .2s;
+        }
+        .footer-links a:hover { color: #fff; }
+        .footer-bottom {
+            border-top: 1px solid rgba(255,255,255,.1); padding-top: 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            font-size: 13px; flex-wrap: wrap; gap: 12px;
+        }
+
+        /* ── WHATSAPP FLOAT ──────────────────────────── */
+        .wa-float {
+            position: fixed; bottom: 28px; right: 28px;
+            width: 58px; height: 58px; background: #25D366;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 26px; text-decoration: none;
+            box-shadow: 0 4px 20px rgba(37,211,102,.5); z-index: 999;
+            transition: transform .3s; animation: wapulse 2.5s infinite;
+        }
+        .wa-float:hover { transform: scale(1.1); }
+        @keyframes wapulse {
+            0%   { box-shadow: 0 0 0   0 rgba(37,211,102,.7); }
+            70%  { box-shadow: 0 0 0 14px rgba(37,211,102,0); }
+            100% { box-shadow: 0 0 0   0 rgba(37,211,102,0); }
+        }
+
+        /* ── RESPONSIVE ──────────────────────────────── */
+        @media (max-width: 900px) {
+            .hero-container   { grid-template-columns: 1fr; padding: 60px 24px; }
+            .hero-visual      { display: none; }
+            .contact-grid     { grid-template-columns: 1fr; gap: 40px; }
+            .footer-grid      { grid-template-columns: 1fr 1fr; gap: 32px; }
+            .footer-grid > *:first-child { grid-column: 1 / -1; }
+        }
+        @media (max-width: 768px) {
+            .nav-links, .nav-cta-wrap { display: none; }
+            .hamburger { display: flex; }
+            .hero-stats { gap: 20px; }
+            .product-tabs { overflow-x: auto; width: 100%; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 500px) {
+            section { padding: 60px 0; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .pricing-footer { flex-direction: column; align-items: flex-start; }
+        }
+
+        /* ── FADE-IN ANIMATIONS ──────────────────────── */
+        .fade-in {
+            opacity: 0; transform: translateY(22px);
+            transition: opacity .55s ease, transform .55s ease;
+        }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ NAVBAR ═══ -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="#" class="logo">
+            <div class="logo-icon"><i class="fas fa-shirt"></i></div>
+            <span class="logo-text">Punto<span>Remeras</span></span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="#productos">Catálogo</a></li>
+            <li><a href="#precios">Precios</a></li>
+            <li><a href="#estampado">Estampado</a></li>
+            <li><a href="#quienes">Clientes</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+        <div class="nav-cta-wrap">
+            <!-- REEMPLAZÁ el número de WhatsApp con el tuyo -->
+            <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20pedir%20una%20cotizaci%C3%B3n" class="btn btn-whatsapp" target="_blank" rel="noopener">
+                <i class="fab fa-whatsapp"></i> Cotizar ahora
+            </a>
+        </div>
+        <button class="hamburger" id="hamburger" aria-label="Menú">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+    <a href="#productos" onclick="closeMobile()">Catálogo</a>
+    <a href="#precios" onclick="closeMobile()">Precios</a>
+    <a href="#estampado" onclick="closeMobile()">Estampado</a>
+    <a href="#quienes" onclick="closeMobile()">Clientes</a>
+    <a href="#contacto" onclick="closeMobile()">Contacto</a>
+    <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20cotizar" class="btn btn-whatsapp" style="margin-top:8px;justify-content:center;" target="_blank" rel="noopener">
+        <i class="fab fa-whatsapp"></i> Cotizar por WhatsApp
+    </a>
+</div>
+
+
+<!-- ═══════════════════════════════════════ HERO ════════ -->
+<section class="hero">
+    <div class="hero-container">
+        <div>
+            <div class="hero-badge">
+                <i class="fas fa-star"></i>
+                Fabricación propia · Envíos a todo el país
+            </div>
+            <h1 class="hero-title">
+                Indumentaria al por mayor<br>
+                <span class="accent">con tu diseño</span>
+            </h1>
+            <p class="hero-subtitle">
+                Fabricamos y estampamos remeras, buzos y pantalones para empresas, colegios, clubes y eventos. Precios mayoristas desde 10 unidades.
+            </p>
+            <div class="hero-actions">
+                <a href="#productos" class="btn btn-primary btn-lg">
+                    <i class="fas fa-th-large"></i> Ver catálogo
+                </a>
+                <a href="https://wa.me/5491100000000?text=Hola!%20Quiero%20pedir%20una%20cotizaci%C3%B3n" class="btn btn-whatsapp btn-lg" target="_blank" rel="noopener">
+                    <i class="fab fa-whatsapp"></i> Pedir cotización
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div>
+                    <span class="hero-stat-value">+500</span>
+                    <span class="hero-stat-label">Clientes activos</span>
+                </div>
+                <div>
+                    <span class="hero-stat-value">10+</span>
+                    <span class="hero-stat-label">Años de experiencia</span>
+                </div>
+                <div>
+                    <span class="hero-stat-value">24 hs</span>
+                    <span class="hero-stat-label">Respuesta cotización</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Decorative card (hidden on mobile) -->
+        <div class="hero-visual">
+            <div class="hero-card">
+                <div class="hero-card-img">
+                    <i class="fas fa-shirt"></i>
+                </div>
+                <div class="hero-card-sub">Producto destacado</div>
+                <div class="hero-card-name">Remera Dry Fit Premium</div>
+                <div class="tag-row">
+                    <span class="tag tag-blue">100% Poliéster</span>
+                    <span class="tag tag-orange">Sublimación total</span>
+                    <span class="tag tag-gray">Desde 10 un.</span>
+                </div>
+            </div>
+            <div class="float-badge float-badge-1">
+                <div class="float-icon float-icon-green"><i class="fas fa-check"></i></div>
+                <div>
+                    <div class="float-title">Pedido listo</div>
+                    <div class="float-sub">150 remeras · Colegio San Martín</div>
+                </div>
+            </div>
+            <div class="float-badge float-badge-2">
+                <div class="float-icon float-icon-orange"><i class="fas fa-truck"></i></div>
+                <div>
+                    <div class="float-title">En camino</div>
+                    <div class="float-sub">Entrega estimada: 3–5 días</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ CLIENTS BAR ═ -->
+<div class="clients-bar">
+    <div class="clients-inner">
+        <span class="clients-label">Trabajamos con:</span>
+        <div class="clients-list">
+            <div class="client-item"><i class="fas fa-building"></i> Empresas</div>
+            <div class="client-item"><i class="fas fa-school"></i> Colegios</div>
+            <div class="client-item"><i class="fas fa-futbol"></i> Clubes deportivos</div>
+            <div class="client-item"><i class="fas fa-calendar-check"></i> Eventos</div>
+            <div class="client-item"><i class="fas fa-university"></i> Universidades</div>
+            <div class="client-item"><i class="fas fa-store"></i> Comercios</div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════ ESTAMPADO ═══ -->
+<section class="services" id="estampado">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Técnicas de estampado</span>
+            <h2 class="section-title">Tu diseño, como lo imaginás</h2>
+            <p class="section-sub">Contamos con todas las técnicas de personalización para que tu pedido quede exactamente como lo necesitás.</p>
+        </div>
+        <div class="services-grid">
+            <div class="service-card fade-in">
+                <div class="service-icon si-blue"><i class="fas fa-layer-group"></i></div>
+                <h3 class="service-title">Serigrafía</h3>
+                <p class="service-desc">Ideal para pedidos grandes. Colores vivos y larga duración. Hasta 6 colores por diseño. La técnica más utilizada para uniformes corporativos y escolares.</p>
+            </div>
+            <div class="service-card fade-in">
+                <div class="service-icon si-purple"><i class="fas fa-palette"></i></div>
+                <h3 class="service-title">Sublimación</h3>
+                <p class="service-desc">Estampado fotográfico de alta resolución en toda la prenda. Sin límite de colores. Ideal para diseños complejos y telas de poliéster.</p>
+            </div>
+            <div class="service-card fade-in">
+                <div class="service-icon si-green"><i class="fas fa-scissors"></i></div>
+                <h3 class="service-title">Bordado</h3>
+                <p class="service-desc">Acabado premium con hilo. Perfecto para logos corporativos, uniformes formales y prendas que requieren distinción y durabilidad.</p>
+            </div>
+            <div class="service-card fade-in">
+                <div class="service-icon si-amber"><i class="fas fa-fire"></i></div>
+                <h3 class="service-title">Transfer Vinilo</h3>
+                <p class="service-desc">Tecnología de calor para detalles especiales. Colores metálicos, reflectivos y efectos que no se logran con otras técnicas.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ PRODUCTS ════ -->
+<section class="products" id="productos">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Catálogo de productos</span>
+            <h2 class="section-title">Modelos disponibles</h2>
+            <p class="section-sub">Todos los modelos disponibles en talles XS al 3XL y amplia gama de colores. Mínimo 10 unidades por pedido.</p>
+        </div>
+
+        <div class="product-tabs">
+            <button class="tab-btn active" onclick="switchTab('remeras', this)">
+                <i class="fas fa-shirt"></i> Remeras
+            </button>
+            <button class="tab-btn" onclick="switchTab('buzos', this)">
+                <i class="fas fa-person"></i> Buzos
+            </button>
+            <button class="tab-btn" onclick="switchTab('pantalones', this)">
+                <i class="fas fa-person-running"></i> Pantalones
+            </button>
+        </div>
+
+        <!-- ─── REMERAS ─── -->
+        <div class="tab-panel active" id="panel-remeras">
+            <div class="product-card fade-in">
+                <div class="product-img pi-blue">
+                    <i class="fas fa-shirt"></i>
+                    <span class="product-badge">Más vendida</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Remera Lisa Básica</h3>
+                    <p class="product-desc">Cuello redondo, manga corta. Ideal para serigrafía y transfer vinilo.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">100% Algodón</span>
+                        <span class="product-spec">160 g/m²</span>
+                        <span class="product-spec">XS al 3XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$3.400 <small>/ unidad</small></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img pi-blue">
+                    <i class="fas fa-shirt"></i>
+                    <span class="product-badge">Premium</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Remera Polo Piqué</h3>
+                    <p class="product-desc">Cuello camisero, botones nácar. Acabado corporativo y profesional.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Piqué Algodón</span>
+                        <span class="product-spec">220 g/m²</span>
+                        <span class="product-spec">S al 2XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$5.200 <small>/ unidad</small></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img pi-blue">
+                    <i class="fas fa-shirt"></i>
+                    <span class="product-badge">Deportiva</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Remera Dry Fit</h3>
+                    <p class="product-desc">Tejido técnico transpirable. Ideal para sublimación total y uso deportivo.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">100% Poliéster</span>
+                        <span class="product-spec">140 g/m²</span>
+                        <span class="product-spec">XS al 3XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$4.500 <small>/ unidad</small></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img pi-blue">
+                    <i class="fas fa-shirt"></i>
+                    <span class="product-badge">Tendencia</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Remera Oversize</h3>
+                    <p class="product-desc">Corte amplio y cuerpo largo. Perfecto para estampados grandes y creativos.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Algodón Premium</span>
+                        <span class="product-spec">200 g/m²</span>
+                        <span class="product-spec">S al XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$5.800 <small>/ unidad</small></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── BUZOS ─── -->
+        <div class="tab-panel" id="panel-buzos">
+            <div class="product-card fade-in">
+                <div class="product-img pi-gray">
+                    <i class="fas fa-shirt"></i>
+                    <span class="product-badge">Más vendido</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Buzo con Capucha</h3>
+                    <p class="product-desc">Interior de frisa suave, cordón ajustable y bolsillo canguro frontal.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Frisa Doble</span>
+                        <span class="product-spec">320 g/m²</span>
+                        <span class="product-spec">XS al 3XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$8.200 <small>/ unidad</small></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img pi-gray">
+                    <i class="fas fa-shirt"></i>
+                    <span class="product-badge">Escolar</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Buzo Canguro</h3>
+                    <p class="product-desc">Sin capucha, cuello redondo, bolsillo frontal. Ideal para uniformes y egresados.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Frisa Simple</span>
+                        <span class="product-spec">280 g/m²</span>
+                        <span class="product-spec">XS al 3XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$7.100 <small>/ unidad</small></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img pi-gray">
+                    <i class="fas fa-shirt"></i>
+                    <span class="product-badge">Clásico</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Buzo Universitario</h3>
+                    <p class="product-desc">Cuello redondo, sin bolsillos. El clásico para colegios, egresados y universidades.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Frisa Suave</span>
+                        <span class="product-spec">300 g/m²</span>
+                        <span class="product-spec">XS al 3XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$7.800 <small>/ unidad</small></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img pi-gray">
+                    <i class="fas fa-shirt"></i>
+                    <span class="product-badge">Premium</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Campera Full Zip</h3>
+                    <p class="product-desc">Cierre completo con capucha opcional. Calidad superior para eventos y empresas.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Frisa Premium</span>
+                        <span class="product-spec">350 g/m²</span>
+                        <span class="product-spec">S al 2XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$11.500 <small>/ unidad</small></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ─── PANTALONES ─── -->
+        <div class="tab-panel" id="panel-pantalones">
+            <div class="product-card fade-in">
+                <div class="product-img pi-green">
+                    <i class="fas fa-person-running"></i>
+                    <span class="product-badge">Más vendido</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Jogging Básico</h3>
+                    <p class="product-desc">Elástico en cintura y botamanga, dos bolsillos laterales. Liviano y cómodo.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Frisa Liviana</span>
+                        <span class="product-spec">220 g/m²</span>
+                        <span class="product-spec">XS al 3XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$6.100 <small>/ unidad</small></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img pi-green">
+                    <i class="fas fa-person-running"></i>
+                    <span class="product-badge">Premium</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Jogging Premium</h3>
+                    <p class="product-desc">Doble frisa, pretina ancha con cordón, costuras reforzadas en triple puntada.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Doble Frisa</span>
+                        <span class="product-spec">300 g/m²</span>
+                        <span class="product-spec">XS al 3XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$8.400 <small>/ unidad</small></div>
+                </div>
+            </div>
+            <div class="product-card fade-in">
+                <div class="product-img pi-green">
+                    <i class="fas fa-person-running"></i>
+                    <span class="product-badge">Workwear</span>
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Pantalón Cargo</h3>
+                    <p class="product-desc">4 bolsillos laterales, elástico en cintura. Ideal para uniformes de trabajo y eventos.</p>
+                    <div class="product-specs">
+                        <span class="product-spec">Gabardina</span>
+                        <span class="product-spec">280 g/m²</span>
+                        <span class="product-spec">S al 3XL</span>
+                    </div>
+                    <div class="product-price-from">Desde (x50 unidades)</div>
+                    <div class="product-price">$9.200 <small>/ unidad</small></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ PRICING ═════ -->
+<section class="pricing" id="precios">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-label">Lista de precios</span>
+            <h2 class="section-title">Precios por cantidad</h2>
+            <p class="section-sub">Cuanto más pedís, más ahorrás. Los precios incluyen estampado básico (1 color, 1 posición).</p>
+        </div>
+
+        <div class="pricing-note">
+            <i class="fas fa-circle-info"></i>
+            <span><strong>Precios orientativos en pesos argentinos.</strong> Pueden variar según modelo, cantidad de colores y tipo de estampado elegido. Consultanos para una cotización personalizada y actualizada.</span>
+        </div>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Producto</th>
+                        <th>10–24 un.<span class="qty">precio / unidad</span></th>
+                        <th>25–49 un.<span class="qty">precio / unidad</span></th>
+                        <th>50–99 un.<span class="qty">precio / unidad</span></th>
+                        <th>+100 un.<span class="qty">precio / unidad</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="td-product">Remera Básica <small>100% Algodón · Serigrafía 1 color</small></td>
+                        <td>$4.200</td><td>$3.800</td><td>$3.400</td>
+                        <td class="td-best">$2.900 ✓</td>
+                    </tr>
+                    <tr>
+                        <td class="td-product">Remera Dry Fit <small>Poliéster · Sublimación total</small></td>
+                        <td>$5.500</td><td>$5.000</td><td>$4.500</td>
+                        <td class="td-best">$4.000 ✓</td>
+                    </tr>
+                    <tr>
+                        <td class="td-product">Remera Polo Piqué <small>Algodón peinado · Bordado</small></td>
+                        <td>$6.800</td><td>$6.200</td><td>$5.600</td>
+                        <td class="td-best">$5.200 ✓</td>
+                    </tr>
+                    <tr>
+                        <td class="td-product">Buzo con Capucha <small>Frisa doble · Serigrafía 1 color</small></td>
+                        <td>$9.800</td><td>$8.900</td><td>$8.200</td>
+                        <td class="td-best">$7.400 ✓</td>
+                    </tr>
+                    <tr>
+                        <td class="td-product">Buzo Canguro <small>Frisa · Serigrafía 1 color</small></td>
+                        <td>$8.500</td><td>$7.800</td><td>$7.100</td>
+                        <td class="td-best">$6.500 ✓</td>
+                    </tr>
+                    <tr>
+                        <td class="td-product">Buzo Universitario <small>Frisa · Serigrafía o Bordado</small></td>
+                        <td>$9.200</td><td>$8.400</td><td>$7.800</td>
+                        <td class="td-best">$7.100 ✓</td>
+                    </tr>
+                    <tr>
+                        <td class="td-product">Jogging Básico <small>Frisa liviana · Bordado o Transfer</small></td>
+                        <td>$7.200</td><td>$6.600</td><td>$6.100</td>
+                        <td class="td-best">$5.500 ✓</td>
+                    </tr>
+                    <tr>
+                        <td class="td-product">Jogging Premium <small>Doble frisa · Bordado</small></td>
+                        <td>$9.600</td><td>$8.800</td><td>$8.400</td>
+                        <td class="td-best">$7.800 ✓</td>
+                    </tr>
+                    <tr>
+                        <td class="td-product">Conjunto remera + pantalón <small>Pack combinado con descuento</small></td>
+                        <td>$10.500</td><td>$9.500</td><td>$8.800</td>
+                        <td class="td-best">$7.900 ✓</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="pricing-footer">
+            <p class="pricing-footer-note">
+                * Colores adicionales, posiciones extra y técnicas premium tienen costo adicional.<br>
+                * Precios sin IVA. Consultar descuentos para ONGs y entidades educativas.
+            </p>
+            <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20pedir%20una%20cotizaci%C3%B3n%20personalizada" class="btn btn-accent btn-lg" target="_blank" rel="noopener">
+                <i class="fab fa-whatsapp"></i> Pedir cotización exacta
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ QUIÉNES ═════ -->
+<section class="serve" id="quienes">
+    <div class="container">
+        <div class="section-header center">
+            <span class="section-label">Nuestros clientes</span>
+            <h2 class="section-title">¿Para quién fabricamos?</h2>
+            <p class="section-sub">Trabajamos con todo tipo de organizaciones que necesitan indumentaria personalizada al por mayor.</p>
+        </div>
+        <div class="serve-grid">
+            <div class="serve-card fade-in">
+                <div class="serve-icon"><i class="fas fa-building"></i></div>
+                <h3 class="serve-title">Empresas</h3>
+                <p class="serve-desc">Uniformes corporativos, ropa de trabajo y artículos institucionales con tu logo.</p>
+            </div>
+            <div class="serve-card fade-in">
+                <div class="serve-icon"><i class="fas fa-school"></i></div>
+                <h3 class="serve-title">Colegios</h3>
+                <p class="serve-desc">Remeras y buzos de egresados, uniformes escolares y ropa deportiva.</p>
+            </div>
+            <div class="serve-card fade-in">
+                <div class="serve-icon"><i class="fas fa-futbol"></i></div>
+                <h3 class="serve-title">Clubes Deportivos</h3>
+                <p class="serve-desc">Camisetas, buzos y pantalones para equipos amateur y profesionales.</p>
+            </div>
+            <div class="serve-card fade-in">
+                <div class="serve-icon"><i class="fas fa-calendar-check"></i></div>
+                <h3 class="serve-title">Eventos</h3>
+                <p class="serve-desc">Remeras para festivales, corridas, conciertos y eventos corporativos.</p>
+            </div>
+            <div class="serve-card fade-in">
+                <div class="serve-icon"><i class="fas fa-university"></i></div>
+                <h3 class="serve-title">Universidades</h3>
+                <p class="serve-desc">Merchandising universitario, ropa para facultades y agrupaciones.</p>
+            </div>
+            <div class="serve-card fade-in">
+                <div class="serve-icon"><i class="fas fa-store"></i></div>
+                <h3 class="serve-title">Revendedores</h3>
+                <p class="serve-desc">Stock para locales de indumentaria, tiendas online y distribuidores.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ CÓMO FUNCIONA -->
+<section class="how">
+    <div class="container">
+        <div class="section-header center">
+            <span class="section-label">¿Cómo funciona?</span>
+            <h2 class="section-title">Tu pedido en 4 pasos</h2>
+            <p class="section-sub">Proceso simple, ágil y transparente de principio a fin.</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step fade-in">
+                <div class="step-num">1</div>
+                <h3 class="step-title">Consultá y cotizá</h3>
+                <p class="step-desc">Contanos qué necesitás: tipo de prenda, cantidad, colores y técnica. Respondemos la cotización en menos de 24 horas.</p>
+            </div>
+            <div class="step fade-in">
+                <div class="step-num">2</div>
+                <h3 class="step-title">Diseñá con nosotros</h3>
+                <p class="step-desc">Envianos tu logo o diseño. Nuestro equipo lo adapta y te manda una prueba digital para que apruebes antes de producir.</p>
+            </div>
+            <div class="step fade-in">
+                <div class="step-num">3</div>
+                <h3 class="step-title">Producimos tu pedido</h3>
+                <p class="step-desc">Con el arte aprobado y el anticipo, empezamos la producción. Plazo estimado: 10–15 días hábiles según la cantidad.</p>
+            </div>
+            <div class="step fade-in">
+                <div class="step-num">4</div>
+                <h3 class="step-title">Lo recibís en tu puerta</h3>
+                <p class="step-desc">Enviamos a todo el país o retirás en nuestro local. El saldo se abona contra entrega.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ CONTACT ═════ -->
+<section class="contact" id="contacto">
+    <div class="container">
+        <div class="contact-grid">
+            <div>
+                <span class="section-label">Contacto</span>
+                <h2 class="section-title">Hablemos de tu pedido</h2>
+                <p class="section-sub">Respondemos todas las consultas. Estamos listos para armar la mejor propuesta para vos.</p>
+                <div class="contact-perks">
+                    <div class="perk">
+                        <div class="perk-icon"><i class="fab fa-whatsapp"></i></div>
+                        Respuesta por WhatsApp en menos de 2 horas
+                    </div>
+                    <div class="perk">
+                        <div class="perk-icon"><i class="fas fa-file-invoice"></i></div>
+                        Cotización detallada sin compromiso en 24 hs
+                    </div>
+                    <div class="perk">
+                        <div class="perk-icon"><i class="fas fa-truck"></i></div>
+                        Envíos a todo el país · Retiro en local
+                    </div>
+                    <div class="perk">
+                        <div class="perk-icon"><i class="fas fa-shield-halved"></i></div>
+                        Garantía de calidad en cada pedido
+                    </div>
+                </div>
+                <div class="contact-actions">
+                    <a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20consultar%20por%20un%20pedido" class="btn btn-whatsapp btn-lg" target="_blank" rel="noopener">
+                        <i class="fab fa-whatsapp"></i> WhatsApp directo
+                    </a>
+                </div>
+            </div>
+
+            <div>
+                <div class="form-card">
+                    <h3>Solicitar cotización</h3>
+                    <form onsubmit="submitForm(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Nombre completo</label>
+                                <input type="text" id="fname" placeholder="Tu nombre" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Teléfono / WhatsApp</label>
+                                <input type="tel" id="fphone" placeholder="11 1234-5678" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Email (opcional)</label>
+                            <input type="email" id="femail" placeholder="tu@email.com">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tipo de prenda</label>
+                                <select id="fprenda">
+                                    <option value="">Seleccioná...</option>
+                                    <option>Remera básica</option>
+                                    <option>Remera dry fit</option>
+                                    <option>Remera polo</option>
+                                    <option>Remera oversize</option>
+                                    <option>Buzo con capucha</option>
+                                    <option>Buzo canguro</option>
+                                    <option>Buzo universitario</option>
+                                    <option>Campera full zip</option>
+                                    <option>Jogging básico</option>
+                                    <option>Jogging premium</option>
+                                    <option>Conjunto completo</option>
+                                    <option>Otro / Consultar</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Cantidad estimada</label>
+                                <select id="fcantidad">
+                                    <option value="">Seleccioná...</option>
+                                    <option>10–24 unidades</option>
+                                    <option>25–49 unidades</option>
+                                    <option>50–99 unidades</option>
+                                    <option>100–199 unidades</option>
+                                    <option>+200 unidades</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Mensaje (opcional)</label>
+                            <textarea id="fmsg" placeholder="Contanos más sobre tu pedido: colores, diseño, fecha de entrega..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:14px 20px;">
+                            <i class="fas fa-paper-plane"></i> Enviar consulta
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ FOOTER ══════ -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">
+                    <div class="footer-logo-icon"><i class="fas fa-shirt"></i></div>
+                    <span class="footer-logo-text">Punto<span>Remeras</span></span>
+                </div>
+                <p class="footer-desc">
+                    Fabricantes de indumentaria personalizada al por mayor. Más de 10 años vistiendo empresas, colegios y eventos en todo el país.
+                </p>
+                <div class="socials">
+                    <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="https://wa.me/5491100000000" class="social-btn" aria-label="WhatsApp" target="_blank" rel="noopener"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Productos</h4>
+                <ul class="footer-links">
+                    <li><a href="#productos">Remeras</a></li>
+                    <li><a href="#productos">Buzos</a></li>
+                    <li><a href="#productos">Pantalones</a></li>
+                    <li><a href="#precios">Lista de precios</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Estampado</h4>
+                <ul class="footer-links">
+                    <li><a href="#estampado">Serigrafía</a></li>
+                    <li><a href="#estampado">Sublimación</a></li>
+                    <li><a href="#estampado">Bordado</a></li>
+                    <li><a href="#estampado">Transfer vinilo</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <!-- REEMPLAZÁ con tu información real -->
+                <h4>Contacto</h4>
+                <ul class="footer-links">
+                    <li><a href="mailto:info@puntoremeras.com.ar">info@puntoremeras.com.ar</a></li>
+                    <li><a href="tel:+5491100000000">+54 9 11 0000-0000</a></li>
+                    <li><a href="#">Lun–Vie: 9 a 18 hs</a></li>
+                    <li><a href="#">Buenos Aires, Argentina</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2024 Punto Remeras. Todos los derechos reservados.</span>
+            <span>Hecho con amor en Argentina 🇦🇷</span>
+        </div>
+    </div>
+</footer>
+
+<!-- Botón flotante WhatsApp -->
+<a href="https://wa.me/5491100000000?text=Hola!%20Me%20interesa%20consultar%20por%20indumentaria" class="wa-float" target="_blank" rel="noopener" title="Consultar por WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+
+<script>
+    // ── Navbar scroll shadow
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // ── Mobile menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+        mobileMenu.classList.toggle('open');
+        hamburger.classList.toggle('open');
+    });
+    function closeMobile() {
+        mobileMenu.classList.remove('open');
+        hamburger.classList.remove('open');
+    }
+
+    // ── Product tabs
+    function switchTab(tab, btn) {
+        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('panel-' + tab).classList.add('active');
+        btn.classList.add('active');
+        // re-trigger fade-in for newly visible cards
+        document.querySelectorAll('#panel-' + tab + ' .fade-in').forEach(el => {
+            el.classList.remove('visible');
+            requestAnimationFrame(() => el.classList.add('visible'));
+        });
+    }
+
+    // ── Form → WhatsApp
+    function submitForm(e) {
+        e.preventDefault();
+        const name     = document.getElementById('fname').value.trim();
+        const phone    = document.getElementById('fphone').value.trim();
+        const prenda   = document.getElementById('fprenda').value;
+        const cantidad = document.getElementById('fcantidad').value;
+        const msg      = document.getElementById('fmsg').value.trim();
+
+        let text = `Hola! Me llamo ${name}.\n📱 Teléfono: ${phone}`;
+        if (prenda)   text += `\n👕 Prenda: ${prenda}`;
+        if (cantidad) text += `\n📦 Cantidad: ${cantidad}`;
+        if (msg)      text += `\n💬 ${msg}`;
+
+        // REEMPLAZÁ el número con el tuyo
+        window.open('https://wa.me/5491100000000?text=' + encodeURIComponent(text), '_blank');
+    }
+
+    // ── Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+        a.addEventListener('click', e => {
+            const target = document.querySelector(a.getAttribute('href'));
+            if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+        });
+    });
+
+    // ── Fade-in on scroll
+    const io = new IntersectionObserver(entries => {
+        entries.forEach(en => { if (en.isIntersecting) en.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

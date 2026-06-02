@@ -571,6 +571,173 @@
             transition: opacity .55s ease, transform .55s ease;
         }
         .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* ── CONFIGURADOR ────────────────────────────── */
+        .configurador { background: linear-gradient(180deg, var(--bg-soft) 0%, var(--bg) 100%); }
+
+        /* Progress */
+        .cfg-progress { margin-bottom: 40px; }
+        .cfg-prog-track {
+            height: 4px; background: var(--border); border-radius: 100px;
+            overflow: hidden; margin-bottom: 18px;
+        }
+        .cfg-prog-fill {
+            height: 100%; background: var(--primary);
+            border-radius: 100px; transition: width .45s ease; width: 0%;
+        }
+        .cfg-steps-row { display: flex; justify-content: space-between; }
+        .cfg-step-dot  { display: flex; flex-direction: column; align-items: center; gap: 5px; flex: 1; }
+        .cfg-step-dot span {
+            width: 30px; height: 30px; border-radius: 50%;
+            background: var(--border); color: var(--text-muted);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; transition: all .3s;
+        }
+        .cfg-step-dot.active span  { background: var(--primary); color: #fff; box-shadow: 0 0 0 4px rgba(27,58,107,.15); }
+        .cfg-step-dot.done span    { background: var(--green); color: #fff; }
+        .cfg-step-dot small        { font-size: 11px; color: var(--text-muted); font-weight: 500; text-align: center; }
+        .cfg-step-dot.active small { color: var(--primary); font-weight: 700; }
+        .cfg-step-dot.done small   { color: var(--green); }
+
+        /* Layout */
+        .cfg-wrapper { display: grid; grid-template-columns: 290px 1fr; gap: 40px; align-items: start; }
+
+        /* Preview */
+        .cfg-preview { position: sticky; top: 88px; }
+        .cfg-garment-box {
+            background: var(--bg-soft); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 28px;
+            display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+        }
+        #cfgSvg { width: 100%; max-width: 190px; height: auto; }
+        .g-fill   { fill: #1B3A6B; transition: fill .35s; }
+        .g-dark   { fill: rgba(0,0,0,.15); }
+        .g-stroke { stroke: rgba(0,0,0,.2); stroke-width: 1.5; fill: none; }
+        .g-cord   { stroke: rgba(255,255,255,.35); stroke-width: 1.5; fill: none; }
+        .logo-r   { fill: rgba(255,255,255,.18); stroke: rgba(255,255,255,.45); stroke-dasharray: 3.5; stroke-width: 1; }
+        .logo-t   { fill: rgba(255,255,255,.55); font-family: Inter, sans-serif; font-size: 7.5px; }
+        .cfg-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+        .cfg-chip  {
+            background: #fff; border: 1px solid var(--border);
+            padding: 4px 11px; border-radius: 100px;
+            font-size: 12px; font-weight: 600; color: var(--text-muted);
+        }
+
+        /* Step panels */
+        .step-panel        { display: none; }
+        .step-panel.active { display: block; animation: stepFade .3s ease; }
+        @keyframes stepFade { from { opacity:0; transform:translateX(10px); } to { opacity:1; transform:translateX(0); } }
+        .cfg-step-title { font-size: 21px; font-weight: 800; letter-spacing: -.5px; margin-bottom: 7px; }
+        .cfg-step-sub   { font-size: 15px; color: var(--text-muted); margin-bottom: 22px; line-height: 1.6; }
+
+        /* Option grids */
+        .opt-g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; }
+        .opt-g2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; }
+        .opt-card {
+            border: 2px solid var(--border); border-radius: var(--radius);
+            padding: 18px 14px; text-align: center; cursor: pointer;
+            transition: all .2s; background: #fff;
+            display: flex; flex-direction: column; align-items: center; gap: 7px;
+        }
+        .opt-card i      { font-size: 24px; color: var(--primary); }
+        .opt-card strong { font-size: 14px; color: var(--text); }
+        .opt-card small  { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+        .opt-card:hover  { border-color: var(--primary); transform: translateY(-2px); background: rgba(27,58,107,.02); }
+        .opt-card.sel    { border-color: var(--primary); background: rgba(27,58,107,.06); }
+        .opt-card.multi.sel { border-color: var(--accent); background: rgba(249,115,22,.06); }
+
+        /* Colors */
+        .color-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+        .c-swatch {
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            transition: all .2s; border: 2px solid transparent; box-shadow: var(--shadow);
+        }
+        .c-swatch:hover { transform: scale(1.12); }
+        .c-swatch.sel   { transform: scale(1.12); box-shadow: 0 0 0 3px rgba(27,58,107,.25); }
+
+        /* Detail toggles */
+        .detail-g          { margin-bottom: 18px; }
+        .detail-g > label  { font-size: 14px; font-weight: 700; color: var(--text); display: block; margin-bottom: 9px; }
+        .tog-row   { display: flex; flex-wrap: wrap; gap: 7px; }
+        .tog-btn   {
+            padding: 7px 15px; border-radius: 100px;
+            border: 1.5px solid var(--border); font-size: 13px; font-weight: 500;
+            cursor: pointer; background: #fff; color: var(--text-muted);
+            transition: all .2s; font-family: inherit;
+        }
+        .tog-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .tog-btn.sel   { background: var(--primary); border-color: var(--primary); color: #fff; }
+
+        /* Quantity */
+        .qty-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 11px; }
+        .qty-card {
+            border: 2px solid var(--border); border-radius: var(--radius);
+            padding: 16px; cursor: pointer; background: #fff;
+            transition: all .2s; text-align: center;
+            display: flex; flex-direction: column; gap: 3px;
+        }
+        .qty-card strong { font-size: 15px; color: var(--text); }
+        .qty-card small  { font-size: 12px; color: var(--text-muted); }
+        .qty-card.sel    { border-color: var(--primary); background: rgba(27,58,107,.05); }
+        .qty-card.best   { border-color: var(--green); }
+        .qty-card.best.sel { background: rgba(5,150,105,.05); }
+        .qty-best-tag    {
+            font-size: 10px; font-weight: 700; background: var(--green); color: #fff;
+            padding: 2px 8px; border-radius: 100px;
+            letter-spacing: .5px; text-transform: uppercase; display: inline-block; margin-bottom: 2px;
+        }
+
+        /* Talle inputs */
+        .talle-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+        .talle-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+        .talle-item span { font-size: 12px; font-weight: 700; color: var(--text-muted); }
+        .talle-item input {
+            width: 50px; padding: 7px 5px; text-align: center;
+            border: 1.5px solid var(--border); border-radius: var(--radius-sm);
+            font-size: 15px; font-family: inherit; outline: none;
+        }
+        .talle-item input:focus { border-color: var(--primary); }
+
+        /* Upload */
+        .upload-lbl {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 9px 16px; border-radius: var(--radius-sm);
+            border: 1.5px dashed var(--primary); color: var(--primary);
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            background: rgba(27,58,107,.03); transition: background .2s;
+        }
+        .upload-lbl:hover { background: rgba(27,58,107,.07); }
+
+        /* Summary */
+        .sum-card {
+            background: var(--bg-soft); border: 1px solid var(--border);
+            border-radius: var(--radius-lg); padding: 22px;
+        }
+        .sum-row {
+            display: flex; justify-content: space-between; align-items: flex-start;
+            padding: 10px 0; border-bottom: 1px solid var(--border); gap: 12px;
+        }
+        .sum-row:last-child { border-bottom: none; }
+        .sum-label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+        .sum-val   { font-size: 14px; color: var(--text); font-weight: 700; text-align: right; }
+
+        /* Nav buttons */
+        .cfg-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--border);
+        }
+
+        @media (max-width: 860px) {
+            .cfg-wrapper { grid-template-columns: 1fr; }
+            .cfg-preview { position: static; display: flex; gap: 16px; align-items: flex-start; }
+            .cfg-garment-box { max-width: 150px; flex-shrink: 0; padding: 16px; margin: 0; }
+        }
+        @media (max-width: 560px) {
+            .opt-g3, .opt-g2 { grid-template-columns: 1fr; }
+            .qty-grid { grid-template-columns: 1fr 1fr; }
+            .cfg-step-dot small { display: none; }
+            .cfg-preview { flex-direction: column; align-items: center; }
+        }
     </style>
 </head>
 <body>
@@ -584,6 +751,7 @@
         </a>
         <ul class="nav-links">
             <li><a href="#productos">Catálogo</a></li>
+            <li><a href="#arma-tu-diseno" style="color:var(--accent);font-weight:700;">✦ Armá tu diseño</a></li>
             <li><a href="#precios">Precios</a></li>
             <li><a href="#estampado">Estampado</a></li>
             <li><a href="#quienes">Clientes</a></li>
@@ -604,6 +772,7 @@
 <!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobileMenu">
     <a href="#productos" onclick="closeMobile()">Catálogo</a>
+    <a href="#arma-tu-diseno" onclick="closeMobile()" style="color:var(--accent);font-weight:700;">✦ Armá tu diseño</a>
     <a href="#precios" onclick="closeMobile()">Precios</a>
     <a href="#estampado" onclick="closeMobile()">Estampado</a>
     <a href="#quienes" onclick="closeMobile()">Clientes</a>
@@ -956,6 +1125,292 @@
             </div>
         </div>
     </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════ CONFIGURADOR ═ -->
+<section class="configurador" id="arma-tu-diseno">
+    <div class="container">
+        <div class="section-header center">
+            <span class="section-label">Personalizá tu pedido</span>
+            <h2 class="section-title">Armá tu diseño</h2>
+            <p class="section-sub">Elegí cada detalle paso a paso. Al final generamos el mensaje completo para enviarnos por WhatsApp y recibir una cotización.</p>
+        </div>
+
+        <!-- Progress bar -->
+        <div class="cfg-progress">
+            <div class="cfg-prog-track"><div class="cfg-prog-fill" id="cfgFill"></div></div>
+            <div class="cfg-steps-row">
+                <div class="cfg-step-dot active" data-s="1"><span>1</span><small>Prenda</small></div>
+                <div class="cfg-step-dot" data-s="2"><span>2</span><small>Color</small></div>
+                <div class="cfg-step-dot" data-s="3"><span>3</span><small>Detalles</small></div>
+                <div class="cfg-step-dot" data-s="4"><span>4</span><small>Estampado</small></div>
+                <div class="cfg-step-dot" data-s="5"><span>5</span><small>Posición</small></div>
+                <div class="cfg-step-dot" data-s="6"><span>6</span><small>Cantidad</small></div>
+                <div class="cfg-step-dot" data-s="7"><span>7</span><small>Resumen</small></div>
+            </div>
+        </div>
+
+        <div class="cfg-wrapper">
+
+            <!-- ── LEFT: garment preview ── -->
+            <div class="cfg-preview">
+                <div class="cfg-garment-box">
+                    <svg id="cfgSvg" viewBox="0 0 200 230" xmlns="http://www.w3.org/2000/svg">
+
+                        <!-- REMERA group (visible by default) -->
+                        <g id="gRemera">
+                            <!-- Body + round collar cutout (evenodd) -->
+                            <path class="g-fill" fill-rule="evenodd" id="rBase" d="M 10,76 L 58,42 Q 79,24 100,22 Q 121,24 142,42 L 190,76 L 165,90 L 165,218 L 35,218 L 35,90 Z M 76,47 Q 100,37 124,47 Q 116,64 100,64 Q 84,64 76,47 Z"/>
+                            <!-- V neck (hidden) -->
+                            <path class="g-fill" fill-rule="evenodd" id="rVneck" style="display:none" d="M 10,76 L 58,42 Q 79,24 100,22 Q 121,24 142,42 L 190,76 L 165,90 L 165,218 L 35,218 L 35,90 Z M 74,46 L 100,87 L 126,46 Q 116,64 100,64 Q 84,64 74,46 Z"/>
+                            <!-- Polo collar band (hidden) -->
+                            <path class="g-dark" id="rPolo" style="display:none" d="M 74,50 Q 100,57 126,50 L 122,38 Q 100,46 78,38 Z"/>
+                            <!-- Logo placeholder -->
+                            <rect class="logo-r" x="84" y="93" width="32" height="32" rx="3"/>
+                            <text class="logo-t" x="100" y="113" text-anchor="middle">LOGO</text>
+                        </g>
+
+                        <!-- BUZO group (hidden) -->
+                        <g id="gBuzo" style="display:none">
+                            <path class="g-fill" fill-rule="evenodd" id="bBase" d="M 10,76 L 58,42 Q 79,24 100,22 Q 121,24 142,42 L 190,76 L 165,90 L 165,218 L 35,218 L 35,90 Z M 76,47 Q 100,37 124,47 Q 116,64 100,64 Q 84,64 76,47 Z"/>
+                            <!-- Hood (hidden) -->
+                            <path class="g-fill" id="bHood" style="display:none" d="M 76,47 Q 55,18 62,7 Q 80,0 100,2 Q 120,0 138,7 Q 145,18 124,47 Q 116,64 100,64 Q 84,64 76,47 Z"/>
+                            <!-- Drawstrings (hidden) -->
+                            <line class="g-cord" id="bCord"  style="display:none" x1="92" y1="64" x2="88" y2="82"/>
+                            <line class="g-cord" id="bCord2" style="display:none" x1="108" y1="64" x2="112" y2="82"/>
+                            <!-- Kangaroo pocket (hidden) -->
+                            <path class="g-dark" id="bPocket" style="display:none" d="M 64,168 Q 100,158 136,168 L 138,215 L 62,215 Z"/>
+                            <line class="g-stroke" id="bPDiv" style="display:none" x1="100" y1="161" x2="100" y2="215" stroke-width="1"/>
+                            <!-- Zipper line (hidden) -->
+                            <line class="g-stroke" id="bZip" style="display:none" x1="100" y1="64" x2="100" y2="218" stroke-width="1.5" stroke-dasharray="5,3"/>
+                            <!-- High collar (hidden) -->
+                            <path class="g-dark" id="bHighCollar" style="display:none" d="M 74,52 Q 100,48 126,52 L 122,38 Q 100,44 78,38 Z"/>
+                            <!-- Logo placeholder -->
+                            <rect class="logo-r" x="84" y="93" width="32" height="32" rx="3"/>
+                            <text class="logo-t" x="100" y="113" text-anchor="middle">LOGO</text>
+                        </g>
+
+                        <!-- PANTALON group (hidden) -->
+                        <g id="gPantalon" style="display:none">
+                            <!-- Waistband -->
+                            <path class="g-dark" d="M 38,25 L 162,25 L 158,44 L 42,44 Z"/>
+                            <!-- Legs -->
+                            <path class="g-fill" d="M 42,44 L 97,44 L 88,218 L 22,218 Z"/>
+                            <path class="g-fill" d="M 158,44 L 103,44 L 112,218 L 178,218 Z"/>
+                            <path class="g-fill" d="M 97,44 L 103,44 L 100,72 Z"/>
+                            <!-- Drawcord -->
+                            <path class="g-cord" d="M 78,35 Q 100,39 122,35"/>
+                            <!-- Side pockets (hidden) -->
+                            <line class="g-stroke" id="pPockL" style="display:none" x1="38" y1="56" x2="50" y2="92"/>
+                            <line class="g-stroke" id="pPockR" style="display:none" x1="162" y1="56" x2="150" y2="92"/>
+                            <!-- Cargo pockets (hidden) -->
+                            <rect class="g-dark" id="pCargoL" style="display:none" x="20" y="108" width="28" height="36" rx="3"/>
+                            <rect class="g-dark" id="pCargoR" style="display:none" x="152" y="108" width="28" height="36" rx="3"/>
+                            <!-- Elastic cuffs -->
+                            <rect class="g-dark" x="22" y="210" width="66" height="8" rx="3"/>
+                            <rect class="g-dark" x="112" y="210" width="66" height="8" rx="3"/>
+                            <!-- Logo placeholder -->
+                            <rect class="logo-r" x="28" y="118" width="24" height="24" rx="3"/>
+                            <text class="logo-t" x="40" y="134" text-anchor="middle">LOGO</text>
+                        </g>
+
+                        <!-- Uploaded logo image overlay -->
+                        <image id="cfgLogoImg" href="" x="84" y="93" width="32" height="32" preserveAspectRatio="xMidYMid meet" style="display:none"/>
+                    </svg>
+                </div>
+                <div class="cfg-chips" id="cfgChips">
+                    <span class="cfg-chip" id="chPrenda"   style="display:none"></span>
+                    <span class="cfg-chip" id="chColor"    style="display:none"></span>
+                    <span class="cfg-chip" id="chEstampa"  style="display:none"></span>
+                    <span class="cfg-chip" id="chCantidad" style="display:none"></span>
+                </div>
+            </div>
+
+            <!-- ── RIGHT: steps ── -->
+            <div class="cfg-panel">
+
+                <!-- STEP 1: Prenda -->
+                <div class="step-panel active" id="sp1">
+                    <h3 class="cfg-step-title">¿Qué prenda querés diseñar?</h3>
+                    <p class="cfg-step-sub">Seleccioná el tipo de prenda para empezar a personalizar.</p>
+                    <div class="opt-g3">
+                        <div class="opt-card" data-field="prenda" data-val="remera" onclick="pickOpt(this)">
+                            <i class="fas fa-shirt"></i>
+                            <strong>Remera</strong>
+                            <small>Básica, Polo, Dry Fit, Oversize</small>
+                        </div>
+                        <div class="opt-card" data-field="prenda" data-val="buzo" onclick="pickOpt(this)">
+                            <i class="fas fa-person"></i>
+                            <strong>Buzo</strong>
+                            <small>Con capucha, Canguro, Universitario</small>
+                        </div>
+                        <div class="opt-card" data-field="prenda" data-val="pantalon" onclick="pickOpt(this)">
+                            <i class="fas fa-person-running"></i>
+                            <strong>Pantalón</strong>
+                            <small>Jogging, Cargo, Premium</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 2: Color -->
+                <div class="step-panel" id="sp2">
+                    <h3 class="cfg-step-title">¿De qué color?</h3>
+                    <p class="cfg-step-sub">Elegí el color principal. El preview se actualiza en tiempo real.</p>
+                    <div class="color-grid" id="colorGrid"></div>
+                    <p style="font-size:13px;color:var(--text-muted);margin-top:14px;">
+                        <i class="fas fa-circle-info"></i> ¿Necesitás combinación de colores o un tono específico? Mencionalo en el mensaje final.
+                    </p>
+                </div>
+
+                <!-- STEP 3: Detalles (generado dinámicamente por JS) -->
+                <div class="step-panel" id="sp3">
+                    <h3 class="cfg-step-title">Detalles de la prenda</h3>
+                    <p class="cfg-step-sub">Personalizá cada aspecto según tus necesidades. El preview se actualiza con tus elecciones.</p>
+                    <div id="detailContent"></div>
+                </div>
+
+                <!-- STEP 4: Estampado -->
+                <div class="step-panel" id="sp4">
+                    <h3 class="cfg-step-title">Tipo de estampado</h3>
+                    <p class="cfg-step-sub">Cada técnica tiene sus ventajas según el diseño y el material.</p>
+                    <div class="opt-g2">
+                        <div class="opt-card" data-field="estampado" data-val="serigrafia" onclick="pickOpt(this)">
+                            <i class="fas fa-layer-group"></i>
+                            <strong>Serigrafía</strong>
+                            <small>1–6 colores · Muy durable · Ideal pedidos grandes</small>
+                        </div>
+                        <div class="opt-card" data-field="estampado" data-val="sublimacion" onclick="pickOpt(this)">
+                            <i class="fas fa-palette"></i>
+                            <strong>Sublimación</strong>
+                            <small>Colores ilimitados · Foto HD · Solo en poliéster</small>
+                        </div>
+                        <div class="opt-card" data-field="estampado" data-val="bordado" onclick="pickOpt(this)">
+                            <i class="fas fa-scissors"></i>
+                            <strong>Bordado</strong>
+                            <small>Acabado premium con hilo · Logos corporativos</small>
+                        </div>
+                        <div class="opt-card" data-field="estampado" data-val="transfer" onclick="pickOpt(this)">
+                            <i class="fas fa-fire"></i>
+                            <strong>Transfer Vinilo</strong>
+                            <small>Metálicos · Reflectivos · Efectos especiales</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 5: Posición + Logo -->
+                <div class="step-panel" id="sp5">
+                    <h3 class="cfg-step-title">¿Dónde va el diseño?</h3>
+                    <p class="cfg-step-sub">Podés elegir más de una posición. Cada posición extra puede tener costo adicional.</p>
+                    <div class="opt-g2" style="margin-bottom:24px;">
+                        <div class="opt-card multi" data-field="posicion" data-val="Pecho izquierdo" onclick="toggleOpt(this)">
+                            <i class="fas fa-arrow-left"></i>
+                            <strong>Pecho izquierdo</strong>
+                            <small>Logo pequeño (clásico corporativo)</small>
+                        </div>
+                        <div class="opt-card multi" data-field="posicion" data-val="Pecho centro" onclick="toggleOpt(this)">
+                            <i class="fas fa-expand"></i>
+                            <strong>Pecho centro</strong>
+                            <small>Diseño mediano centrado</small>
+                        </div>
+                        <div class="opt-card multi" data-field="posicion" data-val="Espalda completa" onclick="toggleOpt(this)">
+                            <i class="fas fa-rotate-left"></i>
+                            <strong>Espalda completa</strong>
+                            <small>Diseño grande en espalda</small>
+                        </div>
+                        <div class="opt-card multi" data-field="posicion" data-val="Manga" onclick="toggleOpt(this)">
+                            <i class="fas fa-hand-point-right"></i>
+                            <strong>Manga</strong>
+                            <small>Logo o texto en manga</small>
+                        </div>
+                    </div>
+                    <div>
+                        <p style="font-size:14px;font-weight:700;margin-bottom:10px;">¿Ya tenés tu logo o diseño? (opcional)</p>
+                        <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+                            <label class="upload-lbl">
+                                <i class="fas fa-upload"></i> Subir imagen o logo
+                                <input type="file" id="logoFile" accept="image/*" style="display:none" onchange="handleLogo(event)">
+                            </label>
+                            <span style="font-size:13px;color:var(--text-muted)">JPG o PNG · También podés enviarlo después por WhatsApp</span>
+                        </div>
+                        <div id="logoPreviewWrap" style="display:none;margin-top:12px;align-items:center;gap:10px;">
+                            <img id="logoPreviewImg" src="" alt="Logo" style="max-height:52px;border-radius:8px;border:1px solid var(--border);">
+                            <span style="font-size:13px;color:var(--green);font-weight:600;"><i class="fas fa-check-circle"></i> Logo visible en el preview</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 6: Cantidad -->
+                <div class="step-panel" id="sp6">
+                    <h3 class="cfg-step-title">¿Cuántas unidades?</h3>
+                    <p class="cfg-step-sub">El precio por unidad baja a medida que aumenta la cantidad.</p>
+                    <div class="qty-grid">
+                        <div class="qty-card" data-val="10–24 unidades" onclick="pickQty(this)">
+                            <strong>10 – 24 un.</strong><small>Precio base</small>
+                        </div>
+                        <div class="qty-card" data-val="25–49 unidades" onclick="pickQty(this)">
+                            <strong>25 – 49 un.</strong><small>≈ 9% de ahorro</small>
+                        </div>
+                        <div class="qty-card" data-val="50–99 unidades" onclick="pickQty(this)">
+                            <strong>50 – 99 un.</strong><small>≈ 19% de ahorro</small>
+                        </div>
+                        <div class="qty-card best" data-val="+100 unidades" onclick="pickQty(this)">
+                            <span class="qty-best-tag">MEJOR PRECIO</span>
+                            <strong>+ 100 un.</strong><small>≈ 31% de ahorro</small>
+                        </div>
+                    </div>
+                    <div style="margin-top:22px;">
+                        <label style="font-size:14px;font-weight:700;display:block;margin-bottom:9px;">Cantidad exacta (opcional):</label>
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <input type="number" id="qtyNum" min="10" max="9999" placeholder="Ej: 75"
+                                style="width:110px;padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:16px;font-family:inherit;outline:none;"
+                                oninput="onQtyInput(this.value)">
+                            <span style="font-size:14px;color:var(--text-muted)">unidades</span>
+                        </div>
+                    </div>
+                    <div id="talleSection" style="display:none;margin-top:22px;">
+                        <label style="font-size:14px;font-weight:700;display:block;margin-bottom:10px;">Distribución por talle (opcional):</label>
+                        <div class="talle-grid">
+                            <div class="talle-item"><span>XS</span><input type="number" min="0" placeholder="0" oninput="onTalleChange()"></div>
+                            <div class="talle-item"><span>S</span><input type="number" min="0" placeholder="0" oninput="onTalleChange()"></div>
+                            <div class="talle-item"><span>M</span><input type="number" min="0" placeholder="0" oninput="onTalleChange()"></div>
+                            <div class="talle-item"><span>L</span><input type="number" min="0" placeholder="0" oninput="onTalleChange()"></div>
+                            <div class="talle-item"><span>XL</span><input type="number" min="0" placeholder="0" oninput="onTalleChange()"></div>
+                            <div class="talle-item"><span>XXL</span><input type="number" min="0" placeholder="0" oninput="onTalleChange()"></div>
+                            <div class="talle-item"><span>3XL</span><input type="number" min="0" placeholder="0" oninput="onTalleChange()"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEP 7: Resumen -->
+                <div class="step-panel" id="sp7">
+                    <h3 class="cfg-step-title">Resumen de tu diseño</h3>
+                    <p class="cfg-step-sub">Revisá todo antes de enviar. Podés volver a cualquier paso con el botón "Anterior".</p>
+                    <div class="sum-card" id="sumCard"></div>
+                    <div style="margin-top:22px;">
+                        <a href="#" id="btnWAFinal" class="btn btn-whatsapp btn-lg" style="width:100%;justify-content:center;" target="_blank" rel="noopener">
+                            <i class="fab fa-whatsapp"></i> Enviar consulta por WhatsApp
+                        </a>
+                        <p style="text-align:center;font-size:13px;color:var(--text-muted);margin-top:10px;">
+                            <i class="fas fa-clock"></i> Respondemos en menos de 2 horas con cotización detallada
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Navigation -->
+                <div class="cfg-nav">
+                    <button class="btn btn-outline" id="cfgBtnBack" onclick="cfgBack()" style="display:none">
+                        <i class="fas fa-arrow-left"></i> Anterior
+                    </button>
+                    <span id="cfgNavSpacer"></span>
+                    <button class="btn btn-primary" id="cfgBtnNext" onclick="cfgNext()">
+                        Siguiente <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+
+            </div><!-- /.cfg-panel -->
+        </div><!-- /.cfg-wrapper -->
+    </div><!-- /.container -->
 </section>
 
 
@@ -1345,6 +1800,292 @@
     }, { threshold: 0.12 });
 
     document.querySelectorAll('.fade-in').forEach(el => io.observe(el));
+
+    // ── CONFIGURADOR ─────────────────────────────────────────────
+    const CFG_COLORS = [
+        { name:'Blanco',       hex:'#FFFFFF', border:'#CBD5E1' },
+        { name:'Negro',        hex:'#1A1A1A' },
+        { name:'Gris Mélange', hex:'#9CA3AF' },
+        { name:'Gris Oscuro',  hex:'#4B5563' },
+        { name:'Azul Marino',  hex:'#1B3A6B' },
+        { name:'Azul Francia', hex:'#2563EB' },
+        { name:'Celeste',      hex:'#7DD3FC' },
+        { name:'Rojo',         hex:'#DC2626' },
+        { name:'Bordo',        hex:'#7F1D1D' },
+        { name:'Verde',        hex:'#16A34A' },
+        { name:'Naranja',      hex:'#F97316' },
+        { name:'Amarillo',     hex:'#EAB308' },
+        { name:'Rosa',         hex:'#EC4899' },
+        { name:'Violeta',      hex:'#7C3AED' },
+    ];
+
+    const CFG_DETAILS = {
+        remera: [
+            { id:'cuello', label:'Tipo de cuello', opts:['Redondo','En V','Camisero (Polo)','Cuello alto'] },
+            { id:'manga',  label:'Manga',           opts:['Corta','Larga','3/4'] },
+            { id:'corte',  label:'Corte / estilo',  opts:['Regular','Slim fit','Oversize','Crop'] },
+        ],
+        buzo: [
+            { id:'capucha',  label:'Capucha',             opts:['Con capucha','Sin capucha'] },
+            { id:'cuellob',  label:'Tipo de cuello',      opts:['Redondo','Alto','Camisero (Polo)'] },
+            { id:'cierre',   label:'Cierre frontal',      opts:['Sin cierre','Media cremallera','Full zip (cierre completo)'] },
+            { id:'bolsillos',label:'Bolsillos',           opts:['Sin bolsillos','Canguro (frontal)','Laterales','Canguro + laterales'] },
+            { id:'cierreb',  label:'Cierre en bolsillos', opts:['Sin cierre','Con cremallera en bolsillos'] },
+        ],
+        pantalon: [
+            { id:'bolsp',     label:'Bolsillos',           opts:['Sin bolsillos','Laterales (x2)','Laterales + traseros','Cargo (laterales grandes)'] },
+            { id:'cierrep',   label:'Cierre en bolsillos', opts:['Sin cierre','Con cremallera'] },
+            { id:'botamanga', label:'Botamanga',            opts:['Elástico ajustado','Elástico suelto','Recto (sin elástico)'] },
+            { id:'pretina',   label:'Pretina / cintura',   opts:['Elástico simple','Elástico con cordón','Con trabillas'] },
+        ]
+    };
+
+    let cfgState = { step:1, prenda:null, color:null, colorName:null, details:{}, estampado:null, posicion:[], cantidad:null, talles:{}, logoUploaded:false };
+
+    // Build color swatches on load
+    (function() {
+        const grid = document.getElementById('colorGrid');
+        if (!grid) return;
+        CFG_COLORS.forEach(c => {
+            const el = document.createElement('div');
+            el.className = 'c-swatch';
+            el.style.background = c.hex;
+            if (c.border) el.style.border = '2px solid ' + c.border;
+            el.title = c.name;
+            el.onclick = () => pickColor(el, c);
+            grid.appendChild(el);
+        });
+    })();
+
+    function pickColor(el, c) {
+        document.querySelectorAll('.c-swatch').forEach(s => s.classList.remove('sel'));
+        el.classList.add('sel');
+        cfgState.color = c.hex; cfgState.colorName = c.name;
+        document.querySelectorAll('.g-fill').forEach(p => p.style.fill = c.hex);
+        const light = cfgIsLight(c.hex);
+        document.querySelectorAll('.logo-t').forEach(t => t.style.fill = light ? 'rgba(0,0,0,.4)' : 'rgba(255,255,255,.55)');
+        document.querySelectorAll('.logo-r').forEach(r => {
+            r.style.fill   = light ? 'rgba(0,0,0,.09)'  : 'rgba(255,255,255,.18)';
+            r.style.stroke = light ? 'rgba(0,0,0,.28)'  : 'rgba(255,255,255,.42)';
+        });
+        document.querySelectorAll('.g-dark').forEach(p => p.style.fill = light ? 'rgba(0,0,0,.12)' : 'rgba(0,0,0,.16)');
+        updateCfgChips();
+    }
+
+    function cfgIsLight(hex) {
+        const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+        return (r*.299 + g*.587 + b*.114) > 175;
+    }
+
+    function buildDetailStep(prenda) {
+        const container = document.getElementById('detailContent');
+        if (!container) return;
+        container.innerHTML = '';
+        (CFG_DETAILS[prenda] || []).forEach(g => {
+            const div = document.createElement('div');
+            div.className = 'detail-g';
+            div.innerHTML = `<label>${g.label}</label><div class="tog-row" id="dg-${g.id}"></div>`;
+            container.appendChild(div);
+            const row = div.querySelector('.tog-row');
+            g.opts.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'tog-btn';
+                btn.textContent = opt;
+                btn.onclick = () => {
+                    row.querySelectorAll('.tog-btn').forEach(b => b.classList.remove('sel'));
+                    btn.classList.add('sel');
+                    cfgState.details[g.id] = opt;
+                    refreshSvgDetails();
+                };
+                row.appendChild(btn);
+            });
+        });
+    }
+
+    function refreshSvgDetails() {
+        const d = cfgState.details;
+        const svgShow = (id, v) => { const el = document.getElementById(id); if (el) el.style.display = v ? 'block' : 'none'; };
+
+        if (cfgState.prenda === 'remera') {
+            const cuello = d.cuello || '';
+            svgShow('rBase',   cuello !== 'En V');
+            svgShow('rVneck',  cuello === 'En V');
+            svgShow('rPolo',   cuello === 'Camisero (Polo)');
+        }
+        if (cfgState.prenda === 'buzo') {
+            const cap = d.capucha || '', bol = d.bolsillos || '', cie = d.cierre || '', cue = d.cuellob || '';
+            svgShow('bHood',       cap === 'Con capucha');
+            svgShow('bCord',       cap === 'Con capucha');
+            svgShow('bCord2',      cap === 'Con capucha');
+            svgShow('bPocket',     bol !== '' && bol !== 'Sin bolsillos');
+            svgShow('bPDiv',       bol === 'Canguro (frontal)' || bol === 'Canguro + laterales');
+            svgShow('bZip',        cie !== '' && cie !== 'Sin cierre');
+            svgShow('bHighCollar', cue === 'Alto');
+        }
+        if (cfgState.prenda === 'pantalon') {
+            const bol = d.bolsp || '';
+            const has = bol && bol !== 'Sin bolsillos';
+            svgShow('pPockL',  has); svgShow('pPockR', has);
+            svgShow('pCargoL', bol === 'Cargo (laterales grandes)');
+            svgShow('pCargoR', bol === 'Cargo (laterales grandes)');
+        }
+    }
+
+    function pickOpt(el) {
+        const field = el.dataset.field, val = el.dataset.val;
+        const grid = el.closest('[class^="opt-g"]') || el.parentElement;
+        grid.querySelectorAll('.opt-card[data-field="' + field + '"]').forEach(c => c.classList.remove('sel'));
+        el.classList.add('sel');
+        cfgState[field] = val;
+
+        if (field === 'prenda') {
+            ['gRemera','gBuzo','gPantalon'].forEach(id => { const g = document.getElementById(id); if(g) g.style.display = 'none'; });
+            const gMap = { remera:'gRemera', buzo:'gBuzo', pantalon:'gPantalon' };
+            const g = document.getElementById(gMap[val]); if(g) g.style.display = 'block';
+            // Reposition logo image for pantalon
+            const li = document.getElementById('cfgLogoImg');
+            if (li) {
+                if (val === 'pantalon') { li.setAttribute('x','28'); li.setAttribute('y','118'); li.setAttribute('width','24'); li.setAttribute('height','24'); }
+                else { li.setAttribute('x','84'); li.setAttribute('y','93'); li.setAttribute('width','32'); li.setAttribute('height','32'); }
+            }
+            cfgState.details = {};
+            buildDetailStep(val);
+        }
+        updateCfgChips();
+    }
+
+    function toggleOpt(el) {
+        el.classList.toggle('sel');
+        const val = el.dataset.val;
+        const idx = cfgState.posicion.indexOf(val);
+        if (idx === -1) cfgState.posicion.push(val);
+        else cfgState.posicion.splice(idx, 1);
+    }
+
+    function pickQty(el) {
+        document.querySelectorAll('.qty-card').forEach(c => c.classList.remove('sel'));
+        el.classList.add('sel');
+        cfgState.cantidad = el.dataset.val;
+        document.getElementById('qtyNum').value = '';
+        document.getElementById('talleSection').style.display = 'block';
+        updateCfgChips();
+    }
+
+    function onQtyInput(v) {
+        if (v && parseInt(v) >= 10) {
+            cfgState.cantidad = v + ' unidades';
+            document.querySelectorAll('.qty-card').forEach(c => c.classList.remove('sel'));
+            document.getElementById('talleSection').style.display = 'block';
+            updateCfgChips();
+        }
+    }
+
+    function onTalleChange() {
+        cfgState.talles = {};
+        document.querySelectorAll('.talle-item').forEach(item => {
+            const label = item.querySelector('span').textContent;
+            const val   = parseInt(item.querySelector('input').value) || 0;
+            if (val > 0) cfgState.talles[label] = val;
+        });
+    }
+
+    function handleLogo(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = ev => {
+            const src = ev.target.result;
+            const li = document.getElementById('cfgLogoImg');
+            li.setAttribute('href', src);
+            li.style.display = 'block';
+            document.querySelectorAll('.logo-r, .logo-t').forEach(el => el.style.display = 'none');
+            const img = document.getElementById('logoPreviewImg');
+            img.src = src;
+            const wrap = document.getElementById('logoPreviewWrap');
+            wrap.style.display = 'flex';
+            cfgState.logoUploaded = true;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function updateCfgChips() {
+        const pNames = { remera:'Remera', buzo:'Buzo', pantalon:'Pantalón' };
+        const eNames = { serigrafia:'Serigrafía', sublimacion:'Sublimación', bordado:'Bordado', transfer:'Transfer' };
+        const s = (id, txt, color) => {
+            const el = document.getElementById(id); if (!el) return;
+            if (txt) { el.textContent = txt; el.style.display = 'inline'; if(color) el.style.borderColor = color; }
+            else el.style.display = 'none';
+        };
+        s('chPrenda',   cfgState.prenda    ? pNames[cfgState.prenda]   : null);
+        s('chColor',    cfgState.colorName || null, cfgState.color);
+        s('chEstampa',  cfgState.estampado ? eNames[cfgState.estampado]: null);
+        s('chCantidad', cfgState.cantidad  || null);
+    }
+
+    function buildSummary() {
+        const rows = [];
+        const pN = { remera:'Remera', buzo:'Buzo', pantalon:'Pantalón' };
+        const eN = { serigrafia:'Serigrafía', sublimacion:'Sublimación', bordado:'Bordado', transfer:'Transfer Vinilo' };
+        if (cfgState.prenda)    rows.push({ l:'👕 Prenda',    v: pN[cfgState.prenda] });
+        if (cfgState.colorName) rows.push({ l:'🎨 Color',     v: cfgState.colorName });
+        (CFG_DETAILS[cfgState.prenda] || []).forEach(g => {
+            if (cfgState.details[g.id]) rows.push({ l:`↳ ${g.label}`, v: cfgState.details[g.id] });
+        });
+        if (cfgState.estampado)           rows.push({ l:'✨ Estampado',    v: eN[cfgState.estampado] });
+        if (cfgState.posicion.length)     rows.push({ l:'📍 Posición',     v: cfgState.posicion.join(', ') });
+        if (cfgState.logoUploaded)        rows.push({ l:'🖼️ Logo / diseño', v: 'Imagen adjunta ✓' });
+        if (cfgState.cantidad)            rows.push({ l:'📦 Cantidad',     v: cfgState.cantidad });
+        const talles = Object.entries(cfgState.talles).map(([t,n]) => `${t}:${n}`).join(' · ');
+        if (talles) rows.push({ l:'📏 Distribución talles', v: talles });
+
+        document.getElementById('sumCard').innerHTML = rows.length
+            ? rows.map(r => `<div class="sum-row"><span class="sum-label">${r.l}</span><span class="sum-val">${r.v}</span></div>`).join('')
+            : '<p style="color:var(--text-muted);font-size:14px;padding:8px 0">Completá los pasos anteriores para ver el resumen.</p>';
+
+        let msg = 'Hola! Quiero consultar por un pedido personalizado:\n\n';
+        rows.forEach(r => { msg += `${r.l.replace(/[^\w\s:.\-\/áéíóúÁÉÍÓÚñÑüÜ]/g,'')} ${r.v}\n`; });
+        msg += '\n¿Me pueden dar una cotización actualizada?';
+        document.getElementById('btnWAFinal').href = 'https://wa.me/5492234224837?text=' + encodeURIComponent(msg);
+    }
+
+    let cfgStep = 1;
+    const CFG_TOTAL = 7;
+
+    function cfgUpdateProgress(step) {
+        document.getElementById('cfgFill').style.width = ((step - 1) / (CFG_TOTAL - 1) * 100) + '%';
+        document.querySelectorAll('.cfg-step-dot').forEach(d => {
+            const s = parseInt(d.dataset.s);
+            d.classList.toggle('active', s === step);
+            d.classList.toggle('done',   s < step);
+        });
+        document.getElementById('cfgBtnBack').style.display = step > 1 ? 'flex' : 'none';
+        document.getElementById('cfgNavSpacer').style.display = step > 1 ? 'none' : 'inline';
+        const btn = document.getElementById('cfgBtnNext');
+        if (step === CFG_TOTAL) {
+            btn.innerHTML = '<i class="fab fa-whatsapp"></i> Enviar por WhatsApp';
+            btn.className = 'btn btn-whatsapp';
+        } else {
+            btn.innerHTML = 'Siguiente <i class="fas fa-arrow-right"></i>';
+            btn.className = 'btn btn-primary';
+        }
+    }
+
+    function cfgNext() {
+        if (cfgStep === CFG_TOTAL) { document.getElementById('btnWAFinal').click(); return; }
+        document.getElementById('sp' + cfgStep).classList.remove('active');
+        cfgStep++;
+        if (cfgStep === CFG_TOTAL) buildSummary();
+        document.getElementById('sp' + cfgStep).classList.add('active');
+        cfgUpdateProgress(cfgStep);
+    }
+
+    function cfgBack() {
+        if (cfgStep <= 1) return;
+        document.getElementById('sp' + cfgStep).classList.remove('active');
+        cfgStep--;
+        document.getElementById('sp' + cfgStep).classList.add('active');
+        cfgUpdateProgress(cfgStep);
+    }
 </script>
 </body>
 </html>

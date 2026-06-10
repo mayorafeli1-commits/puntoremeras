@@ -1,0 +1,1702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Álgebra de Matrices — Estudio</title>
+<style>
+  :root {
+    --primary: #1e3a5f;
+    --accent: #2980b9;
+    --accent2: #27ae60;
+    --warn: #e74c3c;
+    --yellow: #f39c12;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #2c3e50;
+    --border: #d1dce8;
+    --radius: 12px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* NAV */
+  nav {
+    background: var(--primary);
+    color: #fff;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  nav h1 { font-size: 1.1rem; font-weight: 700; flex: 1; }
+  nav .nav-btn {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: #fff;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  nav .nav-btn:hover, nav .nav-btn.active { background: var(--accent); }
+
+  /* LAYOUT */
+  .container { max-width: 860px; margin: 0 auto; padding: 24px 16px 80px; }
+
+  /* PAGES */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* HOME */
+  .home-hero {
+    background: linear-gradient(135deg, var(--primary) 0%, #2980b9 100%);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 40px 32px;
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .home-hero h2 { font-size: 1.9rem; margin-bottom: 8px; }
+  .home-hero p { opacity: 0.9; font-size: 1rem; }
+  .topic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
+  .topic-card {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .topic-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
+  .topic-card .num { font-size: 2rem; font-weight: 800; color: var(--accent); display: block; }
+  .topic-card h3 { font-size: 0.95rem; margin-top: 8px; line-height: 1.3; }
+  .topic-card .status { margin-top: 10px; font-size: 0.78rem; color: #888; }
+  .topic-card.done { border-color: var(--accent2); }
+  .topic-card.done .num { color: var(--accent2); }
+
+  /* SECTION HEADERS */
+  .section-header {
+    background: var(--primary);
+    color: #fff;
+    border-radius: var(--radius) var(--radius) 0 0;
+    padding: 20px 24px;
+    margin-bottom: 0;
+  }
+  .section-header .tag { font-size: 0.75rem; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; }
+  .section-header h2 { font-size: 1.5rem; margin-top: 4px; }
+
+  /* CARDS */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .card h3 { font-size: 1.1rem; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .card h3 .icon { font-size: 1.2rem; }
+  .card p, .card li { line-height: 1.7; margin-bottom: 8px; }
+  .card ul { padding-left: 20px; }
+  .card ol { padding-left: 20px; }
+
+  /* HIGHLIGHT BOXES */
+  .box { border-radius: 8px; padding: 14px 18px; margin: 12px 0; }
+  .box-blue { background: #ebf5fb; border-left: 4px solid var(--accent); }
+  .box-green { background: #eafaf1; border-left: 4px solid var(--accent2); }
+  .box-yellow { background: #fef9e7; border-left: 4px solid var(--yellow); }
+  .box-red { background: #fdf2f2; border-left: 4px solid var(--warn); }
+  .box strong { display: block; margin-bottom: 4px; }
+
+  /* MATRIX DISPLAY */
+  .matrix-wrap { overflow-x: auto; margin: 12px 0; }
+  .matrix-eq { display: inline-flex; align-items: center; gap: 8px; font-family: 'Courier New', monospace; font-size: 1rem; }
+  .mat {
+    display: inline-grid;
+    border-left: 3px solid var(--text);
+    border-right: 3px solid var(--text);
+    padding: 4px 10px;
+    gap: 4px 14px;
+    align-items: center;
+    justify-items: center;
+  }
+  .mat-aug {
+    display: inline-flex;
+    gap: 0;
+    border-left: 3px solid var(--text);
+    border-right: 3px solid var(--text);
+    padding: 4px 10px;
+    align-items: stretch;
+  }
+  .mat-aug .part { display: inline-grid; gap: 4px 14px; align-items: center; justify-items: center; padding: 0 6px; }
+  .mat-aug .divider { width: 2px; background: var(--text); margin: 0 4px; }
+  .mat-num { min-width: 28px; text-align: center; font-family: 'Courier New', monospace; }
+
+  /* STEPS */
+  .steps { counter-reset: step; }
+  .step {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 14px;
+    align-items: flex-start;
+  }
+  .step-num {
+    background: var(--accent);
+    color: #fff;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  /* EXAMPLE BLOCKS */
+  .example {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 12px 0;
+  }
+  .example-title {
+    font-weight: 700;
+    font-size: 0.88rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 10px;
+  }
+
+  /* EXERCISE SECTION */
+  .exercise {
+    background: #fefefe;
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .exercise-q { font-weight: 600; margin-bottom: 14px; }
+  .options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 12px; }
+  .opt-btn {
+    background: #f5f7fa;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.95rem;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--accent); background: #ebf5fb; }
+  .opt-btn.correct { border-color: var(--accent2); background: #eafaf1; color: #1d6a36; }
+  .opt-btn.wrong { border-color: var(--warn); background: #fdf2f2; color: #922b21; }
+  .opt-btn:disabled { cursor: default; }
+  .feedback {
+    display: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 0.92rem;
+    margin-top: 8px;
+  }
+  .feedback.show { display: block; }
+  .feedback.ok { background: #eafaf1; color: #1d6a36; border: 1px solid #a9dfbf; }
+  .feedback.fail { background: #fdf2f2; color: #922b21; border: 1px solid #f1948a; }
+
+  /* EXAM */
+  .exam-intro {
+    background: linear-gradient(135deg, #1a252f, #2c3e50);
+    color: #fff;
+    border-radius: var(--radius);
+    padding: 28px;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .exam-intro h3 { font-size: 1.4rem; margin-bottom: 8px; }
+  .exam-q { margin-bottom: 20px; }
+  .exam-q .q-text { font-weight: 600; margin-bottom: 10px; font-size: 1rem; }
+  .btn {
+    display: inline-block;
+    padding: 11px 26px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #1a6fa3; }
+  .btn-success { background: var(--accent2); color: #fff; }
+  .btn-success:hover { background: #1e8449; }
+  .btn-outline { background: transparent; border: 2px solid var(--accent); color: var(--accent); }
+  .btn-outline:hover { background: var(--accent); color: #fff; }
+
+  .score-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+  .score-big { font-size: 4rem; font-weight: 800; margin: 16px 0; }
+  .score-msg { font-size: 1.1rem; color: #555; margin-bottom: 20px; }
+
+  /* NAV TABS inside topic */
+  .topic-tabs {
+    display: flex;
+    border-bottom: 2px solid var(--border);
+    margin-bottom: 20px;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    padding: 10px 18px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #666;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    border-radius: 4px 4px 0 0;
+    transition: all 0.15s;
+  }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); background: #ebf5fb; }
+  .tab-btn:hover:not(.active) { color: var(--text); background: #f5f7fa; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* PROGRESS */
+  .progress-bar-wrap { background: #dde; border-radius: 20px; height: 8px; margin: 8px 0; }
+  .progress-bar { background: var(--accent2); height: 8px; border-radius: 20px; transition: width 0.4s; }
+
+  /* FORMULA */
+  .formula {
+    background: #1a252f;
+    color: #a3d0f5;
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'Courier New', monospace;
+    font-size: 1rem;
+    margin: 10px 0;
+    overflow-x: auto;
+  }
+
+  /* TABLE */
+  .nice-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.93rem; }
+  .nice-table th { background: var(--primary); color: #fff; padding: 10px 14px; text-align: left; }
+  .nice-table td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  .nice-table tr:nth-child(even) td { background: #f8fafc; }
+
+  /* BADGE */
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: 700; }
+  .badge-blue { background: #d6eaf8; color: var(--accent); }
+  .badge-green { background: #d5f5e3; color: #1d6a36; }
+  .badge-red { background: #fadbd8; color: #922b21; }
+  .badge-yellow { background: #fdebd0; color: #784212; }
+
+  /* RESPONSIVE */
+  @media(max-width: 600px) {
+    nav { padding: 0 12px; gap: 8px; }
+    nav h1 { font-size: 0.9rem; }
+    .nav-btn { padding: 5px 10px; font-size: 0.75rem; }
+    .home-hero h2 { font-size: 1.4rem; }
+    .mat-num { min-width: 22px; font-size: 0.85rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <h1>📐 Álgebra de Matrices</h1>
+  <button class="nav-btn active" onclick="showPage('home')">Inicio</button>
+  <button class="nav-btn" onclick="showPage('t1')">Tema 1</button>
+  <button class="nav-btn" onclick="showPage('t2')">Tema 2</button>
+  <button class="nav-btn" onclick="showPage('t3')">Tema 3</button>
+  <button class="nav-btn" onclick="showPage('t4')">Tema 4</button>
+</nav>
+
+<!-- ============================================================ HOME ============================================================ -->
+<div id="page-home" class="page active">
+<div class="container">
+  <div class="home-hero">
+    <h2>📐 Álgebra de Matrices</h2>
+    <p>Sistemas de ecuaciones lineales · Método de Gauss · Teorema de Rouché-Frobenius</p>
+    <p style="margin-top:10px;opacity:0.75;font-size:0.88rem;">Unidad 4 — Segunda Parte · UCAECE Mar del Plata</p>
+  </div>
+
+  <p style="margin-bottom:16px;font-size:0.95rem;color:#555;">Seleccioná un tema para comenzar. Cada tema tiene <strong>explicación teórica</strong>, <strong>ejemplos resueltos</strong>, <strong>ejercicios prácticos</strong> y un <strong>examen final</strong>.</p>
+
+  <div class="topic-grid">
+    <div class="topic-card" id="card-t1" onclick="showPage('t1')">
+      <span class="num">1</span>
+      <h3>Representación Matricial de Sistemas</h3>
+      <div class="status" id="status-t1">No iniciado</div>
+    </div>
+    <div class="topic-card" id="card-t2" onclick="showPage('t2')">
+      <span class="num">2</span>
+      <h3>Método de Gauss</h3>
+      <div class="status" id="status-t2">No iniciado</div>
+    </div>
+    <div class="topic-card" id="card-t3" onclick="showPage('t3')">
+      <span class="num">3</span>
+      <h3>Teorema de Rouché-Frobenius</h3>
+      <div class="status" id="status-t3">No iniciado</div>
+    </div>
+    <div class="topic-card" id="card-t4" onclick="showPage('t4')">
+      <span class="num">4</span>
+      <h3>Discusión y Tipos de Solución</h3>
+      <div class="status" id="status-t4">No iniciado</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ TEMA 1 ============================================================ -->
+<div id="page-t1" class="page">
+<div class="container">
+  <div class="section-header">
+    <div class="tag">Tema 1</div>
+    <h2>Representación Matricial de Sistemas de Ecuaciones</h2>
+  </div>
+
+  <div class="topic-tabs" style="margin-top:0;background:#fff;border-radius:0 0 var(--radius) var(--radius);padding:12px 16px 0;">
+    <button class="tab-btn active" onclick="switchTab('t1','teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t1','ejemplos')">✏️ Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t1','ejercicios')">🧩 Ejercicios</button>
+    <button class="tab-btn" onclick="switchTab('t1','examen')">📝 Examen</button>
+  </div>
+
+  <!-- TEORIA -->
+  <div id="t1-teoria" class="tab-panel active">
+    <div class="card">
+      <h3><span class="icon">📌</span>¿Qué es la representación matricial?</h3>
+      <p>Un sistema de ecuaciones lineales puede expresarse de manera compacta como el producto de tres matrices:</p>
+      <div class="box box-blue">
+        <strong>Forma matricial: A · X = B</strong>
+        <ul>
+          <li><strong>A</strong>: matriz de coeficientes de orden m×n</li>
+          <li><strong>X</strong>: matriz columna de incógnitas de orden n×1</li>
+          <li><strong>B</strong>: matriz columna de términos independientes de orden m×1</li>
+        </ul>
+      </div>
+      <p>Donde <em>m</em> es el número de ecuaciones y <em>n</em> el número de incógnitas.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">🔑</span>¿Cómo construir la representación matricial?</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div><strong>Identificar los coeficientes</strong> de cada incógnita en cada ecuación. Si una incógnita no aparece, su coeficiente es 0.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div><strong>Construir A</strong>: cada fila es una ecuación, cada columna es una incógnita.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div><strong>Construir X</strong>: columna vertical con las incógnitas (x, y, z, …).</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div><strong>Construir B</strong>: columna vertical con los términos independientes (lado derecho de cada ecuación).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📐</span>Ejemplo visual explicado</h3>
+      <p>Dado el sistema:</p>
+      <div class="formula">
+  x + z = 1<br>
+  x − y − z = 3
+      </div>
+      <p>Notamos que en la primera ecuación no aparece <em>y</em>, entonces su coeficiente es 0.</p>
+      <div class="matrix-wrap">
+        <div class="matrix-eq">
+          <div class="mat" style="grid-template-columns: repeat(3,1fr)">
+            <span class="mat-num">1</span><span class="mat-num">0</span><span class="mat-num">1</span>
+            <span class="mat-num">1</span><span class="mat-num">−1</span><span class="mat-num">−1</span>
+          </div>
+          <span>·</span>
+          <div class="mat" style="grid-template-columns: 1fr">
+            <span class="mat-num">x</span><span class="mat-num">y</span><span class="mat-num">z</span>
+          </div>
+          <span>=</span>
+          <div class="mat" style="grid-template-columns: 1fr">
+            <span class="mat-num">1</span><span class="mat-num">3</span>
+          </div>
+        </div>
+      </div>
+      <div class="box box-yellow">
+        <strong>⚠️ Clave:</strong> Si una incógnita no aparece en una ecuación, colocá 0 en esa posición de la matriz A.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">↔️</span>El camino inverso: de matriz a sistema</h3>
+      <p>También podemos reconstruir el sistema desde su forma matricial. Cada fila de A multiplica a X para dar la ecuación correspondiente en B.</p>
+      <div class="box box-green">
+        <strong>Regla:</strong> fila i de A × columna X = elemento i de B<br>
+        Si la fila es [a, b, c] y X = [x₁, x₂, x₃], la ecuación es: ax₁ + bx₂ + cx₃ = bᵢ
+      </div>
+    </div>
+  </div>
+
+  <!-- EJEMPLOS -->
+  <div id="t1-ejemplos" class="tab-panel">
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 1 — Sistema 2×3</h3>
+      <div class="example">
+        <div class="example-title">Sistema dado</div>
+        <div class="formula">x + 2y − z = 1<br>3y + z = 4</div>
+        <div class="example-title" style="margin-top:14px;">Paso a paso</div>
+        <p><strong>Ecuación 1:</strong> coeficientes de x=1, y=2, z=−1 → término ind.=1</p>
+        <p><strong>Ecuación 2:</strong> x no aparece → 0, coeficientes de y=3, z=1 → término ind.=4</p>
+        <div class="matrix-wrap" style="margin-top:12px;">
+          <div class="matrix-eq">
+            <div class="mat" style="grid-template-columns: repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">2</span><span class="mat-num">−1</span>
+              <span class="mat-num">0</span><span class="mat-num">3</span><span class="mat-num">1</span>
+            </div>
+            <span>·</span>
+            <div class="mat" style="grid-template-columns: 1fr">
+              <span class="mat-num">x</span><span class="mat-num">y</span><span class="mat-num">z</span>
+            </div>
+            <span>=</span>
+            <div class="mat" style="grid-template-columns: 1fr">
+              <span class="mat-num">1</span><span class="mat-num">4</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 2 — Sistema 3×3</h3>
+      <div class="example">
+        <div class="example-title">Sistema dado</div>
+        <div class="formula">x + 2y − z = 1<br>−x + y + 2z = 3<br>x + 5y = 5</div>
+        <div class="example-title" style="margin-top:14px;">Observación</div>
+        <p>En la ecuación 3, z no aparece → su coeficiente es 0.</p>
+        <div class="matrix-wrap" style="margin-top:12px;">
+          <div class="matrix-eq">
+            <div class="mat" style="grid-template-columns: repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">2</span><span class="mat-num">−1</span>
+              <span class="mat-num">−1</span><span class="mat-num">1</span><span class="mat-num">2</span>
+              <span class="mat-num">1</span><span class="mat-num">5</span><span class="mat-num">0</span>
+            </div>
+            <span>·</span>
+            <div class="mat" style="grid-template-columns: 1fr">
+              <span class="mat-num">x</span><span class="mat-num">y</span><span class="mat-num">z</span>
+            </div>
+            <span>=</span>
+            <div class="mat" style="grid-template-columns: 1fr">
+              <span class="mat-num">1</span><span class="mat-num">3</span><span class="mat-num">5</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 3 — De matriz a sistema</h3>
+      <div class="example">
+        <div class="example-title">Matriz dada</div>
+        <div class="matrix-wrap">
+          <div class="matrix-eq">
+            <div class="mat" style="grid-template-columns: repeat(3,1fr)">
+              <span class="mat-num">−1</span><span class="mat-num">0</span><span class="mat-num">2</span>
+              <span class="mat-num">1</span><span class="mat-num">−1</span><span class="mat-num">0</span>
+              <span class="mat-num">0</span><span class="mat-num">1</span><span class="mat-num">1</span>
+            </div>
+            <span>·</span>
+            <div class="mat" style="grid-template-columns: 1fr">
+              <span class="mat-num">x₁</span><span class="mat-num">x₂</span><span class="mat-num">x₃</span>
+            </div>
+            <span>=</span>
+            <div class="mat" style="grid-template-columns: 1fr">
+              <span class="mat-num">1</span><span class="mat-num">−2</span><span class="mat-num">−1</span>
+            </div>
+          </div>
+        </div>
+        <div class="example-title" style="margin-top:14px;">Sistema resultante</div>
+        <div class="formula">−x₁ + 2x₃ = 1<br>x₁ − x₂ = −2<br>x₂ + x₃ = −1</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIOS -->
+  <div id="t1-ejercicios" class="tab-panel">
+    <div class="card">
+      <h3><span class="icon">🧩</span>Ejercicios de práctica</h3>
+      <p style="margin-bottom:16px;color:#555;">Elegí la respuesta correcta para cada ejercicio.</p>
+    </div>
+
+    <div class="exercise" id="t1e1">
+      <div class="exercise-q">1. ¿Cuál es la matriz de coeficientes A del sistema?<br>
+        <span style="font-family:monospace;display:block;margin:8px 0;background:#f0f4f8;padding:8px;border-radius:6px;">
+          2x + y = 5<br>x − 3y = 1
+        </span>
+      </div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t1e1',false)">⬜ A = [[1, 2], [−3, 1]]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e1',true)">⬜ A = [[2, 1], [1, −3]]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e1',false)">⬜ A = [[2, 5], [1, 1]]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e1',false)">⬜ A = [[5, 1], [1, −3]]</button>
+      </div>
+      <div class="feedback" id="fb-t1e1"></div>
+    </div>
+
+    <div class="exercise" id="t1e2">
+      <div class="exercise-q">2. La matriz B (términos independientes) del sistema:<br>
+        <span style="font-family:monospace;display:block;margin:8px 0;background:#f0f4f8;padding:8px;border-radius:6px;">
+          x + 2y − z = 4<br>3x − y + z = 0<br>2x + y = −1
+        </span>
+      </div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t1e2',false)">⬜ B = [1, 3, 2]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e2',true)">⬜ B = [4, 0, −1]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e2',false)">⬜ B = [4, 3, −1]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e2',false)">⬜ B = [1, 0, 1]</button>
+      </div>
+      <div class="feedback" id="fb-t1e2"></div>
+    </div>
+
+    <div class="exercise" id="t1e3">
+      <div class="exercise-q">3. ¿Qué sistema de ecuaciones corresponde a esta representación matricial?<br>
+        <span style="font-family:monospace;display:block;margin:8px 0;background:#f0f4f8;padding:8px;border-radius:6px;">
+          [[ 1, 0, −2 ],<br>&nbsp;[ 0, 3,  1 ]] · [x, y, z]ᵀ = [5, −3]ᵀ
+        </span>
+      </div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t1e3',false)">⬜ x − 2y = 5 y 3y + z = −3</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e3',true)">⬜ x − 2z = 5 y 3y + z = −3</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e3',false)">⬜ x − 2z = 5 y 3x + z = −3</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e3',false)">⬜ x + 0y − 2z = −3 y 3y + z = 5</button>
+      </div>
+      <div class="feedback" id="fb-t1e3"></div>
+    </div>
+
+    <div class="exercise" id="t1e4">
+      <div class="exercise-q">4. ¿Cuál es el orden de la matriz de coeficientes A de un sistema con 4 ecuaciones y 3 incógnitas?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t1e4',false)">⬜ 3×4</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e4',false)">⬜ 3×3</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e4',true)">⬜ 4×3</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e4',false)">⬜ 4×4</button>
+      </div>
+      <div class="feedback" id="fb-t1e4"></div>
+    </div>
+
+    <div class="exercise" id="t1e5">
+      <div class="exercise-q">5. En el sistema 2x + 3z = 7 / y − z = 2, ¿cuál es el elemento a₁₂ (fila 1, columna 2) de la matriz A?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t1e5',false)">⬜ 2</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e5',true)">⬜ 0</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e5',false)">⬜ 3</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t1e5',false)">⬜ 7</button>
+      </div>
+      <div class="feedback" id="fb-t1e5"></div>
+    </div>
+  </div>
+
+  <!-- EXAMEN T1 -->
+  <div id="t1-examen" class="tab-panel">
+    <div class="exam-intro">
+      <h3>📝 Examen — Tema 1</h3>
+      <p>Representación Matricial de Sistemas</p>
+      <p style="margin-top:8px;opacity:0.8;font-size:0.88rem;">5 preguntas · Necesitás 4/5 para aprobar</p>
+    </div>
+    <div id="exam1-container"></div>
+    <div id="exam1-result" style="display:none;"></div>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ TEMA 2 ============================================================ -->
+<div id="page-t2" class="page">
+<div class="container">
+  <div class="section-header">
+    <div class="tag">Tema 2</div>
+    <h2>Método de Gauss — Eliminación Gaussiana</h2>
+  </div>
+
+  <div class="topic-tabs" style="margin-top:0;background:#fff;border-radius:0 0 var(--radius) var(--radius);padding:12px 16px 0;">
+    <button class="tab-btn active" onclick="switchTab('t2','teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t2','ejemplos')">✏️ Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t2','ejercicios')">🧩 Ejercicios</button>
+    <button class="tab-btn" onclick="switchTab('t2','examen')">📝 Examen</button>
+  </div>
+
+  <!-- TEORIA -->
+  <div id="t2-teoria" class="tab-panel active">
+    <div class="card">
+      <h3><span class="icon">💡</span>Idea general del método</h3>
+      <p>El método de Gauss consiste en <strong>transformar un sistema en otro equivalente de resolución más sencilla</strong>: la forma escalonada (triangular superior).</p>
+      <div class="box box-blue">
+        <strong>Sistema original → (operaciones elementales) → Sistema escalonado</strong><br>
+        Ambos sistemas tienen el mismo conjunto solución.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">⚙️</span>Las 3 operaciones elementales de fila</h3>
+      <table class="nice-table">
+        <thead><tr><th>#</th><th>Operación</th><th>Notación</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Multiplicar toda una fila por un número real no nulo</td><td>Fᵢ → k·Fᵢ (k ≠ 0)</td></tr>
+          <tr><td>2</td><td>Sumar a una fila un múltiplo de otra fila</td><td>Fᵢ → Fᵢ + k·Fⱼ</td></tr>
+          <tr><td>3</td><td>Intercambiar dos filas</td><td>Fᵢ ↔ Fⱼ</td></tr>
+        </tbody>
+      </table>
+      <div class="box box-yellow">
+        <strong>⚠️ Importante:</strong> Cada operación produce un sistema <em>equivalente</em> (misma solución). Nunca se pierde ni se gana información.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📋</span>Procedimiento paso a paso</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div><strong>Escribir la matriz ampliada</strong> A* = (A | B) juntando la matriz de coeficientes y el vector de términos independientes.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div><strong>Aplicar operaciones elementales de fila</strong> para hacer cero todos los elementos debajo de la diagonal principal (triangular superior).</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div><strong>Obtener la forma escalonada</strong>: la última fila tiene la variable más "simple", y se resuelve hacia arriba (<em>sustitución regresiva</em>).</div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div><strong>Aplicar Rouché-Frobenius</strong> para clasificar el sistema según su tipo de solución.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📐</span>La matriz ampliada A*</h3>
+      <p>Para el sistema AX = B, la matriz ampliada se forma colocando B como última columna de A, separada por una barra vertical:</p>
+      <div class="box box-green">
+        <strong>A* = (A | B)</strong><br>
+        Cada fila de A* contiene los coeficientes de las incógnitas Y el término independiente de esa ecuación.
+      </div>
+      <p>Ejemplo: para el sistema x + y = 3 / 2x − y = 0:</p>
+      <div class="matrix-wrap">
+        <div class="matrix-eq">
+          <span>A* = </span>
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns: repeat(2,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">1</span>
+              <span class="mat-num">2</span><span class="mat-num">−1</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns: 1fr">
+              <span class="mat-num">3</span>
+              <span class="mat-num">0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJEMPLOS T2 -->
+  <div id="t2-ejemplos" class="tab-panel">
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 1 — Sistema Compatible Determinado (SCD)</h3>
+      <div class="example">
+        <div class="example-title">Sistema</div>
+        <div class="formula">x + y − z = 1<br>2x + 3y + z = −2<br>5x − y + 2z = 4</div>
+        <div class="example-title" style="margin-top:14px;">Proceso de escalonamiento</div>
+        <p><strong>Matriz ampliada inicial:</strong></p>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">1</span><span class="mat-num">−1</span>
+              <span class="mat-num">2</span><span class="mat-num">3</span><span class="mat-num">1</span>
+              <span class="mat-num">5</span><span class="mat-num">−1</span><span class="mat-num">2</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">1</span><span class="mat-num">−2</span><span class="mat-num">4</span>
+            </div>
+          </div>
+        </div></div>
+        <p style="margin-top:10px;"><strong>F₂ → F₂ − 2F₁ / F₃ → F₃ − 5F₁:</strong></p>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">1</span><span class="mat-num">−1</span>
+              <span class="mat-num">0</span><span class="mat-num">1</span><span class="mat-num">3</span>
+              <span class="mat-num">0</span><span class="mat-num">−6</span><span class="mat-num">7</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">1</span><span class="mat-num">−4</span><span class="mat-num">−1</span>
+            </div>
+          </div>
+        </div></div>
+        <p style="margin-top:10px;"><strong>F₃ → F₃ + 6F₂:</strong></p>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">1</span><span class="mat-num">−1</span>
+              <span class="mat-num">0</span><span class="mat-num">1</span><span class="mat-num">3</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">25</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">1</span><span class="mat-num">−4</span><span class="mat-num">−25</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-green" style="margin-top:12px;">
+          <strong>Sustitución regresiva:</strong><br>
+          25z = −25 → <strong>z = −1</strong><br>
+          y + 3(−1) = −4 → y = −4 + 3 → <strong>y = −1</strong><br>
+          x + (−1) − (−1) = 1 → <strong>x = 1</strong><br>
+          <strong>Solución: x=1, y=−1, z=−1 → SCD ✓</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 2 — Sistema Incompatible (SI)</h3>
+      <div class="example">
+        <div class="example-title">Sistema</div>
+        <div class="formula">x + 2y + 4z = 3<br>2x + 4y + 8z = 1<br>−y + z = −2</div>
+        <p style="margin-top:10px;"><strong>F₂ → F₂ − 2F₁:</strong></p>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">2</span><span class="mat-num">4</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">0</span>
+              <span class="mat-num">0</span><span class="mat-num">−1</span><span class="mat-num">1</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">3</span><span class="mat-num">−5</span><span class="mat-num">−2</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-red" style="margin-top:12px;">
+          <strong>Fila 2: 0·x + 0·y + 0·z = −5 → 0 = −5 ❌ IMPOSIBLE</strong><br>
+          rango(A) = 2 ≠ rango(A*) = 3 → <strong>Sistema Incompatible (SI)</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 3 — Sistema Compatible Indeterminado (SCI)</h3>
+      <div class="example">
+        <div class="example-title">Sistema</div>
+        <div class="formula">3x + 2y − 2z = 4<br>4x + y − z = 7<br>x + 4y − 4z = −2</div>
+        <p style="margin-top:10px;">Luego del escalonamiento completo:</p>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">4</span><span class="mat-num">−4</span>
+              <span class="mat-num">0</span><span class="mat-num">−1</span><span class="mat-num">1</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">0</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">−2</span><span class="mat-num">1</span><span class="mat-num">0</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-yellow" style="margin-top:12px;">
+          <strong>Fila 3: 0 = 0 → compatible. Pero rango(A) = rango(A*) = 2 &lt; n=3</strong><br>
+          Sistema con infinitas soluciones. Paramétrizando z = t ∈ ℝ:<br>
+          −y + z = 1 → y = z − 1 = t − 1<br>
+          x + 4(t−1) − 4t = −2 → x = 2<br>
+          <strong>S = {(2, t−1, t) : t ∈ ℝ} → SCI ∞ soluciones</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIOS T2 -->
+  <div id="t2-ejercicios" class="tab-panel">
+    <div class="card">
+      <h3><span class="icon">🧩</span>Ejercicios — Método de Gauss</h3>
+    </div>
+
+    <div class="exercise" id="t2e1">
+      <div class="exercise-q">1. ¿Cuál de las siguientes es una operación elemental de fila <em>válida</em>?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t2e1',false)">⬜ Multiplicar una fila por 0</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e1',true)">⬜ Sumar el doble de la fila 1 a la fila 2</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e1',false)">⬜ Elevar al cuadrado los elementos de una fila</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e1',false)">⬜ Dividir una ecuación por otra ecuación</button>
+      </div>
+      <div class="feedback" id="fb-t2e1"></div>
+    </div>
+
+    <div class="exercise" id="t2e2">
+      <div class="exercise-q">2. Si aplicás F₂ → F₂ − 3F₁ a la matriz ampliada:<br>
+        <span style="font-family:monospace;display:block;margin:8px 0;background:#f0f4f8;padding:8px;border-radius:6px;">
+          F₁: [1, 2, | 4]<br>F₂: [3, 1, | 6]
+        </span>
+        ¿Cuál es la nueva F₂?
+      </div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t2e2',false)">⬜ [0, 7, | 18]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e2',true)">⬜ [0, −5, | −6]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e2',false)">⬜ [2, −1, | 2]</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e2',false)">⬜ [0, −5, | 6]</button>
+      </div>
+      <div class="feedback" id="fb-t2e2"></div>
+    </div>
+
+    <div class="exercise" id="t2e3">
+      <div class="exercise-q">3. Después de escalonar, obtenés la fila [0, 0, 0 | 5]. Esto indica que el sistema es:</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t2e3',false)">⬜ Compatible determinado</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e3',false)">⬜ Compatible indeterminado</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e3',true)">⬜ Incompatible</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e3',false)">⬜ No tiene suficiente información</button>
+      </div>
+      <div class="feedback" id="fb-t2e3"></div>
+    </div>
+
+    <div class="exercise" id="t2e4">
+      <div class="exercise-q">4. Después de escalonar, obtenés la fila [0, 0, 0 | 0]. Esto indica:</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t2e4',false)">⬜ El sistema es incompatible</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e4',true)">⬜ El sistema tiene menos ecuaciones independientes que incógnitas → posiblemente SCI</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e4',false)">⬜ La única solución es x=y=z=0</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e4',false)">⬜ Hay que reiniciar el método</button>
+      </div>
+      <div class="feedback" id="fb-t2e4"></div>
+    </div>
+
+    <div class="exercise" id="t2e5">
+      <div class="exercise-q">5. ¿Cuál es el objetivo principal del escalonamiento en el método de Gauss?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t2e5',false)">⬜ Hacer que todos los elementos sean iguales a 1</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e5',false)">⬜ Multiplicar todas las filas por el mismo número</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e5',true)">⬜ Hacer cero los elementos por debajo de la diagonal principal (forma triangular superior)</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t2e5',false)">⬜ Intercambiar las filas hasta que queden en orden alfabético</button>
+      </div>
+      <div class="feedback" id="fb-t2e5"></div>
+    </div>
+  </div>
+
+  <!-- EXAMEN T2 -->
+  <div id="t2-examen" class="tab-panel">
+    <div class="exam-intro">
+      <h3>📝 Examen — Tema 2</h3>
+      <p>Método de Gauss</p>
+      <p style="margin-top:8px;opacity:0.8;font-size:0.88rem;">5 preguntas · Necesitás 4/5 para aprobar</p>
+    </div>
+    <div id="exam2-container"></div>
+    <div id="exam2-result" style="display:none;"></div>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ TEMA 3 ============================================================ -->
+<div id="page-t3" class="page">
+<div class="container">
+  <div class="section-header">
+    <div class="tag">Tema 3</div>
+    <h2>Teorema de Rouché-Frobenius y Tipos de Sistemas</h2>
+  </div>
+
+  <div class="topic-tabs" style="margin-top:0;background:#fff;border-radius:0 0 var(--radius) var(--radius);padding:12px 16px 0;">
+    <button class="tab-btn active" onclick="switchTab('t3','teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t3','ejemplos')">✏️ Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t3','ejercicios')">🧩 Ejercicios</button>
+    <button class="tab-btn" onclick="switchTab('t3','examen')">📝 Examen</button>
+  </div>
+
+  <!-- TEORIA T3 -->
+  <div id="t3-teoria" class="tab-panel active">
+    <div class="card">
+      <h3><span class="icon">📏</span>El Rango de una matriz</h3>
+      <p>El <strong>rango</strong> de una matriz es el número de <strong>filas no nulas</strong> que quedan después de aplicar el método de Gauss (escalonamiento).</p>
+      <div class="box box-blue">
+        <strong>Rango = cantidad de filas con al menos un elemento distinto de cero en la forma escalonada.</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">⚖️</span>Teorema de Rouché-Frobenius</h3>
+      <p>Sea A·X = B un sistema de <em>m</em> ecuaciones con <em>n</em> incógnitas. Luego del escalonamiento comparamos:</p>
+      <ul>
+        <li><strong>r(A)</strong> = rango de la matriz de coeficientes</li>
+        <li><strong>r(A*)</strong> = rango de la matriz ampliada</li>
+        <li><strong>n</strong> = número de incógnitas</li>
+      </ul>
+
+      <table class="nice-table" style="margin-top:14px;">
+        <thead>
+          <tr><th>Condición</th><th>Tipo de sistema</th><th>Soluciones</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>r(A) ≠ r(A*)</td>
+            <td><span class="badge badge-red">SI — Incompatible</span></td>
+            <td>Sin solución</td>
+          </tr>
+          <tr>
+            <td>r(A) = r(A*) = n</td>
+            <td><span class="badge badge-green">SCD — Compatible Determinado</span></td>
+            <td>Solución única</td>
+          </tr>
+          <tr>
+            <td>r(A) = r(A*) &lt; n</td>
+            <td><span class="badge badge-yellow">SCI — Compatible Indeterminado</span></td>
+            <td>Infinitas soluciones</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">🌳</span>Árbol de decisión</h3>
+      <div class="box box-blue" style="font-family:monospace;font-size:0.9rem;white-space:pre-line;">
+Sistema m×n
+│
+├─ ¿r(A) = r(A*)?
+│   │
+│   ├── NO  ──→  SI (sin solución)
+│   │
+│   └── SÍ
+│       │
+│       ├── ¿r(A) = n?
+│       │     ├── SÍ ──→  SCD (solución única)
+│       │     └── NO ──→  SCI (infinitas soluciones)
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">🔢</span>Sistemas m×n con m &lt; n</h3>
+      <div class="box box-yellow">
+        <strong>Cuando hay más incógnitas que ecuaciones (m &lt; n):</strong><br>
+        El sistema <strong>nunca puede ser SCD</strong>. Solo puede ser SI o SCI.
+      </div>
+      <p>Esto se debe a que siempre r(A) ≤ m &lt; n, por lo que la condición r(A) = n jamás se cumple.</p>
+    </div>
+  </div>
+
+  <!-- EJEMPLOS T3 -->
+  <div id="t3-ejemplos" class="tab-panel">
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 1 — Determinar tipo con matrices escalonadas</h3>
+      <div class="example">
+        <div class="example-title">Caso (a) — SCD</div>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">0</span><span class="mat-num">2</span>
+              <span class="mat-num">0</span><span class="mat-num">1</span><span class="mat-num">0</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">−3</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">5</span><span class="mat-num">0</span><span class="mat-num">3</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-green">r(A)=3, r(A*)=3, n=3 → r(A)=r(A*)=n=3 → <strong>SCD ✓</strong><br>
+        z=−1, y=0, x+2(−1)=5 → x=7. Solución: (7, 0, −1)</div>
+
+        <div class="example-title" style="margin-top:16px;">Caso (b) — SCI</div>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">0</span><span class="mat-num">2</span>
+              <span class="mat-num">0</span><span class="mat-num">1</span><span class="mat-num">0</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">0</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">5</span><span class="mat-num">0</span><span class="mat-num">0</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-yellow">r(A)=2, r(A*)=2, n=3 → r(A)=r(A*)=2 &lt; n=3 → <strong>SCI ✓</strong><br>
+        z=t libre, y=0, x=5−2t. S = {(5−2t, 0, t) : t∈ℝ}</div>
+
+        <div class="example-title" style="margin-top:16px;">Caso (c) — SI</div>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">0</span><span class="mat-num">2</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">0</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">0</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">5</span><span class="mat-num">0</span><span class="mat-num">1</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-red">r(A)=1, r(A*)=2 → r(A) ≠ r(A*) → <strong>SI ✓</strong><br>
+        Fila 3: 0 = 1 → IMPOSIBLE</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 2 — Análisis con parámetro k</h3>
+      <div class="example">
+        <div class="example-title">Matriz escalonada con parámetro</div>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">0</span><span class="mat-num">2</span>
+              <span class="mat-num">0</span><span class="mat-num">3</span><span class="mat-num">0</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">k−1</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">2</span><span class="mat-num">−3</span><span class="mat-num">1</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-blue">
+          <strong>Si k = 1:</strong> la última fila es [0,0,0 | 1] → 0=1 → r(A)=2 ≠ r(A*)=3 → <strong>SI</strong><br>
+          <strong>Si k ≠ 1:</strong> el elemento k−1 ≠ 0 → r(A)=r(A*)=n=3 → <strong>SCD</strong><br>
+          <strong>No existe k para SCI</strong> en este caso.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIOS T3 -->
+  <div id="t3-ejercicios" class="tab-panel">
+    <div class="card"><h3><span class="icon">🧩</span>Ejercicios — Rouché-Frobenius</h3></div>
+
+    <div class="exercise" id="t3e1">
+      <div class="exercise-q">1. Después del escalonamiento obtenés r(A)=3, r(A*)=3, n=3. ¿Qué tipo de sistema es?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t3e1',false)">⬜ SI</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e1',true)">⬜ SCD</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e1',false)">⬜ SCI</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e1',false)">⬜ No se puede determinar</button>
+      </div>
+      <div class="feedback" id="fb-t3e1"></div>
+    </div>
+
+    <div class="exercise" id="t3e2">
+      <div class="exercise-q">2. Se obtiene r(A)=2, r(A*)=3 para un sistema 3×3. ¿Qué tipo es?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t3e2',true)">⬜ SI (Incompatible)</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e2',false)">⬜ SCD</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e2',false)">⬜ SCI</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e2',false)">⬜ Depende del valor de n</button>
+      </div>
+      <div class="feedback" id="fb-t3e2"></div>
+    </div>
+
+    <div class="exercise" id="t3e3">
+      <div class="exercise-q">3. Para un sistema con n=4 incógnitas, si r(A)=r(A*)=2, el sistema es:</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t3e3',false)">⬜ SCD</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e3',false)">⬜ SI</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e3',true)">⬜ SCI (infinitas soluciones con 2 parámetros libres)</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e3',false)">⬜ No puede determinarse</button>
+      </div>
+      <div class="feedback" id="fb-t3e3"></div>
+    </div>
+
+    <div class="exercise" id="t3e4">
+      <div class="exercise-q">4. ¿Puede un sistema con más incógnitas que ecuaciones (m &lt; n) tener solución única?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t3e4',false)">⬜ Sí, siempre que los coeficientes sean distintos</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e4',true)">⬜ No, nunca puede ser SCD</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e4',false)">⬜ Sí, si todos los términos independientes son cero</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e4',false)">⬜ Depende del método utilizado</button>
+      </div>
+      <div class="feedback" id="fb-t3e4"></div>
+    </div>
+
+    <div class="exercise" id="t3e5">
+      <div class="exercise-q">5. Si la forma escalonada tiene la fila [0, 0, 2 | 6], ¿qué se puede concluir directamente?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t3e5',false)">⬜ El sistema es incompatible</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e5',true)">⬜ Esa variable vale 3 (z = 3), y el sistema puede ser compatible</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e5',false)">⬜ El rango es 0</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t3e5',false)">⬜ La variable es libre (parámetro)</button>
+      </div>
+      <div class="feedback" id="fb-t3e5"></div>
+    </div>
+  </div>
+
+  <!-- EXAMEN T3 -->
+  <div id="t3-examen" class="tab-panel">
+    <div class="exam-intro">
+      <h3>📝 Examen — Tema 3</h3>
+      <p>Teorema de Rouché-Frobenius</p>
+      <p style="margin-top:8px;opacity:0.8;font-size:0.88rem;">5 preguntas · Necesitás 4/5 para aprobar</p>
+    </div>
+    <div id="exam3-container"></div>
+    <div id="exam3-result" style="display:none;"></div>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================ TEMA 4 ============================================================ -->
+<div id="page-t4" class="page">
+<div class="container">
+  <div class="section-header">
+    <div class="tag">Tema 4</div>
+    <h2>Discusión del Tipo de Solución y Sistemas con Parámetros</h2>
+  </div>
+
+  <div class="topic-tabs" style="margin-top:0;background:#fff;border-radius:0 0 var(--radius) var(--radius);padding:12px 16px 0;">
+    <button class="tab-btn active" onclick="switchTab('t4','teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t4','ejemplos')">✏️ Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t4','ejercicios')">🧩 Ejercicios</button>
+    <button class="tab-btn" onclick="switchTab('t4','examen')">📝 Examen</button>
+  </div>
+
+  <!-- TEORIA T4 -->
+  <div id="t4-teoria" class="tab-panel active">
+    <div class="card">
+      <h3><span class="icon">🎯</span>Discusión del tipo de solución</h3>
+      <p>Cuando un sistema tiene parámetros (letras como <em>m</em>, <em>k</em>, <em>a</em>...) en sus coeficientes o términos independientes, el tipo de solución <strong>depende del valor del parámetro</strong>. El objetivo es <strong>determinar para qué valores el sistema es SCD, SCI o SI</strong>.</p>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📋</span>Estrategia para sistemas con parámetros</h3>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div>Aplicar el método de Gauss normalmente hasta obtener la forma escalonada.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div>Identificar la <strong>fila crítica</strong>: la fila donde aparece el parámetro en la posición determinante.</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div>Analizar los casos:
+            <ul style="margin-top:6px;">
+              <li>Si el coeficiente de esa fila = 0 y el término ind. ≠ 0 → <strong>SI</strong></li>
+              <li>Si el coeficiente de esa fila = 0 y el término ind. = 0 → <strong>SCI</strong></li>
+              <li>Si el coeficiente de esa fila ≠ 0 → <strong>SCD</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">📌</span>El conjunto solución en SCI</h3>
+      <p>Cuando hay infinitas soluciones, se parametriza con variables libres:</p>
+      <div class="box box-yellow">
+        <strong>Variables libres:</strong> las incógnitas que no tienen pivote en la forma escalonada. Se les asigna el parámetro t (o s, r, …) ∈ ℝ.<br><br>
+        <strong>Variables dependientes:</strong> se expresan en función de los parámetros libres.
+      </div>
+      <p>El conjunto solución se escribe como: <strong>S = {(f(t), g(t), t) : t ∈ ℝ}</strong></p>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">🏭</span>Problema de aplicación real</h3>
+      <div class="box box-blue">
+        <strong>Problema:</strong> Una empresa fabrica 3 modelos usando insumos A, B, C:<br>
+        M1: 3A + 2B + 5C | M2: 2A + 3B + 5C | M3: 5A + 2B + 5C<br>
+        Disponible: A=100, B=67, C=150<br><br>
+        <strong>Sistema:</strong><br>
+        3x + 2y + 5z = 100 (insumo A)<br>
+        2x + 3y + 2z = 67  (insumo B)<br>
+        5x + 5y + 5z = 150 (insumo C)<br><br>
+        <strong>Solución única:</strong> x=14.5, y=7, z=8.5 → SCD
+      </div>
+    </div>
+  </div>
+
+  <!-- EJEMPLOS T4 -->
+  <div id="t4-ejemplos" class="tab-panel">
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 1 — Sistema con parámetro m (3×2)</h3>
+      <div class="example">
+        <div class="example-title">Sistema</div>
+        <div class="formula">x + 2y = 3<br>2x − y = 1<br>4x + 3y = m</div>
+        <div class="example-title" style="margin-top:12px;">Escalonamiento</div>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(2,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">2</span>
+              <span class="mat-num">2</span><span class="mat-num">−1</span>
+              <span class="mat-num">4</span><span class="mat-num">3</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">3</span><span class="mat-num">1</span><span class="mat-num">m</span>
+            </div>
+          </div>
+        </div></div>
+        <p style="margin-top:8px;">F₂→F₂−2F₁ / F₃→F₃−4F₁, luego F₃→F₃−F₂:</p>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(2,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">2</span>
+              <span class="mat-num">0</span><span class="mat-num">−5</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">3</span><span class="mat-num">−5</span><span class="mat-num">m−7</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-blue" style="margin-top:10px;">
+          <strong>Fila 3: [0, 0 | m−7]</strong><br>
+          • Si m ≠ 7 → 0 = m−7 ≠ 0 → <strong>SI</strong><br>
+          • Si m = 7 → 0 = 0 → r(A)=r(A*)=2=n → <strong>SCD: x=1, y=1</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 2 — Sistema con parámetro m (4×3)</h3>
+      <div class="example">
+        <div class="example-title">Sistema</div>
+        <div class="formula">x − y − 2z = 2<br>2x + y + 3z = 1<br>3x + z = 3<br>x + 2y + 5z = m</div>
+        <p style="margin-top:8px;">Luego del escalonamiento completo:</p>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(3,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">−1</span><span class="mat-num">−2</span>
+              <span class="mat-num">0</span><span class="mat-num">3</span><span class="mat-num">7</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">0</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span><span class="mat-num">0</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">2</span><span class="mat-num">−3</span><span class="mat-num">0</span><span class="mat-num">m+1</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-blue" style="margin-top:10px;">
+          • Si m ≠ −1 → fila 4: [0,0,0 | m+1] → 0 = m+1 ≠ 0 → <strong>SI</strong><br>
+          • Si m = −1 → r(A)=r(A*)=2 &lt; n=3 → <strong>SCI</strong><br>
+          → Sistema: 3y + 7z = −3 / x − y − 2z = 2<br>
+          → Parámetro libre z=t: y=(−3−7t)/3, x=2+y+2t<br>
+          → <strong>S = {(x(t), y(t), t) : t ∈ ℝ}</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3><span class="icon">✏️</span>Ejemplo 3 — Lectura directa de forma escalonada 2×2</h3>
+      <div class="example">
+        <div class="example-title">Caso (a)</div>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(2,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">9</span>
+              <span class="mat-num">0</span><span class="mat-num">1</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">3</span><span class="mat-num">0</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-green">r(A)=r(A*)=n=2 → <strong>SCD</strong>. y=0, x+9(0)=3 → x=3. S={(3,0)}</div>
+
+        <div class="example-title" style="margin-top:14px;">Caso (b)</div>
+        <div class="matrix-wrap"><div class="matrix-eq">
+          <div class="mat-aug">
+            <div class="part" style="grid-template-columns:repeat(2,1fr)">
+              <span class="mat-num">1</span><span class="mat-num">6</span>
+              <span class="mat-num">0</span><span class="mat-num">0</span>
+            </div>
+            <div class="divider"></div>
+            <div class="part" style="grid-template-columns:1fr">
+              <span class="mat-num">−5</span><span class="mat-num">1</span>
+            </div>
+          </div>
+        </div></div>
+        <div class="box box-red">Fila 2: 0 = 1 → IMPOSIBLE → <strong>SI</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIOS T4 -->
+  <div id="t4-ejercicios" class="tab-panel">
+    <div class="card"><h3><span class="icon">🧩</span>Ejercicios — Tipos de solución y parámetros</h3></div>
+
+    <div class="exercise" id="t4e1">
+      <div class="exercise-q">1. Después del escalonamiento se obtiene la fila [0, 0 | m−3] en un sistema 3×2. ¿Para qué valor de m el sistema es compatible?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t4e1',false)">⬜ Para m = 0</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e1',true)">⬜ Para m = 3</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e1',false)">⬜ Para todo m real</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e1',false)">⬜ Para m ≠ 3</button>
+      </div>
+      <div class="feedback" id="fb-t4e1"></div>
+    </div>
+
+    <div class="exercise" id="t4e2">
+      <div class="exercise-q">2. En la forma escalonada de un sistema 3×3, la última fila es [0, 0, k−2 | 5]. ¿Para qué valor de k hay <em>solución única</em>?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t4e2',false)">⬜ k = 2 (hace SCI)</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e2',true)">⬜ k ≠ 2 (el coeficiente es no nulo → SCD)</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e2',false)">⬜ k = 5</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e2',false)">⬜ k = 0</button>
+      </div>
+      <div class="feedback" id="fb-t4e2"></div>
+    </div>
+
+    <div class="exercise" id="t4e3">
+      <div class="exercise-q">3. Si la forma escalonada de un sistema 3×3 es:<br>
+        <span style="font-family:monospace;display:block;margin:8px 0;background:#f0f4f8;padding:8px;border-radius:6px;">
+          [1, 0, 2 | 5]<br>[0, 1, 0 | 0]<br>[0, 0, 0 | 0]
+        </span>
+        ¿Cuál es el conjunto solución?
+      </div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t4e3',false)">⬜ S = {(5, 0, 0)}</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e3',true)">⬜ S = {(5−2t, 0, t) : t ∈ ℝ}</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e3',false)">⬜ No tiene solución</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e3',false)">⬜ S = {(5, 0, t) : t ∈ ℝ}</button>
+      </div>
+      <div class="feedback" id="fb-t4e3"></div>
+    </div>
+
+    <div class="exercise" id="t4e4">
+      <div class="exercise-q">4. Un sistema 2×3 (2 ecuaciones, 3 incógnitas) que resulta compatible ¿qué tipo de sistema es?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t4e4',false)">⬜ Siempre SCD</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e4',true)">⬜ Siempre SCI (si es compatible)</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e4',false)">⬜ Puede ser SCD o SCI dependiendo del rango</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e4',false)">⬜ Siempre SI</button>
+      </div>
+      <div class="feedback" id="fb-t4e4"></div>
+    </div>
+
+    <div class="exercise" id="t4e5">
+      <div class="exercise-q">5. En un SCI con n=3 y r=2, ¿cuántas variables libres hay?</div>
+      <div class="options">
+        <button class="opt-btn" onclick="checkOpt(this,'t4e5',false)">⬜ 0</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e5',true)">⬜ 1 (= n − r = 3 − 2)</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e5',false)">⬜ 2</button>
+        <button class="opt-btn" onclick="checkOpt(this,'t4e5',false)">⬜ 3</button>
+      </div>
+      <div class="feedback" id="fb-t4e5"></div>
+    </div>
+  </div>
+
+  <!-- EXAMEN T4 -->
+  <div id="t4-examen" class="tab-panel">
+    <div class="exam-intro">
+      <h3>📝 Examen — Tema 4</h3>
+      <p>Discusión y Tipos de Solución</p>
+      <p style="margin-top:8px;opacity:0.8;font-size:0.88rem;">5 preguntas · Necesitás 4/5 para aprobar</p>
+    </div>
+    <div id="exam4-container"></div>
+    <div id="exam4-result" style="display:none;"></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ============================= STATE =============================
+const state = { exams: {} };
+
+// ============================= NAVIGATION =============================
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const btns = document.querySelectorAll('.nav-btn');
+  const map = { home:0, t1:1, t2:2, t3:3, t4:4 };
+  btns[map[id]].classList.add('active');
+  window.scrollTo(0, 0);
+  if(id !== 'home') initExam(id);
+}
+
+function switchTab(topic, tab) {
+  document.querySelectorAll(`#page-${topic} .tab-panel`).forEach(p => p.classList.remove('active'));
+  document.querySelectorAll(`#page-${topic} .tab-btn`).forEach(b => b.classList.remove('active'));
+  document.getElementById(`${topic}-${tab}`).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+// ============================= EXERCISES =============================
+const feedbacks = {
+  't1e1': 'Correcto. La matriz A solo contiene los coeficientes de las incógnitas, no los términos independientes. Filas = ecuaciones, columnas = incógnitas.',
+  't1e2': 'Correcto. B contiene solo los términos independientes (lado derecho de cada ecuación): 4, 0, −1.',
+  't1e3': 'Correcto. La columna 2 de A (coeficiente de la 2da variable) en fila 1 es 0 → no hay "y", solo "x" y "z".',
+  't1e4': 'Correcto. El orden es m×n = 4×3 (4 filas = 4 ecuaciones, 3 columnas = 3 incógnitas).',
+  't1e5': 'Correcto. En la ecuación 2x + 3z = 7, la variable "y" no aparece. Su coeficiente es 0. Elemento a₁₂ = 0.',
+  't2e1': 'Correcto. Sumar un múltiplo de una fila a otra es una operación elemental válida. Multiplicar por 0 destruiría información.',
+  't2e2': 'Correcto. F₂ − 3F₁: [3−3·1, 1−3·2, | 6−3·4] = [0, −5, | −6].',
+  't2e3': 'Correcto. La fila [0,0,0 | 5] representa la ecuación 0=5, que es IMPOSIBLE → sistema incompatible.',
+  't2e4': 'Correcto. Una fila de todos ceros significa que esa ecuación era combinación lineal de las otras. Puede haber infinitas soluciones.',
+  't2e5': 'Correcto. El objetivo es triangular: hacer cero todos los elementos debajo de la diagonal → forma triangular superior.',
+  't3e1': 'Correcto. r(A)=r(A*)=n=3 cumple exactamente la condición para SCD: solución única.',
+  't3e2': 'Correcto. r(A)=2 ≠ r(A*)=3 → los rangos son distintos → sistema incompatible (SI).',
+  't3e3': 'Correcto. r(A)=r(A*)=2 < n=4 → SCI. Hay n−r = 4−2 = 2 variables libres (parámetros).',
+  't3e4': 'Correcto. Si m < n, entonces r(A) ≤ m < n, por lo que r(A) nunca puede igualar n → nunca SCD.',
+  't3e5': 'Correcto. La fila [0,0,2|6] da la ecuación 2z=6 → z=3. Esta fila contribuye al rango y permite resolver.',
+  't4e1': 'Correcto. La fila [0,0 | m−3] = 0 solo si m−3=0, es decir m=3. Para cualquier otro valor, 0 = algo ≠ 0 → SI.',
+  't4e2': 'Correcto. Si k≠2, el elemento k−2≠0, hay pivote → r(A)=r(A*)=n=3 → SCD. Si k=2 la fila queda [0,0,0|5] → SI.',
+  't4e3': 'Correcto. Fila 3: 0=0 → SCI. z=t libre, y=0, x+2t=5 → x=5−2t. S = {(5−2t, 0, t) : t∈ℝ}.',
+  't4e4': 'Correcto. Con m<n y sistema compatible, siempre r(A)=r(A*) ≤ m < n → SCI con al menos una variable libre.',
+  't4e5': 'Correcto. Número de variables libres = n − rango = 3 − 2 = 1. Una variable se parametriza con t.',
+};
+
+const wrongFeedbacks = {
+  't1e1': 'Incorrecto. Recordá: A contiene solo los coeficientes de x e y en cada ecuación. Primera ecuación: [2, 1], segunda: [1, −3].',
+  't1e2': 'Incorrecto. B son los valores del lado derecho de cada ecuación: ecuación 1 → 4, ecuación 2 → 0, ecuación 3 → −1.',
+  't1e3': 'Incorrecto. Mirá la segunda fila de A: [0, 3, 1]. Eso da 0·x₁ + 3·x₂ + 1·x₃ = ecuación 2. El "0" ocupa la columna de x₁, no de y.',
+  't1e4': 'Incorrecto. El orden de A es (número de ecuaciones) × (número de incógnitas) = m×n = 4×3.',
+  't1e5': 'Incorrecto. La ecuación es 2x + 3z = 7. No hay "y", entonces el coeficiente de y (posición columna 2) es 0. a₁₂ = 0.',
+  't2e1': 'Incorrecto. Multiplicar por 0 destruye la ecuación (no es reversible). Elevar al cuadrado cambia la solución del sistema.',
+  't2e2': 'Incorrecto. Calculá: F₂ − 3F₁ = [3−3, 1−6, | 6−12] = [0, −5, | −6].',
+  't2e3': 'Incorrecto. La fila [0,0,0|5] dice 0·x+0·y+0·z=5, o sea 0=5, que es imposible → SI.',
+  't2e4': 'Incorrecto. La fila [0,0,...,0|0] significa 0=0, lo cual es siempre verdadero. Esa ecuación es redundante.',
+  't2e5': 'Incorrecto. El objetivo específico del escalonamiento es obtener zeros debajo de la diagonal principal (triangular superior).',
+  't3e1': 'Incorrecto. Cuando r(A)=r(A*)=n, hay tantas ecuaciones independientes como incógnitas → solución única → SCD.',
+  't3e2': 'Incorrecto. Si r(A) ≠ r(A*) siempre es SI, sin importar el número de incógnitas.',
+  't3e3': 'Incorrecto. r=2 < n=4 y los rangos son iguales → SCI. Variables libres = n−r = 4−2 = 2.',
+  't3e4': 'Incorrecto. Si m < n, el rango máximo de A es m, y como m < n, nunca se cumple r(A) = n → nunca SCD.',
+  't3e5': 'Incorrecto. La fila [0,0,2|6] da 2z=6 → z=3. Es una fila no nula que agrega información y permite encontrar z.',
+  't4e1': 'Incorrecto. Para que el sistema sea compatible necesitamos 0 = 0 en esa fila, es decir m−3=0 → m=3.',
+  't4e2': 'Incorrecto. Si k=2, la fila queda [0,0,0|5] → 0=5 → SI. Solo con k≠2 el coeficiente k−2≠0 y se puede despejar → SCD.',
+  't4e3': 'Incorrecto. La fila [0,0,0|0] indica SCI (0=0, verdadero). z es libre, z=t. x+2t=5 → x=5−2t. y=0.',
+  't4e4': 'Incorrecto. Con m<n compatible, siempre r ≤ m < n → r < n → SCI (infinitas soluciones).',
+  't4e5': 'Incorrecto. Variables libres = n − rango = 3 − 2 = 1. Una variable se elige libremente (parámetro t).',
+};
+
+function checkOpt(btn, exId, correct) {
+  const container = document.getElementById(exId);
+  if (container.dataset.answered) return;
+  container.dataset.answered = '1';
+  container.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  if (!correct) {
+    // Highlight correct
+    container.querySelectorAll('.opt-btn').forEach(b => {
+      const isCorrect = b.getAttribute('onclick').includes(',true)');
+      if (isCorrect) b.classList.add('correct');
+    });
+  }
+  const fb = document.getElementById('fb-' + exId);
+  fb.textContent = correct ? '✅ ' + feedbacks[exId] : '❌ ' + wrongFeedbacks[exId];
+  fb.className = 'feedback show ' + (correct ? 'ok' : 'fail');
+}
+
+// ============================= EXAMS =============================
+const examData = {
+  t1: [
+    { q: "¿Qué representa la matriz A en el sistema A·X = B?",
+      opts: ["Los términos independientes","Los coeficientes de las incógnitas","Las soluciones del sistema","El rango del sistema"],
+      ans: 1, exp: "A es la matriz de coeficientes: cada fila es una ecuación y cada columna corresponde a una incógnita." },
+    { q: "Para el sistema 3x − 2z = 1 / y + z = 0, ¿cuál es la matriz A?",
+      opts: ["[[3,−2],[1,1]]","[[3,0,−2],[0,1,1]]","[[3,−2,0],[0,1,0]]","[[1,0],[0,1]]"],
+      ans: 1, exp: "Fila 1: 3x+0y+(−2)z → [3,0,−2]. Fila 2: 0x+1y+1z → [0,1,1]." },
+    { q: "El sistema cuya forma matricial es [[-1,2],[3,0]]·[x,y]=[4,-1] es:",
+      opts: ["−x+2y=4 / 3x=−1","−x+2y=4 / 3x=−1 (sin y)","−x+2=4 / 3x+0y=−1","x−2y=4 / −3x=−1"],
+      ans: 0, exp: "Fila 1: −1·x + 2·y = 4. Fila 2: 3·x + 0·y = −1, o sea 3x = −1." },
+    { q: "¿De qué orden es la matriz X en un sistema con 3 incógnitas?",
+      opts: ["3×3","1×3","3×1","Depende del número de ecuaciones"],
+      ans: 2, exp: "X siempre es una columna de incógnitas: n×1. Con 3 incógnitas, X es de orden 3×1." },
+    { q: "En el sistema x + y = 2 / 2x − y + z = 0 / z = 3, ¿cuánto vale a₂₃ (fila 2, col 3) en A?",
+      opts: ["0","−1","1","2"],
+      ans: 2, exp: "Fila 2: 2x − y + z = 0. El coeficiente de z (columna 3) es 1. a₂₃ = 1." },
+  ],
+  t2: [
+    { q: "¿Qué es la matriz ampliada A*?",
+      opts: ["Solo la matriz de coeficientes A","A con la diagonal transpuesta","La matriz A con la columna B agregada: (A|B)","La inversa de A"],
+      ans: 2, exp: "A* = (A|B): la matriz de coeficientes con los términos independientes como última columna, separados por una barra." },
+    { q: "Al aplicar F₃ → F₃ − 2F₁ a la fila F₃=[4,2,1|6] con F₁=[1,0,1|3], ¿cuál es el resultado?",
+      opts: ["[2,2,−1|0]","[6,2,3|12]","[2,2,−1|−6]","[4,2,1|0]"],
+      ans: 0, exp: "F₃ − 2F₁ = [4−2, 2−0, 1−2 | 6−6] = [2, 2, −1 | 0]." },
+    { q: "¿Por qué NO podemos multiplicar una fila por 0 como operación elemental?",
+      opts: ["Porque cambia el número de ecuaciones","Porque destruye la ecuación (0=0 no aporta nada) y la operación no es reversible","Porque lo prohíbe la regla de Gauss","Porque cambiaría el rango automáticamente a n"],
+      ans: 1, exp: "Multiplicar por 0 convierte la fila en [0,0,...|0], perdiendo la información de esa ecuación. No es reversible." },
+    { q: "Después del escalonamiento, la resolución se hace por:",
+      opts: ["Sustitución directa desde arriba","Sustitución regresiva desde la última ecuación hacia arriba","Transposición de la matriz","División de todos los elementos por el pivote mayor"],
+      ans: 1, exp: "En la forma triangular superior, se resuelve desde la última fila (que tiene menos incógnitas) hacia arriba." },
+    { q: "Si al escalonar un sistema 3×3 obtenés r(A)=3 y r(A*)=3, la solución es:",
+      opts: ["Infinitas soluciones","Sin solución","Una única solución","Dos soluciones"],
+      ans: 2, exp: "r(A)=r(A*)=n=3 → SCD: existe una única solución. Se obtiene por sustitución regresiva." },
+  ],
+  t3: [
+    { q: "¿Qué significa que r(A) ≠ r(A*)?",
+      opts: ["El sistema tiene infinitas soluciones","El sistema tiene solución única","El sistema no tiene solución (incompatible)","El sistema necesita más ecuaciones"],
+      ans: 2, exp: "Cuando los rangos son distintos, el sistema es incompatible (SI): existe una fila 0=k con k≠0." },
+    { q: "Para un sistema con n=3, r(A)=r(A*)=2, el sistema es:",
+      opts: ["SCD","SI","SCI con 1 parámetro libre","SCI con 2 parámetros libres"],
+      ans: 2, exp: "r=n−1=2 < n=3 y rangos iguales → SCI. Variables libres = n−r = 3−2 = 1." },
+    { q: "El Rango de una matriz se calcula como:",
+      opts: ["El número total de filas","El número de elementos distintos de cero","El número de filas NO nulas en la forma escalonada","El determinante de la matriz"],
+      ans: 2, exp: "El rango es el número de filas con al menos un elemento no nulo después del escalonamiento (filas pivote)." },
+    { q: "Un sistema tiene m=2 ecuaciones y n=5 incógnitas. Si es compatible, ¿qué tipo es?",
+      opts: ["SCD","Siempre SCI","Siempre SI","Depende solo del determinante"],
+      ans: 1, exp: "Con m<n, r(A)≤m=2 < n=5, por lo que nunca se cumple r=n → si es compatible, siempre es SCI." },
+    { q: "¿Cuántas variables libres tiene un SCI con n=4 y r=1?",
+      opts: ["1","2","3","4"],
+      ans: 2, exp: "Variables libres = n − r = 4 − 1 = 3. Hay 3 parámetros libres en la solución." },
+  ],
+  t4: [
+    { q: "Al analizar un sistema con parámetro m, obtenés la fila escalonada [0,0,0 | m²−4]. ¿Para qué valores de m el sistema es compatible?",
+      opts: ["m = 0","m = 2 y m = −2","m ≠ 2 y m ≠ −2","Solo m = 4"],
+      ans: 1, exp: "Necesitamos m²−4 = 0, que da m²=4 → m=2 o m=−2. Para esos valores, la fila es [0,0,0|0] → compatible." },
+    { q: "En un SCI con la solución S = {(3+t, 2t, t) : t ∈ ℝ}, ¿cuál es la solución particular con t=0?",
+      opts: ["(0, 0, 0)","(3, 0, 0)","(1, 2, 1)","No existe"],
+      ans: 1, exp: "Con t=0: (3+0, 2·0, 0) = (3, 0, 0). Toda solución particular se obtiene asignando un valor a t." },
+    { q: "La forma escalonada de un sistema 3×3 es [[1,2,3|4],[0,1,−1|2],[0,0,0|0]]. El sistema es:",
+      opts: ["SCD","SI","SCI","No determinado"],
+      ans: 2, exp: "r(A)=r(A*)=2 < n=3 → SCI. Una variable libre: z=t, y=2+t, x=4−2y−3z=4−2(2+t)−3t = −5t." },
+    { q: "Si tenés un sistema de 4 ecuaciones con 3 incógnitas y r(A*)=4, el sistema es:",
+      opts: ["SCD porque m>n","SCI porque hay ecuaciones de sobra","SI porque r(A*) no puede ser 4 si n=3 → contradicción","Depende de los coeficientes"],
+      ans: 2, exp: "r(A*) ≤ min(m,n+1)=4. Pero r(A) ≤ n=3. Si r(A*)=4 > r(A)=3 → r(A) ≠ r(A*) → SI." },
+    { q: "Para que un sistema compatible tenga exactamente 2 variables libres, ¿qué condición debe cumplirse?",
+      opts: ["r(A) = n","r(A) = n − 1","r(A) = n − 2","r(A) = 0"],
+      ans: 2, exp: "Variables libres = n − r. Para tener 2 variables libres: n − r = 2 → r = n − 2." },
+  ],
+};
+
+function initExam(topic) {
+  if (state.exams[topic]) return;
+  state.exams[topic] = { answers: {}, submitted: false };
+  renderExam(topic);
+}
+
+function renderExam(topic) {
+  const num = topic.replace('t','');
+  const container = document.getElementById('exam' + num + '-container');
+  const data = examData[topic];
+  let html = '';
+  data.forEach((q, i) => {
+    html += `<div class="exam-q">
+      <div class="q-text">${i+1}. ${q.q}</div>
+      <div class="options" id="exam${num}q${i}">`;
+    q.opts.forEach((o, j) => {
+      html += `<button class="opt-btn" onclick="selectExamOpt(${j},'${topic}',${i})">${String.fromCharCode(65+j)}) ${o}</button>`;
+    });
+    html += `</div></div>`;
+  });
+  html += `<div style="text-align:center;margin-top:20px;">
+    <button class="btn btn-primary" onclick="submitExam('${topic}')">Enviar respuestas</button>
+  </div>`;
+  container.innerHTML = html;
+}
+
+function selectExamOpt(j, topic, qi) {
+  const num = topic.replace('t','');
+  if (state.exams[topic].submitted) return;
+  const opts = document.querySelectorAll(`#exam${num}q${qi} .opt-btn`);
+  opts.forEach(b => b.classList.remove('active'));
+  opts[j].classList.add('active');
+  state.exams[topic].answers[qi] = j;
+}
+
+function submitExam(topic) {
+  const data = examData[topic];
+  const answers = state.exams[topic].answers;
+  // Check all answered
+  for(let i=0;i<data.length;i++){
+    if(answers[i] === undefined){
+      alert('Por favor respondé todas las preguntas antes de enviar.');
+      return;
+    }
+  }
+  state.exams[topic].submitted = true;
+  const num = topic.replace('t','');
+  let score = 0;
+  data.forEach((q, i) => {
+    const opts = document.querySelectorAll(`#exam${num}q${i} .opt-btn`);
+    opts.forEach(b => b.disabled = true);
+    const sel = answers[i];
+    if(sel === q.ans) {
+      opts[sel].classList.add('correct');
+      score++;
+    } else {
+      opts[sel].classList.add('wrong');
+      opts[q.ans].classList.add('correct');
+    }
+  });
+  showExamResult(topic, score, data.length);
+  // Update home card
+  const passed = score >= 4;
+  const card = document.getElementById('card-' + topic);
+  const statusEl = document.getElementById('status-' + topic);
+  if(passed) {
+    card.classList.add('done');
+    statusEl.textContent = '✅ Aprobado (' + score + '/' + data.length + ')';
+  } else {
+    statusEl.textContent = '❌ ' + score + '/' + data.length + ' — Intentá de nuevo';
+  }
+}
+
+function showExamResult(topic, score, total) {
+  const num = topic.replace('t','');
+  const resultDiv = document.getElementById('exam' + num + '-result');
+  const pct = Math.round(score/total*100);
+  const passed = score >= 4;
+  const msgs = {
+    100: "¡Perfecto! Dominás el tema completamente.",
+    80: "¡Muy bien! Aprobaste con nota alta.",
+    60: "Aprobado, pero revisá los conceptos erróneos.",
+    40: "No alcanzaste el mínimo. Repasá la teoría y los ejemplos.",
+    20: "Necesitás estudiar más el tema antes de intentarlo.",
+    0:  "Empezá por la sección de teoría del tema."
+  };
+  const msgKey = Object.keys(msgs).reverse().find(k => pct >= parseInt(k));
+  resultDiv.style.display = 'block';
+  resultDiv.innerHTML = `
+    <div class="score-card">
+      <h3>${passed ? '🎉 ¡Aprobaste!' : '📚 A repasar...'}</h3>
+      <div class="score-big" style="color:${passed ? 'var(--accent2)' : 'var(--warn)'}">
+        ${score}/${total}
+      </div>
+      <div class="progress-bar-wrap" style="max-width:300px;margin:0 auto 12px;">
+        <div class="progress-bar" style="width:${pct}%;background:${passed ? 'var(--accent2)' : 'var(--warn)'}"></div>
+      </div>
+      <div class="score-msg">${msgs[msgKey]}</div>
+      <div style="margin-top:8px;font-size:0.88rem;color:#888;">
+        ${passed ? '' : 'Mínimo para aprobar: 4/5'}
+      </div>
+      <button class="btn btn-outline" style="margin-top:16px;" onclick="retryExam('${topic}')">
+        🔄 Volver a intentar
+      </button>
+    </div>
+  `;
+  resultDiv.scrollIntoView({ behavior: 'smooth' });
+}
+
+function retryExam(topic) {
+  delete state.exams[topic];
+  const num = topic.replace('t','');
+  document.getElementById('exam' + num + '-result').style.display = 'none';
+  document.getElementById('exam' + num + '-container').innerHTML = '';
+  initExam(topic);
+}
+
+// Init exams on load for all topics (lazy)
+</script>
+</body>
+</html>

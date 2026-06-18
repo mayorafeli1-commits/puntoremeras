@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing II — App de Estudio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1B3A6B;--teal:#006064;--teal2:#00ACC1;--accent:#F97316;--bg:#F0F4F8;--card:#fff;--text:#1a202c;--muted:#64748b;--green:#16a34a;--red:#dc2626;--yellow:#d97706}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+/* SIDEBAR */
+#sidebar{width:260px;background:linear-gradient(160deg,var(--navy),var(--teal));color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;transition:.3s}
+#sidebar .logo{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.15)}
+#sidebar .logo h1{font-size:1.1rem;font-weight:700;letter-spacing:.5px}
+#sidebar .logo p{font-size:.75rem;opacity:.7;margin-top:4px}
+#sidebar nav{padding:12px 0;flex:1}
+#sidebar nav a{display:flex;align-items:center;gap:10px;padding:11px 20px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.88rem;transition:.2s;cursor:pointer;border-left:3px solid transparent}
+#sidebar nav a:hover,#sidebar nav a.active{background:rgba(255,255,255,.12);color:#fff;border-left-color:var(--teal2)}
+#sidebar nav a .icon{width:22px;text-align:center;font-size:1rem}
+#sidebar nav .section-label{padding:16px 20px 6px;font-size:.68rem;text-transform:uppercase;letter-spacing:1px;opacity:.5}
+/* MAIN */
+#main{margin-left:260px;flex:1;padding:28px;min-height:100vh}
+.page{display:none}
+.page.active{display:block}
+/* CARDS */
+.card{background:var(--card);border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:24px;margin-bottom:20px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px;margin-bottom:24px}
+.topic-card{background:var(--card);border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.07);border-top:4px solid var(--teal);cursor:pointer;transition:.2s}
+.topic-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.topic-card .emoji{font-size:2rem;margin-bottom:10px}
+.topic-card h3{font-size:1rem;margin-bottom:6px;color:var(--navy)}
+.progress-bar{height:7px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:10px}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal2));border-radius:99px;transition:.6s}
+.progress-label{font-size:.75rem;color:var(--muted);margin-top:4px}
+/* PAGE HEADER */
+.page-header{margin-bottom:24px}
+.page-header h2{font-size:1.6rem;color:var(--navy);font-weight:700}
+.page-header p{color:var(--muted);margin-top:4px}
+/* TABS */
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:2px solid #e2e8f0}
+.tab-btn{padding:10px 22px;background:none;border:none;cursor:pointer;font-size:.9rem;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.2s;font-weight:500}
+.tab-btn.active{color:var(--teal);border-bottom-color:var(--teal)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/* ACCORDION */
+.accordion{margin-bottom:8px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}
+.accordion-header{padding:14px 18px;background:#f8fafc;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.92rem;color:var(--navy);transition:.2s}
+.accordion-header:hover{background:#f1f5f9}
+.accordion-header .arrow{transition:.3s;font-size:.8rem}
+.accordion-body{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .2s}
+.accordion.open .accordion-body{max-height:600px;padding:14px 18px}
+.accordion.open .arrow{transform:rotate(180deg)}
+.accordion-body p,.accordion-body li{font-size:.9rem;line-height:1.7;color:var(--text);margin-bottom:6px}
+.accordion-body ul{padding-left:18px}
+.accordion-body strong{color:var(--navy)}
+.example-box{background:linear-gradient(135deg,#e0f7fa,#f0f9ff);border-left:4px solid var(--teal2);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.example-box .ex-title{font-weight:700;color:var(--teal);font-size:.85rem;margin-bottom:6px}
+.example-box p{font-size:.88rem;line-height:1.6;color:var(--text)}
+/* PRACTICE */
+.question-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px}
+.question-card .q-num{font-size:.75rem;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.question-card .q-text{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.5}
+.tf-btns{display:flex;gap:10px}
+.tf-btn,.mc-opt{padding:9px 18px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;font-size:.88rem;font-weight:500;transition:.2s}
+.tf-btn:hover,.mc-opt:hover{border-color:var(--teal2)}
+.tf-btn.correct,.mc-opt.correct{background:#dcfce7;border-color:var(--green);color:var(--green)}
+.tf-btn.wrong,.mc-opt.wrong{background:#fee2e2;border-color:var(--red);color:var(--red)}
+.mc-opts{display:flex;flex-direction:column;gap:8px}
+.mc-opt{text-align:left;padding:10px 14px}
+.feedback{font-size:.83rem;margin-top:10px;padding:8px 12px;border-radius:6px;font-weight:500}
+.feedback.ok{background:#dcfce7;color:var(--green)}
+.feedback.no{background:#fee2e2;color:var(--red)}
+/* DEV QUESTIONS */
+.dev-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px}
+.dev-card .q-text{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.5}
+.show-ans-btn{padding:8px 16px;background:var(--teal);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;transition:.2s}
+.show-ans-btn:hover{background:var(--teal2)}
+.answer-box{background:#fff;border:1px solid var(--teal2);border-radius:8px;padding:14px;margin-top:12px;display:none;font-size:.88rem;line-height:1.7}
+.answer-box.visible{display:block}
+/* EXAM */
+.exam-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;padding:20px 24px;border-radius:14px}
+.exam-header h3{font-size:1.2rem;font-weight:700}
+#timer1,#timer2{font-size:1.8rem;font-weight:800;font-variant-numeric:tabular-nums}
+.timer-warn{color:#fde047}
+.exam-q{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px}
+.exam-q .q-label{font-size:.75rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.exam-q .q-text{font-size:.92rem;font-weight:600;margin-bottom:10px;line-height:1.5}
+.exam-tf{display:flex;gap:10px}
+.exam-tf label,.exam-mc label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.88rem;padding:8px 14px;border:2px solid #e2e8f0;border-radius:8px;transition:.2s;background:#fff}
+.exam-tf label:hover,.exam-mc label:hover{border-color:var(--teal2)}
+input[type=radio]:checked+span{color:var(--teal);font-weight:700}
+.exam-mc{display:flex;flex-direction:column;gap:8px}
+.submit-exam-btn{display:block;margin:20px auto 0;padding:14px 40px;background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer;transition:.2s}
+.submit-exam-btn:hover{opacity:.9;transform:translateY(-2px)}
+.result-box{background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;border-radius:14px;padding:28px;text-align:center;margin-top:20px;display:none}
+.result-box h3{font-size:1.5rem;margin-bottom:8px}
+.result-box .score{font-size:3rem;font-weight:800;margin:12px 0}
+.result-box p{opacity:.9}
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti-piece{position:absolute;width:10px;height:10px;top:-10px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+.badge{display:inline-block;padding:3px 10px;border-radius:99px;font-size:.75rem;font-weight:700;margin-left:8px}
+.badge.green{background:#dcfce7;color:var(--green)}
+.badge.blue{background:#dbeafe;color:#1d4ed8}
+/* DASHBOARD */
+.dash-welcome{background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;border-radius:14px;padding:28px;margin-bottom:24px}
+.dash-welcome h2{font-size:1.5rem;font-weight:800;margin-bottom:6px}
+.dash-welcome p{opacity:.85;font-size:.95rem}
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:12px;padding:18px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.stat-card .n{font-size:2rem;font-weight:800;color:var(--teal)}
+.stat-card .l{font-size:.8rem;color:var(--muted);margin-top:4px}
+@media(max-width:700px){#sidebar{width:100%;height:auto;position:relative}#main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="logo">
+    <h1>📚 Marketing II</h1>
+    <p>CAECE Mar del Plata · 2do Parcial</p>
+  </div>
+  <nav>
+    <a onclick="showPage('dashboard')" class="active"><span class="icon">🏠</span> Dashboard</a>
+    <div class="section-label">Temas</div>
+    <a onclick="showPage('t1')"><span class="icon">🎯</span> Mkt Estratégico</a>
+    <a onclick="showPage('t2')"><span class="icon">💰</span> Producto y Precio</a>
+    <a onclick="showPage('t3')"><span class="icon">🚚</span> Distribución</a>
+    <a onclick="showPage('t4')"><span class="icon">📣</span> Comunicación</a>
+    <a onclick="showPage('t5')"><span class="icon">🤖</span> Marketing Digital e IA</a>
+    <div class="section-label">Exámenes</div>
+    <a onclick="showPage('exam1')"><span class="icon">📝</span> Parcial Simulacro 1</a>
+    <a onclick="showPage('exam2')"><span class="icon">📝</span> Parcial Simulacro 2</a>
+  </nav>
+</nav>
+
+<main id="main">
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+  <div class="dash-welcome">
+    <h2>¡Hola! A estudiar 💪</h2>
+    <p>Segundo parcial de Marketing · Viernes · CAECE Mar del Plata</p>
+  </div>
+  <div class="dash-stats">
+    <div class="stat-card"><div class="n" id="stat-done">0</div><div class="l">Ejercicios completados</div></div>
+    <div class="stat-card"><div class="n">5</div><div class="l">Temas para estudiar</div></div>
+    <div class="stat-card"><div class="n">2</div><div class="l">Exámenes simulacro</div></div>
+  </div>
+  <h3 style="margin-bottom:16px;color:var(--navy)">Progreso por tema</h3>
+  <div class="card-grid">
+    <div class="topic-card" onclick="showPage('t1')">
+      <div class="emoji">🎯</div>
+      <h3>Marketing Estratégico</h3>
+      <p style="font-size:.82rem;color:var(--muted)">Segmentación · Posicionamiento · Estrategias</p>
+      <div class="progress-bar"><div class="fill" id="p1" style="width:0%"></div></div>
+      <div class="progress-label" id="pl1">0 / 10 ejercicios</div>
+    </div>
+    <div class="topic-card" onclick="showPage('t2')">
+      <div class="emoji">💰</div>
+      <h3>Producto y Precio</h3>
+      <p style="font-size:.82rem;color:var(--muted)">Dimensiones · Ciclo de vida · Estrategias</p>
+      <div class="progress-bar"><div class="fill" id="p2" style="width:0%"></div></div>
+      <div class="progress-label" id="pl2">0 / 10 ejercicios</div>
+    </div>
+    <div class="topic-card" onclick="showPage('t3')">
+      <div class="emoji">🚚</div>
+      <h3>Distribución (Plaza)</h3>
+      <p style="font-size:.82rem;color:var(--muted)">Canales · Logística · Merchandising</p>
+      <div class="progress-bar"><div class="fill" id="p3" style="width:0%"></div></div>
+      <div class="progress-label" id="pl3">0 / 10 ejercicios</div>
+    </div>
+    <div class="topic-card" onclick="showPage('t4')">
+      <div class="emoji">📣</div>
+      <h3>Comunicación</h3>
+      <p style="font-size:.82rem;color:var(--muted)">Publicidad · Promoción · Publicity</p>
+      <div class="progress-bar"><div class="fill" id="p4" style="width:0%"></div></div>
+      <div class="progress-label" id="pl4">0 / 10 ejercicios</div>
+    </div>
+    <div class="topic-card" onclick="showPage('t5')">
+      <div class="emoji">🤖</div>
+      <h3>Marketing Digital e IA</h3>
+      <p style="font-size:.82rem;color:var(--muted)">SEO/SEM · Métricas · IA y casos reales</p>
+      <div class="progress-bar"><div class="fill" id="p5" style="width:0%"></div></div>
+      <div class="progress-label" id="pl5">0 / 10 ejercicios</div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMA 1: MARKETING ESTRATÉGICO -->
+<div id="page-t1" class="page">
+  <div class="page-header"><h2>🎯 Marketing Estratégico</h2><p>Segmentación · Cliente Meta · Posicionamiento · Estrategias Genéricas</p></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'t1-teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab(this,'t1-ejemplos')">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab(this,'t1-practica')">✏️ Práctica</button>
+  </div>
+  <div id="t1-teoria" class="tab-content active">
+    <div class="accordion open">
+      <div class="accordion-header" onclick="toggleAcc(this)">¿Qué es el Marketing Estratégico? <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Conjunto de decisiones de <strong>largo plazo</strong> que analiza el mercado, identifica oportunidades y decide en qué mercados competir.</p><p><strong>Diferencia clave:</strong> Marketing estratégico = "<strong>QUÉ</strong> hacer" (definir a quién y con qué). Marketing operativo = "<strong>CÓMO</strong> hacerlo" (ejecutar las 4P).</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Segmentación de Mercados <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p><strong>Definición (Kotler):</strong> "Dividir el mercado en grupos <strong>distintos</strong> de compradores que requieren productos o mezclas de marketing <strong>diferentes</strong>."</p><p><strong>¿Para qué sirve?</strong></p><ul><li>Personalizar mensajes y propuestas de valor</li><li>Identificar oportunidades no atendidas</li><li>Optimizar recursos (no gastar en quien no comprará)</li><li>Crear ventajas diferenciales por segmento</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Tipos de Segmentación <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Demográfica:</strong> edad, sexo, estado civil, educación, ocupación, nacionalidad</li><li><strong>Psicográfica:</strong> estilo de vida, actividades, intereses, opiniones, personalidad</li><li><strong>Geográfica:</strong> agrupación por ubicación o lugar de residencia</li><li><strong>Por beneficio proyectado:</strong> economía, moda, rapidez</li><li><strong>Situacional:</strong> momento de uso del producto</li><li><strong>Conductual:</strong> comportamiento de compra del consumidor</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Proceso de Segmentación <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ol style="padding-left:18px"><li style="margin-bottom:6px">Identificar variables relevantes</li><li style="margin-bottom:6px">Agrupar consumidores según esas variables</li><li style="margin-bottom:6px">Describir cada segmento en detalle</li><li>Evaluar el atractivo de cada segmento</li></ol></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Evaluación del Segmento (Cliente Meta) <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Factores a evaluar para determinar si un segmento es atractivo:</p><ul><li>Intensidad competitiva</li><li>Economías de escala disponibles</li><li>Tecnología disponible</li><li>Índice de crecimiento del segmento</li><li>Estacionalidad (variaciones por época)</li><li>Margen de rentabilidad / precios posibles</li><li>Sensibilidad a cambiar de marcas</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Estrategias de Cobertura de Mercado <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Indiferenciada:</strong> mismo producto/propuesta para TODOS los segmentos</li><li><strong>Diferenciada:</strong> distintos productos/propuestas para distintos segmentos</li><li><strong>Concentrada:</strong> apunta a un ÚNICO segmento específico (especialización)</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Posicionamiento <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Estrategia que permite <strong>influir en la posición del producto en la mente del consumidor</strong>.</p><p>Puede ser:</p><ul><li><strong>Intencionado:</strong> la empresa lo planifica deliberadamente</li><li><strong>Inercial:</strong> ocurre sin que la empresa lo planifique — el cliente igualmente posiciona la marca</li></ul><p style="margin-top:8px"><em>"Si la empresa no se propone posicionarse, el cliente igualmente lo hará."</em></p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Tipos de Posicionamiento <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Por atributos:</strong> características del producto (Volvo = seguridad)</li><li><strong>Por beneficios:</strong> resultado que obtiene el cliente (Colgate = dientes blancos)</li><li><strong>Por origen:</strong> país o región (Quilmes = la cerveza argentina)</li><li><strong>Por trayectoria:</strong> historia y experiencia de la marca</li><li><strong>Por ocasión de uso:</strong> cuándo se usa (Gatorade = después del deporte)</li><li><strong>Por cliente:</strong> tipo de usuario (Nike = atletas)</li><li><strong>Por competencia/liderazgo:</strong> Pepsi vs Coca-Cola</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Elementos de Marca y Estrategias Genéricas <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p><strong>Elementos de marca:</strong> nombre, color, imagen visual, logo, slogan.</p><p><strong>Estrategias genéricas (Porter):</strong></p><ul><li><strong>Liderazgo en costos:</strong> precio más bajo del mercado (Walmart)</li><li><strong>Diferenciación:</strong> atributos percibidos como superiores → precio premium (Apple)</li><li>Versiones <strong>concentradas</strong> de ambas (enfocadas en un nicho)</li></ul></div>
+    </div>
+  </div>
+  <div id="t1-ejemplos" class="tab-content">
+    <div class="example-box"><div class="ex-title">🏃 Nike — Segmentación Demográfica</div><p>Nike produce zapatillas distintas para hombres, mujeres y niños, con diferentes precios y diseños. También tiene líneas para running, fútbol y básquet: distintos segmentos con distintas necesidades.</p></div>
+    <div class="example-box"><div class="ex-title">🍎 Apple — Segmentación Psicográfica</div><p>Apple apunta a personas creativas e innovadoras que valoran el diseño y el estatus. No venden solo una computadora: venden un <em>estilo de vida</em>. "Think Different" es puro posicionamiento psicográfico.</p></div>
+    <div class="example-box"><div class="ex-title">🍔 McDonald's — Segmentación Geográfica</div><p>En India no venden hamburguesas de carne vacuna (adaptan el menú por cultura/religión). En Japón tienen sabores locales. El mismo producto base, adaptado a cada mercado geográfico.</p></div>
+    <div class="example-box"><div class="ex-title">📦 Amazon — Segmentación Conductual</div><p>Amazon identifica clientes frecuentes vs. ocasionales y les da experiencias distintas. Los usuarios Prime tienen acceso a beneficios especiales. Analiza el comportamiento de compra para personalizar recomendaciones.</p></div>
+    <div class="example-box"><div class="ex-title">🚗 Posicionamiento por Atributos vs Beneficios</div><p><strong>Volvo = seguridad</strong> (atributos físicos del auto). <strong>Colgate = dientes blancos</strong> (beneficio que obtenés). <strong>Quilmes = la cerveza argentina</strong> (origen). <strong>Pepsi vs Coca-Cola</strong> = posicionamiento por competencia/liderazgo.</p></div>
+    <div class="example-box"><div class="ex-title">💡 Estrategias Genéricas en acción</div><p><strong>Liderazgo en costos:</strong> Walmart basa toda su propuesta en "siempre precios bajos". <strong>Diferenciación:</strong> Apple cobra más por el iPhone porque construyó una percepción de diseño superior e innovación. Ambas son estrategias ganadoras en sus segmentos.</p></div>
+  </div>
+  <div id="t1-practica" class="tab-content">
+    <h3 style="margin-bottom:16px;color:var(--navy)">Verdadero o Falso</h3>
+    <div id="tf-t1"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Múltiple Opción</h3>
+    <div id="mc-t1"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Preguntas de Desarrollo</h3>
+    <div id="dev-t1"></div>
+  </div>
+</div>
+
+<!-- TEMA 2: PRODUCTO Y PRECIO -->
+<div id="page-t2" class="page">
+  <div class="page-header"><h2>💰 Producto y Precio</h2><p>Dimensiones del producto · Ciclo de vida · Estrategias de precio</p></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'t2-teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab(this,'t2-ejemplos')">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab(this,'t2-practica')">✏️ Práctica</button>
+  </div>
+  <div id="t2-teoria" class="tab-content active">
+    <div class="accordion open">
+      <div class="accordion-header" onclick="toggleAcc(this)">El Producto <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>El producto es un <strong>satisfactor de necesidades</strong>. Conjunto de bienes y servicios que la empresa ofrece al mercado.</p><p><strong>Dimensión imaginaria:</strong> lo que el producto <em>representa</em> para el consumidor. Influida por: intensidad de necesidades, intencionalidad del deseo, experiencia anterior, comunicación de la empresa.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Las 3 Dimensiones del Producto <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Producto Básico:</strong> esencia, función fundamental de satisfacer la necesidad. ¿Qué estoy comprando realmente?</li><li><strong>Producto Real:</strong> atributos tangibles: diseño, marca, calidad, características técnicas, packaging</li><li><strong>Producto Aumentado:</strong> aspectos adicionales/complementarios que generan valor agregado y fidelizan al cliente (garantía, delivery, soporte)</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">La Marca <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Nombre, término, signo, símbolo o diseño que <strong>identifica y diferencia</strong> a un vendedor.</p><p><strong>Beneficios de la marca:</strong> reduce incertidumbre del comprador, genera confianza, permite cobrar más, fideliza clientes.</p><p><strong>Importante:</strong> Producto ≠ Marca. Ejemplo: <em>Celular = producto / Apple = innovación + diseño + identidad</em>.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Ciclo de Vida del Producto <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Lanzamiento:</strong> ventas bajas, costos altos, pocos competidores, consumidores innovadores</li><li><strong>Crecimiento:</strong> ventas suben rápido, llegan competidores, precios bajan un poco</li><li><strong>Madurez:</strong> ventas se estabilizan, competencia máxima, saturación del mercado</li><li><strong>Declive:</strong> ventas caen, consumidores buscan sustitutos, se decide relanzar o retirar</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">El Precio <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Según <strong>Lambin</strong>: el precio es el <strong>único elemento del mix de marketing que genera ingresos</strong>; los demás (producto, plaza, promoción) generan costos.</p><p><strong>Factores que determinan el precio:</strong></p><ul><li>Cliente (valor percibido)</li><li>Competidores (precios del mercado)</li><li>Costos (piso del precio)</li><li>Ciclos estacionales (demanda alta = precios suben)</li><li>Control del Estado (regulaciones, precios máximos)</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Cliente y Valor Percibido <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Precio &lt; Valor percibido →</strong> Compra y está satisfecho ✅</li><li><strong>Precio = Valor percibido →</strong> Compra (sin ganancia extra para el cliente)</li><li><strong>Precio &gt; Valor percibido →</strong> No compra ❌</li></ul><p>Por eso el marketing busca <em>aumentar el valor percibido</em> (marca, packaging, comunicación) para poder cobrar más.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Tipos de Mercado <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Competencia perfecta:</strong> muchos vendedores de productos idénticos, precio de mercado (commodities)</li><li><strong>Monopolio:</strong> un solo vendedor, fija el precio libremente</li><li><strong>Oligopolio:</strong> pocos vendedores grandes (telefonía, combustibles)</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Estrategias Tácticas de Precio <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Penetración:</strong> precio bajo para entrar al mercado rápido y ganar cuota</li><li><strong>Descreme (Skimming):</strong> precio alto al inicio (early adopters), luego baja gradualmente</li><li><strong>Precios psicológicos:</strong> $9.99 en vez de $10 — el cerebro lo procesa como "menos de diez"</li><li><strong>Precios promocionales:</strong> descuentos por tiempo limitado para impulsar compra</li></ul><p style="margin-top:8px"><strong>Punto de equilibrio:</strong> P(x) × Q(x) = CVu × Q(x) + CFT</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Elasticidad Precio <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Mide cuánto cambia la cantidad demandada cuando cambia el precio.</p><ul><li><strong>Bienes elásticos:</strong> la demanda cambia mucho ante cambios de precio (productos de lujo, viajes)</li><li><strong>Bienes inelásticos:</strong> la demanda no cambia mucho (nafta, medicamentos esenciales)</li></ul></div>
+    </div>
+  </div>
+  <div id="t2-ejemplos" class="tab-content">
+    <div class="example-box"><div class="ex-title">🍎 Apple — Estrategia Skimming</div><p>Cada iPhone nuevo se lanza a precio altísimo. Los early adopters lo compran aunque sea caro. Con el tiempo el precio baja. Así Apple maximiza ingresos en cada segmento: los fans pagan más primero.</p></div>
+    <div class="example-box"><div class="ex-title">🎬 Netflix — Estrategia de Penetración</div><p>Cuando entró a Argentina, Netflix ofreció precios muy bajos para captar usuarios rápidamente. Una vez que el hábito estuvo instalado, subieron los precios gradualmente. Clásica estrategia de penetración.</p></div>
+    <div class="example-box"><div class="ex-title">🛒 Precio Psicológico</div><p>$9.99 en vez de $10. El cerebro lo registra como "menos de diez" incluso si la diferencia es mínima. Se usa masivamente en e-commerce, supermercados y tiendas de ropa. Psicología del consumidor aplicada al precio.</p></div>
+    <div class="example-box"><div class="ex-title">✈️ Precios Estacionales</div><p>Las aerolíneas suben precios en vacaciones de verano e invierno. Las flores se encarecen el Día de los Enamorados. La demanda sube → el precio sube. Es la estacionalidad como factor de fijación de precios.</p></div>
+    <div class="example-box"><div class="ex-title">🏨 Hotel — Las 3 Dimensiones</div><p><strong>Básico:</strong> alojamiento y descanso (la función esencial). <strong>Real:</strong> diseño de la habitación, WiFi, marca del hotel, calidad de la cama. <strong>Aumentado:</strong> spa, desayuno incluido, check-in tardío, programa de puntos → eso fideliza.</p></div>
+    <div class="example-box"><div class="ex-title">📱 Smartphones — Ciclo de Vida</div><p>Los smartphones están en <strong>etapa de madurez</strong>: ventas estabilizadas, competencia enorme (Samsung, Apple, Xiaomi, Motorola), precios competitivos. Las marcas buscan diferenciarse con cámaras, autonomía y diseño.</p></div>
+  </div>
+  <div id="t2-practica" class="tab-content">
+    <h3 style="margin-bottom:16px;color:var(--navy)">Verdadero o Falso</h3>
+    <div id="tf-t2"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Múltiple Opción</h3>
+    <div id="mc-t2"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Preguntas de Desarrollo</h3>
+    <div id="dev-t2"></div>
+  </div>
+</div>
+
+<!-- TEMA 3: DISTRIBUCIÓN -->
+<div id="page-t3" class="page">
+  <div class="page-header"><h2>🚚 Distribución (Plaza)</h2><p>Canales · Logística · Merchandising · Funciones</p></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'t3-teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab(this,'t3-ejemplos')">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab(this,'t3-practica')">✏️ Práctica</button>
+  </div>
+  <div id="t3-teoria" class="tab-content active">
+    <div class="accordion open">
+      <div class="accordion-header" onclick="toggleAcc(this)">Concepto de Distribución <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Variable del mix que pone el producto a disposición del cliente, en el <strong>lugar adecuado</strong>, en el <strong>momento oportuno</strong> y en las <strong>condiciones deseadas</strong>.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Las 2 Dimensiones <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Logística (distribución física):</strong> manipulación, transporte y entrega desde fábrica hasta el cliente. Dimensión <em>OPERATIVA</em>.</li><li><strong>Canal (distribución comercial):</strong> canales de comercialización entre fabricante y cliente. Dimensión <em>ESTRATÉGICA</em>.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Funciones Estratégicas del Canal <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li>Acercar el producto al cliente (ej: lechero, sodero, diariero — van al cliente)</li><li>Ser agente promotor de la marca en el punto de venta</li><li>Agregar valor al producto (servicios, financiamiento, exhibición)</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Funciones Operativas <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Fraccionamiento:</strong> venta en unidades de consumo (no en bulk industrial)</li><li><strong>Exhibición:</strong> técnicas de localización y exhibición en góndola</li><li><strong>Financiamiento:</strong> forma y modalidad de pago (cuotas, contado)</li><li><strong>Entrega:</strong> distribución física al cliente</li><li><strong>Post-venta:</strong> soporte posterior a la compra</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Participantes y Longitud del Canal <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p><strong>Participantes:</strong> Fabricante → Distribuidor → Mayorista → Minorista → Consumidor</p><ul><li><strong>Canal directo:</strong> Fabricante → Consumidor</li><li><strong>Canal indirecto corto:</strong> Fabricante → Minorista → Consumidor</li><li><strong>Canal indirecto largo:</strong> Fabricante → Distribuidor → Mayorista → Minorista → Consumidor</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Venta Directa vs Indirecta <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p><strong>Venta directa — ventajas:</strong></p><ul><li>Control total del canal</li><li>Imposible tener quiebres de stock por terceros</li><li>Contacto directo con el cliente → mejor feedback</li><li>Mejores márgenes (no se comparte con intermediarios)</li></ul><p style="margin-top:8px"><strong>Venta indirecta — ventaja:</strong> expansión geográfica sin gran inversión propia.</p><p><strong>Desventaja:</strong> pérdida del dominio del canal y fuerza de negociación.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Código de Barras <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>EAN-13:</strong> más común, 13 dígitos, para casi todos los productos</li><li><strong>EAN-8:</strong> para productos pequeños donde no entra EAN-13</li><li><strong>UPC:</strong> usado en EE.UU. principalmente</li></ul><p>En Argentina, el código lo otorga <strong>GS1 Argentina</strong>.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Merchandising <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Técnicas que <strong>estimulan la compra en el punto de venta</strong>. Incluye: layout del local, exhibición en góndola, material POP, iluminación, música, aromas.</p><p><strong>Merchandising digital:</strong></p><ul><li>Home page como vidriera (productos destacados al frente)</li><li>Filtros y navegación clara</li><li>Packaging digital (fotos HD, videos del producto)</li><li>Promociones destacadas (banners, pop-ups)</li><li>Recomendaciones personalizadas ("también te puede interesar")</li></ul></div>
+    </div>
+  </div>
+  <div id="t3-ejemplos" class="tab-content">
+    <div class="example-box"><div class="ex-title">📦 Amazon — Canal Directo Digital</div><p>Amazon vende directamente al consumidor sin intermediarios (en su marketplace propio). Control total del precio, la experiencia y los datos del cliente. Margen completo para ellos.</p></div>
+    <div class="example-box"><div class="ex-title">🥤 Coca-Cola — Canal Indirecto Largo</div><p>La fábrica produce → distribuidor regional → mayorista → kiosco/supermercado → consumidor. Cada intermediario agrega un margen, pero Coca-Cola llega a millones de puntos en todo el país.</p></div>
+    <div class="example-box"><div class="ex-title">🥛 Sodero y Lechero — Función Estratégica</div><p>Llevan el producto hasta la puerta del cliente. Función estratégica clásica: acercar el producto al cliente. No esperan que el cliente vaya a buscarlos — ellos van al cliente.</p></div>
+    <div class="example-box"><div class="ex-title">🛒 Góndola de Supermercado — Merchandising</div><p>Los productos más rentables están a la altura de los ojos (prime shelf). Los básicos están al fondo (para que recorras todo el local y compres más). Los productos por impulso están en la caja. Todo eso es merchandising.</p></div>
+    <div class="example-box"><div class="ex-title">🎬 Netflix — Merchandising Digital</div><p>La home de Netflix muestra contenido en tendencia, destacados y personalizados según tu historial. "Más vendidos", "Continuar viendo", "Recomendados para vos". Es exactamente lo mismo que la góndola de supermercado, pero en digital.</p></div>
+    <div class="example-box"><div class="ex-title">🏷️ Código de Barras EAN-13</div><p>Cualquier producto de supermercado tiene 13 dígitos que lo identifican unívocamente. Los primeros 3 dígitos identifican el país (Argentina = 779). Lo asigna GS1 Argentina.</p></div>
+  </div>
+  <div id="t3-practica" class="tab-content">
+    <h3 style="margin-bottom:16px;color:var(--navy)">Verdadero o Falso</h3>
+    <div id="tf-t3"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Múltiple Opción</h3>
+    <div id="mc-t3"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Preguntas de Desarrollo</h3>
+    <div id="dev-t3"></div>
+  </div>
+</div>
+
+<!-- TEMA 4: COMUNICACIÓN -->
+<div id="page-t4" class="page">
+  <div class="page-header"><h2>📣 Comunicación (Publicidad)</h2><p>Mix comunicacional · Objetivos · Herramientas · Medios</p></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'t4-teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab(this,'t4-ejemplos')">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab(this,'t4-practica')">✏️ Práctica</button>
+  </div>
+  <div id="t4-teoria" class="tab-content active">
+    <div class="accordion open">
+      <div class="accordion-header" onclick="toggleAcc(this)">Circuito de Comunicación <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Proceso por el cual una empresa utiliza <strong>herramientas comunicacionales</strong>, a través de ciertos <strong>medios</strong>, según sus <strong>objetivos mercadológicos</strong>, para entablar relación con los clientes.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Objetivos de Comunicación <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Conocimiento:</strong> informar sobre marcas, características y beneficios. Generar visibilidad.</li><li><strong>Preferencia:</strong> lograr que el cliente <em>elija</em> nuestra marca. Comunicar ventajas diferenciales.</li><li><strong>Prueba:</strong> incitar a consumir por primera vez. Muestras gratis, período de prueba.</li><li><strong>Recordación:</strong> acciones continuas que generan recompra. Carteles, publicidad repetitiva.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Formas de Influencia <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Emulación:</strong> copiar comportamientos de otros (FOMO, tendencias en redes)</li><li><strong>Sugerencias:</strong> el cliente elige libremente entre opciones presentadas</li><li><strong>Persuasión:</strong> argumentos favorables que convencen racionalmente</li><li><strong>Autoridad:</strong> comunicación agresiva, con sanciones implícitas por no elegir</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Medios Personales vs Impersonales <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Medios personales:</strong> existe interacción emisor-receptor (personal, visual, auditivo, afectivo). Más impacto pero más caro.</li><li><strong>Medios impersonales:</strong> NO existe interacción (gráfico, radial, televisivo, estático, telefónico). Alcance masivo.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Publicidad <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Comunicación <strong>impersonal</strong>, <strong>pagada</strong> por un anunciante identificado, con resultado mediato.</p><ul><li>Impersonal (no hay diálogo)</li><li>Pagada (hay un anunciante que paga)</li><li>Controlada (la empresa decide el mensaje)</li><li>Resultado a mediano/largo plazo</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Promoción de Ventas <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Presión de mercadotecnia en <strong>período limitado</strong> para estimular prueba/demanda. Caracterísitcas:</p><ul><li>Corto plazo (termina la promo, se termina el efecto)</li><li>Impulsor de compra inmediata</li><li>Incremento de ventas puntual</li></ul><p>Ej: 2x1, descuentos temporales, cupones, sorteos.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Publicity <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Acciones masivas con agente comunicador. Relaciones públicas, marketing social, sponsorización.</p><ul><li>Normalmente <strong>NO son pagadas</strong></li><li>La empresa <strong>NO controla</strong> el contenido</li><li>Mayor credibilidad que la publicidad</li></ul><p><strong>Evolución moderna:</strong> marketing de influencers, relaciones públicas digitales, campañas de expectativa, marketing de guerrilla.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Fuerza de Ventas y Marketing Directo <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p><strong>Fuerza de ventas:</strong></p><ul><li><strong>Receptora:</strong> está en el punto de venta esperando al cliente (vendedora de local)</li><li><strong>Emisora:</strong> se dirige al origen del cliente, va a buscar clientes (representante médico, vendedor de seguros)</li></ul><p style="margin-top:8px"><strong>Marketing directo:</strong> crear relación rentable a largo plazo a través de trato personal entre cliente y empresa. Personalizado, interactivo, medible.</p></div>
+    </div>
+  </div>
+  <div id="t4-ejemplos" class="tab-content">
+    <div class="example-box"><div class="ex-title">🏎️ Red Bull — Publicity Clásico</div><p>Red Bull patrocina eventos extremos (Cliff Diving, Flugtag) y el equipo de F1. Los medios los cubren gratis porque son noticia. Eso es publicity: la empresa invierte en el evento, la prensa genera cobertura gratuita.</p></div>
+    <div class="example-box"><div class="ex-title">📸 Influencer Marketing — Publicity Moderno</div><p>La marca envía productos a un influencer. El influencer hace un review. La marca no controla lo que dice. Si el review es positivo = publicidad gratuita creíble. Si es negativo = riesgo. Por eso es publicity, no publicidad.</p></div>
+    <div class="example-box"><div class="ex-title">📺 Publicidad en TV — Coca-Cola Super Bowl</div><p>Coca-Cola paga millones por 30 segundos en el Super Bowl. Es publicidad clásica: impersonal, pagada, controlada, masiva. La empresa decide exactamente qué se ve y dice. Alto alcance, alto costo.</p></div>
+    <div class="example-box"><div class="ex-title">🍕 Promoción — 2x1 en Pizzas</div><p>2x1 los martes, 30% de descuento solo hoy. Es promoción: tiempo limitado, objetivo de compra inmediata, genera un pico de ventas puntual. Cuando termina la promo, las ventas vuelven a la normalidad.</p></div>
+    <div class="example-box"><div class="ex-title">💼 Fuerza de Ventas Emisora</div><p>El representante médico visita médicos para presentar medicamentos. El vendedor de seguros va a empresas. No esperan al cliente: van a buscarlo. Eso es fuerza de ventas emisora.</p></div>
+    <div class="example-box"><div class="ex-title">📧 Marketing Directo</div><p>Email personalizado: "Hola María, basado en tus compras anteriores, creemos que esto te puede gustar..." Con nombre, oferta específica, historial de compras. Personalizado, medible (se sabe quién abrió), interactivo (responde si compra).</p></div>
+  </div>
+  <div id="t4-practica" class="tab-content">
+    <h3 style="margin-bottom:16px;color:var(--navy)">Verdadero o Falso</h3>
+    <div id="tf-t4"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Múltiple Opción</h3>
+    <div id="mc-t4"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Preguntas de Desarrollo</h3>
+    <div id="dev-t4"></div>
+  </div>
+</div>
+
+<!-- TEMA 5: MARKETING DIGITAL E IA -->
+<div id="page-t5" class="page">
+  <div class="page-header"><h2>🤖 Marketing Digital e IA</h2><p>SEO/SEM · Google Ads · Métricas · IA y casos reales</p></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab(this,'t5-teoria')">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab(this,'t5-ejemplos')">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab(this,'t5-practica')">✏️ Práctica</button>
+  </div>
+  <div id="t5-teoria" class="tab-content active">
+    <div class="accordion open">
+      <div class="accordion-header" onclick="toggleAcc(this)">¿Qué es el Marketing Digital? <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Conjunto de acciones de marketing en <strong>entornos digitales</strong>. Se basa en: datos en tiempo real, canales interactivos, medición continua, segmentación precisa.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Tradicional vs Digital <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Canal:</strong> TV/radio/gráfica VS Web/redes/email/apps</li><li><strong>Segmentación:</strong> amplia y básica VS personalizada por comportamiento e intención</li><li><strong>Costo:</strong> elevado (paquetes mínimos grandes) VS flexible (se puede empezar con poco)</li><li><strong>Medición:</strong> difusa (encuestas, estimaciones) VS precisa en tiempo real (CTR, ROAS, conversiones)</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">SEO vs SEM <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>SEO (Search Engine Optimization):</strong> posicionamiento orgánico en buscadores. Gratis pero tarda meses. Sostenible a largo plazo.</li><li><strong>SEM (Search Engine Marketing):</strong> campañas pagas en buscadores. Resultados inmediatos. Se paga por clic (CPC). Ejemplo: Google Ads.</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Google Ads y Meta Ads <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p><strong>Google Ads:</strong> pujas por palabras clave. Tipos: Búsqueda, Display, YouTube, Shopping. Métrica clave: CPC (Costo por Clic).</p><p><strong>Meta Ads (Facebook e Instagram):</strong> segmentación por intereses, edad, ubicación, comportamiento. Formatos: carruseles, reels, historias. Instagram = mejor engagement para B2C.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Email Marketing y CRM <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p><strong>Email Marketing:</strong> ROI de <strong>$42 por cada $1 invertido</strong> (DMA 2023) — uno de los ROI más altos del marketing digital. Herramientas: Mailchimp, HubSpot, Doppler. Siempre con opt-in (consentimiento).</p><p><strong>CRM (Customer Relationship Management):</strong> gestiona relaciones con clientes y trazabilidad completa del journey. Ejemplos: HubSpot, Salesforce, Zoho.</p></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Métricas Clave <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>CTR:</strong> Click-Through Rate — porcentaje de personas que hacen clic en el anuncio</li><li><strong>CPC:</strong> Costo por Clic</li><li><strong>CPA:</strong> Costo por Adquisición (cuánto cuesta conseguir un cliente)</li><li><strong>ROAS:</strong> Retorno sobre inversión publicitaria. Ej: invertís $1.000 → ganás $4.000 = ROAS 4:1</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">IA en Marketing — Conceptos <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>La IA imita el aprendizaje y razonamiento humano. Aplicaciones en marketing:</p><ul><li><strong>Segmentación predictiva:</strong> predice qué cliente está por abandonar, quién comprará, qué producto es ideal</li><li><strong>Personalización:</strong> antes por edad/género. Hoy por intención/comportamiento/contexto en tiempo real</li><li><strong>Chatbots:</strong> WhatsApp Bots, Landbot, Zendesk. Disponibles 24/7, respuestas instantáneas</li><li><strong>Generación de contenido:</strong> ChatGPT/Jasper (textos), DALL-E/Midjourney (imágenes), Synthesia (videos)</li><li><strong>Dynamic Pricing:</strong> Uber y Booking ajustan precios automáticamente según oferta/demanda, hora, perfil</li><li><strong>Análisis de sentimientos:</strong> detecta el tono emocional en redes sociales</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">Casos Reales de IA <span class="arrow">▾</span></div>
+      <div class="accordion-body"><ul><li><strong>Netflix:</strong> 80% de las visualizaciones son por recomendación del algoritmo de IA</li><li><strong>Amazon:</strong> personalización 1:1, cada usuario ve una home diferente</li><li><strong>Spotify:</strong> más de 2.000 millones de playlists únicas por mes</li><li><strong>Coca-Cola:</strong> análisis de sentimiento en redes → +3% en ventas</li><li><strong>Airbnb:</strong> pricing dinámico → +10-15% de ingresos para anfitriones</li><li><strong>H&M:</strong> predicción de demanda → reducción del 25% de stock sin vender</li><li><strong>Mercado Libre:</strong> pricing dinámico en millones de productos</li></ul></div>
+    </div>
+    <div class="accordion">
+      <div class="accordion-header" onclick="toggleAcc(this)">IA y Ética <span class="arrow">▾</span></div>
+      <div class="accordion-body"><p>Riesgos de la IA en marketing:</p><ul><li><strong>Sesgos en algoritmos:</strong> si los datos de entrenamiento están sesgados, la IA reproduce esos sesgos</li><li><strong>Privacidad de datos:</strong> personalización requiere datos personales → riesgo de vulneraciones</li><li><strong>Automatización sin supervisión:</strong> decisiones sin control humano pueden generar errores</li></ul></div>
+    </div>
+  </div>
+  <div id="t5-ejemplos" class="tab-content">
+    <div class="example-box"><div class="ex-title">🎬 Netflix — IA como motor de negocio</div><p>El algoritmo aprende de cada segundo que mirás, cada pausa, cada búsqueda. El 80% de lo que ves es recomendado por la IA, no buscado por vos. Sin IA, Netflix no funcionaría.</p></div>
+    <div class="example-box"><div class="ex-title">🎵 Spotify — Personalización masiva</div><p>Discover Weekly: cada lunes te aparece una playlist nueva de 30 canciones que probablemente no conocés pero te van a gustar. Spotify genera más de 2.000 millones de playlists únicas por mes. Personalización a escala masiva.</p></div>
+    <div class="example-box"><div class="ex-title">🛒 Amazon — Home page 1:1</div><p>Entrás a Amazon y ves algo completamente diferente a lo que ve tu vecino. La home page cambia según tu historial de compras, búsquedas y tiempo de navegación. Personalización 1:1 en tiempo real.</p></div>
+    <div class="example-box"><div class="ex-title">🚗 Uber — Dynamic Pricing</div><p>"Precio surge": cuando hay muchos pedidos y pocos conductores, el precio sube automáticamente. Equilibra oferta y demanda en tiempo real. Más demanda = precio más alto = más conductores salen a trabajar.</p></div>
+    <div class="example-box"><div class="ex-title">👗 H&M — Predicción de demanda</div><p>H&M usa IA para predecir qué ropa vender en cada tienda y región antes de la temporada. Resultado: reducción del 25% del stock sin vender. Menos desperdicio, más rentabilidad.</p></div>
+    <div class="example-box"><div class="ex-title">📧 Carrito abandonado — Email automático</div><p>Dejás algo en el carrito de MercadoLibre. 2 horas después llegás a un email: "Te olvidaste algo 👀". 24 horas después: "Quedan pocas unidades". Es marketing directo + IA + automatización.</p></div>
+  </div>
+  <div id="t5-practica" class="tab-content">
+    <h3 style="margin-bottom:16px;color:var(--navy)">Verdadero o Falso</h3>
+    <div id="tf-t5"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Múltiple Opción</h3>
+    <div id="mc-t5"></div>
+    <h3 style="margin:20px 0 16px;color:var(--navy)">Preguntas de Desarrollo</h3>
+    <div id="dev-t5"></div>
+  </div>
+</div>
+
+<!-- EXAMEN 1 -->
+<div id="page-exam1" class="page">
+  <div class="exam-header">
+    <div><h3>📝 Parcial Simulacro 1</h3><p style="opacity:.8;margin-top:4px">20 preguntas · 30 minutos</p></div>
+    <div id="timer1">30:00</div>
+  </div>
+  <div id="exam1-questions"></div>
+  <button class="submit-exam-btn" onclick="submitExam(1)">Entregar Parcial</button>
+  <div class="result-box" id="result1"></div>
+</div>
+
+<!-- EXAMEN 2 -->
+<div id="page-exam2" class="page">
+  <div class="exam-header">
+    <div><h3>📝 Parcial Simulacro 2</h3><p style="opacity:.8;margin-top:4px">20 preguntas · 30 minutos</p></div>
+    <div id="timer2">30:00</div>
+  </div>
+  <div id="exam2-questions"></div>
+  <button class="submit-exam-btn" onclick="submitExam(2)">Entregar Parcial</button>
+  <div class="result-box" id="result2"></div>
+</div>
+
+</main>
+
+<div id="confetti-container" class="confetti-container"></div>
+
+<script>
+// ========== DATA ==========
+const TF = {
+  t1:[
+    {q:"La segmentación busca dividir el mercado en grupos heterogéneos.",a:false,exp:"FALSO: la segmentación divide en grupos HOMOGÉNEOS internamente pero heterogéneos entre sí."},
+    {q:"El posicionamiento inercial ocurre cuando la empresa no planifica su posicionamiento.",a:true,exp:"VERDADERO: si la empresa no actúa, el cliente igualmente posiciona la marca en su mente."},
+    {q:"La estrategia diferenciada atiende a todos los segmentos con la misma propuesta.",a:false,exp:"FALSO: la estrategia INDIFERENCIADA usa la misma propuesta. La diferenciada usa distintas propuestas para distintos segmentos."},
+    {q:"El liderazgo en costos implica ofrecer el precio más bajo del mercado.",a:true,exp:"VERDADERO: el liderazgo en costos basa su ventaja competitiva en ser la opción más económica."},
+    {q:"Los elementos de marca incluyen nombre, color, logo, slogan e imagen visual.",a:true,exp:"VERDADERO: todos esos elementos forman la identidad de marca."}
+  ],
+  t2:[
+    {q:"El precio es el único elemento del mix de marketing que genera ingresos.",a:true,exp:"VERDADERO: según Lambin, el precio es el único que genera ingresos; producto, plaza y promoción generan costos."},
+    {q:"La dimensión aumentada del producto incluye la función fundamental de satisfacer la necesidad.",a:false,exp:"FALSO: eso es el PRODUCTO BÁSICO. La dimensión aumentada son los servicios adicionales y valor extra."},
+    {q:"La estrategia de descreme o skimming consiste en lanzar el producto a un precio bajo.",a:false,exp:"FALSO: el skimming lanza a precio ALTO para captar early adopters, luego baja."},
+    {q:"Si el precio es mayor al valor percibido por el cliente, la compra no se realiza.",a:true,exp:"VERDADERO: si Precio > Valor percibido → el cliente no compra."},
+    {q:"En un mercado de competencia perfecta, los precios los fija una sola empresa.",a:false,exp:"FALSO: eso es MONOPOLIO. En competencia perfecta hay muchos vendedores y el precio lo determina el mercado."}
+  ],
+  t3:[
+    {q:"La logística es la dimensión estratégica de la distribución.",a:false,exp:"FALSO: la logística es la dimensión OPERATIVA. El canal es la dimensión ESTRATÉGICA."},
+    {q:"En el canal directo, el fabricante vende directamente al consumidor final.",a:true,exp:"VERDADERO: canal directo = Fabricante → Consumidor, sin intermediarios."},
+    {q:"Una ventaja de la venta indirecta es el mayor control sobre el canal.",a:false,exp:"FALSO: la venta DIRECTA da mayor control. La indirecta pierde control pero gana alcance geográfico."},
+    {q:"El código EAN-13 tiene 13 dígitos y es el más utilizado a nivel mundial.",a:true,exp:"VERDADERO: EAN-13 es el estándar internacional para la mayoría de productos."},
+    {q:"El merchandising solo aplica en locales físicos, no en entornos digitales.",a:false,exp:"FALSO: el merchandising digital es clave. La home page como vidriera, filtros, banners, etc."}
+  ],
+  t4:[
+    {q:"La publicidad es una forma de comunicación pagada por un anunciante identificado.",a:true,exp:"VERDADERO: la publicidad es impersonal, pagada y el anunciante es identificable."},
+    {q:"El publicity es siempre una comunicación paga y controlada por la empresa.",a:false,exp:"FALSO: el publicity normalmente NO es pago y la empresa NO controla el contenido."},
+    {q:"La fuerza de ventas emisora se dirige al punto de venta para esperar al cliente.",a:false,exp:"FALSO: la RECEPTORA espera en el punto de venta. La EMISORA se dirige al origen del cliente."},
+    {q:"La promoción de ventas actúa principalmente en el largo plazo.",a:false,exp:"FALSO: la promoción es de CORTO PLAZO. Genera un pico de ventas durante el período de la oferta."},
+    {q:"Los medios personales implican interacción entre emisor y receptor.",a:true,exp:"VERDADERO: en los medios personales existe interacción directa. En los impersonales no hay diálogo."}
+  ],
+  t5:[
+    {q:"El SEO es un posicionamiento pago en buscadores.",a:false,exp:"FALSO: el SEO es ORGÁNICO (gratuito pero requiere tiempo). El SEM es el pago."},
+    {q:"El ROAS mide el retorno sobre la inversión publicitaria.",a:true,exp:"VERDADERO: ROAS = Return On Ad Spend. Si invertís $1000 y ganás $4000, el ROAS es 4:1."},
+    {q:"El email marketing tiene uno de los ROI más bajos del marketing digital.",a:false,exp:"FALSO: el email marketing tiene uno de los ROI MÁS ALTOS: $42 por cada $1 invertido (DMA 2023)."},
+    {q:"Los microinfluencers tienen mejor tasa de conversión que los macroinfluencers.",a:true,exp:"VERDADERO: los microinfluencers tienen audiencias más comprometidas y nicho, lo que genera mejor conversión."},
+    {q:"La IA puede generar sesgos en algoritmos si los datos de entrenamiento están sesgados.",a:true,exp:"VERDADERO: este es uno de los riesgos éticos principales de la IA en marketing."}
+  ]
+};
+
+const MC = {
+  t1:[
+    {q:"Según Kotler, la segmentación es:",opts:["Dividir en grupos homogéneos de compradores con necesidades distintas","Dividir en grupos heterogéneos de consumidores","Identificar el mercado total y venderles a todos","Analizar a los competidores del mercado"],a:0},
+    {q:"¿Qué estrategia de cobertura apunta a un solo segmento específico?",opts:["Indiferenciada","Diferenciada","Concentrada","Masiva"],a:2},
+    {q:"El posicionamiento por trayectoria hace referencia a:",opts:["Los atributos físicos del producto","La historia y experiencia acumulada de la marca","El perfil del cliente objetivo","La ocasión de uso del producto"],a:1},
+    {q:"En la evaluación del cliente meta, la estacionalidad se refiere a:",opts:["El lugar geográfico donde vive el cliente","Variaciones en la demanda según época del año","El precio del producto en distintas épocas","La tecnología disponible en la empresa"],a:1},
+    {q:"¿Cuál es la diferencia clave entre marketing estratégico y operativo?",opts:["El estratégico es más costoso que el operativo","El operativo define QUÉ hacer y el estratégico CÓMO hacerlo","El estratégico define QUÉ hacer y el operativo CÓMO hacerlo","Son exactamente lo mismo"],a:2}
+  ],
+  t2:[
+    {q:"¿Qué incluye el producto 'real'?",opts:["Solo el packaging externo del producto","La función básica de satisfacer la necesidad","Atributos tangibles: diseño, marca, calidad y packaging","Los servicios de posventa y garantías"],a:2},
+    {q:"La estrategia de penetración de precios consiste en:",opts:["Cobrar muy alto al inicio para captar early adopters","Cobrar muy bajo para ganar mercado rápidamente","Ajustar precios según lo que hace la competencia","Fijar precios psicológicos como $9.99"],a:1},
+    {q:"La elasticidad precio mide:",opts:["La calidad percibida del producto","Cuánto cambia la demanda cuando cambia el precio","El costo total de producción","La rentabilidad esperada del producto"],a:1},
+    {q:"La dimensión imaginaria del producto está influida por:",opts:["Solo el precio que paga el cliente","Solo las características técnicas del producto","Intensidad de necesidades, experiencia anterior y comunicación","El canal de distribución utilizado"],a:2},
+    {q:"En el ciclo de vida del producto, ¿en qué etapa la competencia es máxima y las ventas se estabilizan?",opts:["Lanzamiento","Crecimiento","Madurez","Declive"],a:2}
+  ],
+  t3:[
+    {q:"¿Cuál es la función operativa que divide el producto en unidades de consumo?",opts:["Exhibición","Financiamiento","Fraccionamiento","Post-venta"],a:2},
+    {q:"¿Qué organismo otorga el código de barras en Argentina?",opts:["AFIP (Administración Federal de Ingresos Públicos)","GS1 Argentina","INDEC (Instituto Nacional de Estadística)","Ministerio de Comercio"],a:1},
+    {q:"El canal indirecto largo incluye:",opts:["Solo fabricante y consumidor","Fabricante, minorista y consumidor","Fabricante, distribuidor, mayorista, minorista y consumidor","Solo mayorista y minorista"],a:2},
+    {q:"Una desventaja de la distribución indirecta es:",opts:["Mayores costos de almacenamiento propios","Pérdida del dominio del canal y fuerza de negociación","Contacto directo con el cliente","Quiebres de stock propios de la empresa"],a:1},
+    {q:"¿Qué función estratégica cumple el canal de distribución?",opts:["Solo transportar el producto de A a B","Solo almacenar stock para terceros","Acercar el producto, ser agente promotor y agregar valor","Solo emitir facturas de venta"],a:2}
+  ],
+  t4:[
+    {q:"¿Cuál objetivo de comunicación busca incitar al consumo mediante muestras gratis?",opts:["Conocimiento","Preferencia","Prueba","Recordación"],a:2},
+    {q:"La forma de influencia que usa argumentos favorables para convencer es:",opts:["Emulación","Sugerencia","Persuasión","Autoridad"],a:2},
+    {q:"¿Cuál herramienta del mix comunicacional NO es paga y la empresa NO controla su contenido?",opts:["Publicidad","Promoción de ventas","Publicity","Marketing directo"],a:2},
+    {q:"El marketing de guerrilla es una evolución moderna de:",opts:["La publicidad televisiva masiva","El publicity","La fuerza de ventas directa","El marketing directo por email"],a:1},
+    {q:"La fuerza de ventas receptora:",opts:["Sale a buscar clientes activamente","Se encuentra en el punto de venta esperando al cliente","Envía emails y mensajes directos","Gestiona las redes sociales de la empresa"],a:1}
+  ],
+  t5:[
+    {q:"¿Qué significa un ROAS de 4:1?",opts:["Gastaste $4 y ganaste $1","Invertiste $1 en publicidad y generaste $4 en ventas","Tuviste 4 clics por cada $1 invertido","Obtuviste 4% de retorno sobre la inversión"],a:1},
+    {q:"¿Qué plataforma usa Google para campañas de publicidad paga?",opts:["Meta Ads","Google Analytics","Google Ads","Google SEO"],a:2},
+    {q:"Netflix utiliza IA principalmente para:",opts:["Fijar precios dinámicos de sus suscripciones","Recomendar contenido (80% de las vistas son por IA)","Gestionar el soporte al cliente","Crear películas y series originales"],a:1},
+    {q:"El CRM sirve para:",opts:["Crear anuncios de Google Ads","Gestionar relaciones con clientes y trazabilidad del journey","Optimizar el posicionamiento SEO","Generar imágenes con inteligencia artificial"],a:1},
+    {q:"¿Cuál es un riesgo ético de la IA en marketing?",opts:["Mayor precisión en la segmentación de clientes","Reducción de costos operativos","Sesgos en algoritmos y vulneraciones de privacidad","Mejora en la personalización del contenido"],a:2}
+  ]
+};
+
+const DEV = {
+  t1:[
+    {q:"Explique los pasos del proceso de segmentación y por qué es importante para una empresa.",a:"1) Identificar variables relevantes (demográficas, psicográficas, etc.) → 2) Agrupar consumidores según esas variables → 3) Describir cada segmento en detalle (tamaño, necesidades, comportamiento) → 4) Evaluar el atractivo de cada segmento (crecimiento, rentabilidad, competencia). Es importante porque permite personalizar mensajes y propuestas de valor, identificar oportunidades no atendidas, optimizar recursos (no gastar en quien no comprará) y crear ventajas diferenciales."},
+    {q:"¿Qué es el posicionamiento y cuáles son sus tipos? Dé un ejemplo de cada uno.",a:"El posicionamiento es la estrategia que permite influir en la posición que ocupa un producto en la mente del consumidor. Tipos: Por atributos (Volvo = seguridad — característica física del auto). Por beneficios (Colgate = dientes blancos — resultado que obtenés). Por origen (Quilmes = la cerveza argentina — procedencia geográfica). Por trayectoria (Yerba Playadito, años en el mercado — historia de la marca). Por ocasión de uso (Gatorade = después del deporte). Por cliente (Nike = atletas). Por competencia (Pepsi vs Coca-Cola — se posiciona contra el líder)."}
+  ],
+  t2:[
+    {q:"Explique las tres dimensiones del producto con un ejemplo concreto.",a:"Básico: la función esencial, lo que el cliente realmente compra (ej: en un hotel, alojamiento y descanso). Real: los atributos tangibles que diferencian el producto (ej: diseño de la habitación, WiFi, marca del hotel, calidad de la cama, packaging como la tarjeta llave). Aumentado: el valor agregado adicional que fideliza (ej: servicio de spa, desayuno incluido, check-in tardío, programa de puntos). La clave es que el producto aumentado crea lealtad más allá de la función básica."},
+    {q:"¿Cuáles son los factores que determinan el precio? Explique cómo afecta la competencia.",a:"Los factores son: 1) el cliente (su valor percibido define el precio máximo), 2) los competidores (precios de referencia del mercado), 3) los costos (piso mínimo del precio), 4) ciclos estacionales (alta demanda = precios suben), 5) control del Estado (regulaciones, precios máximos). La competencia directa (productos similares) obliga a estar cerca del precio de mercado. La competencia indirecta (productos sustitutos) también afecta: si el sustituto baja, el consumidor puede cambiar. En oligopolio, si uno baja el precio, todos deben bajar."}
+  ],
+  t3:[
+    {q:"Compare el canal directo con el canal indirecto largo. ¿En qué situaciones conviene cada uno?",a:"Canal directo (Fabricante → Consumidor): conviene cuando la empresa quiere control total del precio y la experiencia, contacto directo para obtener feedback, mejores márgenes (no comparte con intermediarios) y evitar quiebres de stock por terceros. Ejemplo: tienda propia o e-commerce. Canal indirecto largo (Fab → Dist → May → Min → Cons): conviene cuando se quiere expansión geográfica amplia sin gran inversión propia, llegar a muchos puntos de venta rápidamente. Desventaja: se pierde control del precio final, de la exhibición y del contacto con el cliente."},
+    {q:"¿Qué es el merchandising y cómo se aplica en el entorno digital?",a:"El merchandising son técnicas que estimulan la compra en el punto de venta. En físico: layout del local (básicos al fondo), productos rentables a la altura de los ojos, iluminación, música, materiales POP. En digital: la home page funciona como vidriera (productos más vendidos o rentables al frente), filtros y navegación clara (fácil de encontrar lo que buscás), packaging digital (fotos de alta calidad, videos 360°), promociones destacadas con banners o pop-ups, recomendaciones personalizadas ('también compraron', 'te puede interesar'). Netflix y Amazon son maestros del merchandising digital."}
+  ],
+  t4:[
+    {q:"Explique los cuatro objetivos de comunicación con un ejemplo de acción para cada uno.",a:"Conocimiento: hacer que el target sepa que la marca existe (ej: campaña de lanzamiento masiva en redes sociales, publicidad en vía pública). Preferencia: lograr que elijan nuestra marca sobre la competencia (ej: comunicar que somos más baratos, más rápidos o de mejor calidad con comparativas). Prueba: incitar al primer consumo (ej: muestras gratis en supermercado, período de prueba gratuita de 30 días, degustaciones). Recordación: mantener la marca en la mente para generar recompra (ej: publicidad repetitiva en radio, carteles en la vía pública, newsletter mensual)."},
+    {q:"Compare publicidad, promoción y publicity. ¿En qué se diferencian?",a:"Publicidad: comunicación impersonal, pagada, controlada por la empresa, resultado a mediano/largo plazo. La empresa decide exactamente qué se comunica. Ej: aviso en TV del Super Bowl. Promoción: acción de corto plazo para impulsar la compra inmediata. Genera un pico de ventas durante el período de oferta. Ej: 2x1, descuento 30%. Publicity: comunicación masiva normalmente no paga, la empresa NO controla el contenido. Mayor credibilidad porque no parece publicidad. Ej: nota periodística, review de influencer. La gran diferencia clave: la publicidad la controla y paga la empresa; el publicity puede ser más creíble pero es impredecible y puede ser negativo."},
+    {q:"¿Qué es el marketing directo y en qué se diferencia de la publicidad masiva?",a:"El marketing directo crea una relación rentable a largo plazo mediante trato personal entre cliente y empresa. Se diferencia de la publicidad masiva en que es: personalizado (mensaje uno a uno, con nombre y oferta específica), interactivo (hay respuesta medible del cliente: abre el email, hace clic, compra), medible con precisión (se sabe exactamente quién respondió y cuánto generó) y construye relación a largo plazo. Ejemplo: email marketing personalizado con historial de compras, WhatsApp Business con mensajes uno a uno, CRM que registra cada interacción. La publicidad masiva no sabe quién la vio; el marketing directo sí."}
+  ],
+  t5:[
+    {q:"Compare el marketing tradicional con el digital en 4 dimensiones clave.",a:"1) Canal: Tradicional (TV, radio, gráfica, vía pública — unidireccional) vs Digital (web, redes sociales, email, apps — bidireccional e interactivo). 2) Segmentación: Tradicional (amplia, demográfica básica: mujeres de 25-35 años) vs Digital (hiperpersonalizada por comportamiento, intención y contexto en tiempo real). 3) Costo: Tradicional (elevado, paquetes mínimos grandes, acceso limitado a pequeñas empresas) vs Digital (flexible, se puede empezar con muy poco presupuesto). 4) Medición: Tradicional (difusa, encuestas, estimaciones de audiencia) vs Digital (precisa en tiempo real: CTR exacto, ROAS, conversiones, mapa de calor, etc.)."},
+    {q:"Explique cómo la IA revoluciona la personalización en marketing. Cite 3 casos reales.",a:"La IA permite pasar de segmentación masiva a hiperpersonalización por intención, comportamiento y contexto en tiempo real. Antes: todos los usuarios de 25-35 años veían lo mismo. Hoy: cada usuario ve algo distinto según lo que hizo en los últimos 5 minutos. Casos reales: 1) Netflix: el 80% de lo que ven los usuarios es recomendado por el algoritmo de IA que aprende de cada segundo de reproducción. 2) Amazon: personalización 1:1, cada usuario ve una home page diferente con productos relevantes según su historial de compras y navegación. 3) Spotify: genera más de 2.000 millones de playlists únicas por mes, adaptadas al gusto de cada usuario. Bonus: H&M usa IA para predicción de demanda, reduciendo 25% el stock sin vender."},
+    {q:"¿Qué es el dynamic pricing y cómo lo usan Uber y Airbnb?",a:"El dynamic pricing ajusta precios automáticamente en tiempo real según: oferta/demanda actual, día y hora, ubicación, perfil del usuario y competencia. Uber lo aplica con el 'precio surge': cuando hay muchos pedidos y pocos conductores disponibles, el precio sube automáticamente para equilibrar la ecuación (sube el precio → más conductores salen a trabajar, demanda baja). Airbnb ajusta los precios según temporada, eventos locales (recital, partido, feriado) y demanda en la zona, logrando +10-15% de ingresos para los anfitriones respecto a precio fijo. La ventaja del dynamic pricing sobre el precio fijo es que maximiza ingresos en momentos de alta demanda y mantiene la competitividad en períodos bajos."}
+  ]
+};
+
+// EXAMS
+const EXAM1 = [
+  {type:'tf',q:"La segmentación demográfica incluye variables como estilo de vida y personalidad.",a:false},
+  {type:'tf',q:"El precio es el único elemento del mix de marketing que genera ingresos.",a:true},
+  {type:'tf',q:"El canal directo es más largo que el canal indirecto.",a:false},
+  {type:'tf',q:"La publicidad es pagada por un anunciante identificado.",a:true},
+  {type:'tf',q:"El SEO genera resultados inmediatos y se paga por clic.",a:false},
+  {type:'mc',q:"¿Qué estrategia usa Coca-Cola para atender distintos segmentos con distintos productos?",opts:["Indiferenciada","Concentrada","Diferenciada","Masiva"],a:2},
+  {type:'mc',q:"La estrategia de skimming consiste en:",opts:["Precio bajo de entrada al mercado","Precio alto al lanzamiento que luego baja","Precio igual al costo de producción","Precio psicológico terminado en .99"],a:1},
+  {type:'mc',q:"¿Qué función operativa divide el producto en unidades de consumo?",opts:["Exhibición","Entrega","Fraccionamiento","Post-venta"],a:2},
+  {type:'mc',q:"¿Cuál objetivo de comunicación busca que el cliente pruebe el producto por primera vez?",opts:["Conocimiento","Preferencia","Prueba","Recordación"],a:2},
+  {type:'mc',q:"¿Qué significa CTR?",opts:["Costo Total de Retorno","Tasa de clics (Click-Through Rate)","Costo por Transacción","Canal de Transferencia"],a:1},
+  {type:'mc',q:"Producto básico se refiere a:",opts:["El packaging externo del producto","La función fundamental de satisfacer la necesidad","Los servicios adicionales de posventa","La marca y diseño del producto"],a:1},
+  {type:'mc',q:"¿Cuál es el posicionamiento inercial?",opts:["El posicionamiento planeado por la empresa","El que ocurre sin que la empresa lo planifique","La estrategia de liderazgo en costos","El posicionamiento por atributos del producto"],a:1},
+  {type:'tf',q:"GS1 Argentina otorga los códigos de barras en Argentina.",a:true},
+  {type:'tf',q:"La fuerza de ventas emisora espera al cliente en el punto de venta.",a:false},
+  {type:'tf',q:"Los microinfluencers tienen peor tasa de conversión que los macroinfluencers.",a:false},
+  {type:'mc',q:"Si el precio de un producto es MENOR al valor percibido por el cliente:",opts:["El cliente no compra","El cliente compra y está satisfecho","El cliente compra pero insatisfecho","El cliente negocia el precio"],a:1},
+  {type:'mc',q:"¿Qué ventaja tiene el canal directo sobre el indirecto?",opts:["Mayor expansión geográfica","Menor inversión inicial","Control total del canal y contacto directo con el cliente","Menos costos logísticos propios"],a:2},
+  {type:'mc',q:"El publicity se diferencia de la publicidad en que:",opts:["El publicity es más costoso","La empresa controla el contenido en el publicity","Normalmente no es pago y la empresa no controla el contenido","El publicity solo funciona en digital"],a:2},
+  {type:'mc',q:"¿Cuál empresa usa IA para recomendar contenido en un 80% de sus visualizaciones?",opts:["Amazon","Spotify","Netflix","Airbnb"],a:2},
+  {type:'mc',q:"¿Qué mide la elasticidad precio?",opts:["La calidad del producto","Cuánto cambia la demanda cuando cambia el precio","El costo de producción","La rentabilidad de la empresa"],a:1}
+];
+
+const EXAM2 = [
+  {type:'tf',q:"La estrategia indiferenciada atiende a todos los segmentos con la misma propuesta.",a:true},
+  {type:'tf',q:"La dimensión aumentada del producto es lo que el cliente imagina sobre el producto.",a:false},
+  {type:'tf',q:"El canal indirecto corto incluye: Fabricante → Distribuidor → Mayorista → Minorista → Consumidor.",a:false},
+  {type:'tf',q:"La emulación como forma de influencia consiste en copiar comportamientos de otros.",a:true},
+  {type:'tf',q:"Meta Ads permite segmentar por intereses, edad, ubicación y comportamiento.",a:true},
+  {type:'mc',q:"Los tipos de segmentación incluyen:",opts:["Solo demográfica y geográfica","Demográfica, psicográfica, geográfica, conductual, por beneficio y situacional","Solo conductual y psicográfica","Solo la segmentación demográfica"],a:1},
+  {type:'mc',q:"¿Quién dijo que el precio es el único elemento del mix que genera ingresos?",opts:["Kotler","Lambin","Porter","Drucker"],a:1},
+  {type:'mc',q:"El merchandising digital incluye:",opts:["Solo carteles en vía pública digital","Home page como vidriera, filtros claros, packaging digital y promociones","Solo descuentos temporales","Solo el empaque físico del producto"],a:1},
+  {type:'mc',q:"La forma de influencia 'autoridad' se caracteriza por:",opts:["Copiar comportamientos de otras personas","Dejar que el cliente elija libremente","Comunicación agresiva, con sanciones implícitas por no elegir","Argumentos favorables que convencen"],a:2},
+  {type:'mc',q:"¿Qué herramienta de email marketing es mencionada en el material de estudio?",opts:["Canva","Mailchimp","Hootsuite","Buffer"],a:1},
+  {type:'tf',q:"El marketing estratégico define el 'cómo hacer' y el operativo el 'qué hacer'.",a:false},
+  {type:'tf',q:"En el ciclo de vida, la etapa de declive es cuando las ventas están en su punto máximo.",a:false},
+  {type:'mc',q:"La función estratégica de la distribución incluye:",opts:["Solo transportar el producto de un lugar a otro","Acercar el producto, ser agente promotor y agregar valor","Solo almacenar stock para terceros","Solo emitir facturas y cobrar"],a:1},
+  {type:'mc',q:"¿Qué herramienta del mix comunicacional actúa principalmente en el corto plazo?",opts:["Publicidad","Marketing directo","Promoción de ventas","Fuerza de ventas"],a:2},
+  {type:'mc',q:"El CPA significa:",opts:["Costo por Alcance","Costo por Adquisición","Costo por Anuncio","Canal por Audiencia"],a:1},
+  {type:'tf',q:"La estrategia de diferenciación permite cobrar un precio premium por atributos percibidos como superiores.",a:true},
+  {type:'tf',q:"La competencia directa se da entre productos sustitutos.",a:false},
+  {type:'tf',q:"La venta indirecta permite mayor control sobre el canal de distribución.",a:false},
+  {type:'mc',q:"¿Cuánto retorna el email marketing por cada $1 invertido según DMA 2023?",opts:["$5","$15","$42","$100"],a:2},
+  {type:'mc',q:"¿Qué empresa redujo 25% su stock sin vender gracias a predicción de demanda con IA?",opts:["Amazon","Netflix","H&M","Airbnb"],a:2}
+];
+
+// ========== STATE ==========
+let progress = JSON.parse(localStorage.getItem('mkt_progress')||'{"t1":{},"t2":{},"t3":{},"t4":{},"t5":{}}');
+let timers = {};
+
+function saveProgress(){localStorage.setItem('mkt_progress',JSON.stringify(progress));}
+
+// ========== NAVIGATION ==========
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('#sidebar nav a').forEach(a=>a.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  const links = document.querySelectorAll('#sidebar nav a');
+  const map = {dashboard:0,t1:1,t2:2,t3:3,t4:4,t5:5,exam1:6,exam2:7};
+  if(map[id]!==undefined) links[map[id]].classList.add('active');
+  updateDashboard();
+  if(id==='exam1'&&!timers[1]) startTimer(1);
+  if(id==='exam2'&&!timers[2]) startTimer(2);
+}
+
+// ========== TABS ==========
+function switchTab(btn,contentId){
+  const parent = btn.closest('.page');
+  parent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  parent.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(contentId).classList.add('active');
+}
+
+// ========== ACCORDION ==========
+function toggleAcc(header){
+  const acc = header.parentElement;
+  const wasOpen = acc.classList.contains('open');
+  header.closest('.tab-content').querySelectorAll('.accordion').forEach(a=>a.classList.remove('open'));
+  if(!wasOpen) acc.classList.add('open');
+}
+
+// ========== RENDER PRACTICE ==========
+function renderTF(topicId){
+  const el = document.getElementById('tf-'+topicId);
+  if(!el||el.childElementCount>0) return;
+  TF[topicId].forEach((item,i)=>{
+    const done = progress[topicId]['tf'+i];
+    const div = document.createElement('div');
+    div.className='question-card';
+    div.id=`tfcard-${topicId}-${i}`;
+    div.innerHTML=`<div class="q-num">Pregunta ${i+1} de 5</div><div class="q-text">${item.q}</div><div class="tf-btns"><button class="tf-btn ${done===true?'correct':done===false?'wrong':''}" onclick="answerTF('${topicId}',${i},true,this)">✅ Verdadero</button><button class="tf-btn ${done===false&&item.a===false?'correct':done===true&&item.a===false?'wrong':''}" onclick="answerTF('${topicId}',${i},false,this)">❌ Falso</button></div>${done!==undefined?`<div class="feedback ${done===item.a?'ok':'no'}">${done===item.a?'✓ Correcto':'✗ Incorrecto'} — ${item.exp}</div>`:''}`;
+    el.appendChild(div);
+  });
+}
+
+function answerTF(topicId,i,answer,btn){
+  const item = TF[topicId][i];
+  const correct = answer===item.a;
+  const card = document.getElementById(`tfcard-${topicId}-${i}`);
+  card.querySelectorAll('.tf-btn').forEach(b=>{b.classList.remove('correct','wrong');});
+  btn.classList.add(correct?'correct':'wrong');
+  if(!correct){
+    const otherBtn = btn.parentElement.querySelector('.tf-btn:not(:hover)');
+    card.querySelectorAll('.tf-btn').forEach(b=>{
+      const bAns = b.textContent.includes('Verdadero');
+      if(bAns===item.a) b.classList.add('correct');
+    });
+  }
+  let fb = card.querySelector('.feedback');
+  if(!fb){fb=document.createElement('div');card.appendChild(fb);}
+  fb.className=`feedback ${correct?'ok':'no'}`;
+  fb.textContent=`${correct?'✓ Correcto':'✗ Incorrecto'} — ${item.exp}`;
+  if(progress[topicId]['tf'+i]===undefined){
+    progress[topicId]['tf'+i]=answer;
+    saveProgress();updateDashboard();
+  }
+}
+
+function renderMC(topicId){
+  const el = document.getElementById('mc-'+topicId);
+  if(!el||el.childElementCount>0) return;
+  MC[topicId].forEach((item,i)=>{
+    const done = progress[topicId]['mc'+i];
+    const div = document.createElement('div');
+    div.className='question-card';
+    div.id=`mccard-${topicId}-${i}`;
+    let opts = item.opts.map((o,j)=>`<button class="mc-opt ${done!==undefined?(j===item.a?'correct':(done===j?'wrong':'')):''}\" onclick="answerMC('${topicId}',${i},${j},this)">${String.fromCharCode(65+j)}) ${o}</button>`).join('');
+    div.innerHTML=`<div class="q-num">Pregunta ${i+1} de 5</div><div class="q-text">${item.q}</div><div class="mc-opts">${opts}</div>${done!==undefined?`<div class="feedback ${done===item.a?'ok':'no'}">${done===item.a?'✓ Correcto':'✗ Incorrecto — Respuesta correcta: '+String.fromCharCode(65+item.a)+') '+item.opts[item.a]}</div>`:''}`;
+    el.appendChild(div);
+  });
+}
+
+function answerMC(topicId,i,chosen,btn){
+  const item = MC[topicId][i];
+  const correct = chosen===item.a;
+  const card = document.getElementById(`mccard-${topicId}-${i}`);
+  card.querySelectorAll('.mc-opt').forEach((b,j)=>{
+    b.classList.remove('correct','wrong');
+    if(j===item.a) b.classList.add('correct');
+    else if(j===chosen&&!correct) b.classList.add('wrong');
+  });
+  let fb = card.querySelector('.feedback');
+  if(!fb){fb=document.createElement('div');card.appendChild(fb);}
+  fb.className=`feedback ${correct?'ok':'no'}`;
+  fb.textContent=correct?'✓ Correcto':'✗ Incorrecto — Respuesta correcta: '+String.fromCharCode(65+item.a)+') '+item.opts[item.a];
+  if(progress[topicId]['mc'+i]===undefined){
+    progress[topicId]['mc'+i]=chosen;
+    saveProgress();updateDashboard();
+  }
+}
+
+function renderDev(topicId){
+  const el = document.getElementById('dev-'+topicId);
+  if(!el||el.childElementCount>0) return;
+  DEV[topicId].forEach((item,i)=>{
+    const div = document.createElement('div');
+    div.className='dev-card';
+    div.innerHTML=`<div class="q-text">📝 ${item.q}</div><button class="show-ans-btn" onclick="toggleAns(this)">Ver respuesta modelo</button><div class="answer-box"><strong>Respuesta modelo:</strong><br><br>${item.a}</div>`;
+    el.appendChild(div);
+  });
+}
+
+function toggleAns(btn){
+  const box = btn.nextElementSibling;
+  box.classList.toggle('visible');
+  btn.textContent = box.classList.contains('visible')?'Ocultar respuesta':'Ver respuesta modelo';
+}
+
+// ========== DASHBOARD ==========
+function updateDashboard(){
+  let totalDone = 0;
+  ['t1','t2','t3','t4','t5'].forEach((t,i)=>{
+    const done = Object.keys(progress[t]).length;
+    const pct = Math.round((done/10)*100);
+    totalDone += done;
+    const bar = document.getElementById('p'+(i+1));
+    const lbl = document.getElementById('pl'+(i+1));
+    if(bar) bar.style.width=pct+'%';
+    if(lbl) lbl.textContent=`${done} / 10 ejercicios`;
+  });
+  const s = document.getElementById('stat-done');
+  if(s) s.textContent = totalDone;
+}
+
+// ========== EXAMS ==========
+function buildExam(n, questions){
+  const el = document.getElementById('exam'+n+'-questions');
+  if(el.childElementCount>0) return;
+  questions.forEach((q,i)=>{
+    const div = document.createElement('div');
+    div.className='exam-q';
+    div.id=`eq${n}-${i}`;
+    if(q.type==='tf'){
+      div.innerHTML=`<div class="q-label">Pregunta ${i+1} — Verdadero / Falso</div><div class="q-text">${q.q}</div><div class="exam-tf"><label><input type="radio" name="eq${n}${i}" value="true"><span>✅ Verdadero</span></label><label><input type="radio" name="eq${n}${i}" value="false"><span>❌ Falso</span></label></div>`;
+    } else {
+      const opts = q.opts.map((o,j)=>`<label><input type="radio" name="eq${n}${i}" value="${j}"><span>${String.fromCharCode(65+j)}) ${o}</span></label>`).join('');
+      div.innerHTML=`<div class="q-label">Pregunta ${i+1} — Múltiple Opción</div><div class="q-text">${q.q}</div><div class="exam-mc">${opts}</div>`;
+    }
+    el.appendChild(div);
+  });
+}
+
+function startTimer(n){
+  let secs = 1800;
+  const el = document.getElementById('timer'+n);
+  timers[n] = setInterval(()=>{
+    secs--;
+    const m = Math.floor(secs/60);
+    const s = secs%60;
+    el.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(secs<=300) el.classList.add('timer-warn');
+    if(secs<=0){clearInterval(timers[n]);submitExam(n);}
+  },1000);
+}
+
+function submitExam(n){
+  clearInterval(timers[n]);
+  const questions = n===1?EXAM1:EXAM2;
+  let score=0, missed=[];
+  questions.forEach((q,i)=>{
+    const inp = document.querySelector(`input[name="eq${n}${i}"]:checked`);
+    if(!inp){missed.push(i+1);return;}
+    const val = q.type==='tf'?(inp.value==='true'):parseInt(inp.value);
+    if(val===q.a) score++;
+    const card = document.getElementById(`eq${n}-${i}`);
+    card.style.background = val===q.a?'#dcfce7':'#fee2e2';
+    card.style.border = `1px solid ${val===q.a?'#16a34a':'#dc2626'}`;
+  });
+  const result = document.getElementById('result'+n);
+  result.style.display='block';
+  const pct = Math.round((score/20)*100);
+  const pass = score>=14;
+  result.innerHTML=`<h3>${pass?'🎉 ¡Aprobaste!':'📚 Seguí estudiando'}</h3><div class="score">${score}/20</div><p>${pct}% de respuestas correctas${missed.length>0?' · Sin responder: Preguntas '+missed.join(', '):''}</p><p style="margin-top:12px;font-size:.9rem">${pass?'Excelente resultado. Estás bien preparado para el parcial.':'Necesitás 14/20 para aprobar. Repasá los temas con menos puntaje.'}</p>`;
+  result.scrollIntoView({behavior:'smooth'});
+  if(pass) launchConfetti();
+}
+
+function launchConfetti(){
+  const container = document.getElementById('confetti-container');
+  const colors=['#006064','#F97316','#1B3A6B','#00ACC1','#fde047','#16a34a'];
+  for(let i=0;i<80;i++){
+    const p=document.createElement('div');
+    p.className='confetti-piece';
+    p.style.cssText=`left:${Math.random()*100}%;background:${colors[Math.floor(Math.random()*colors.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>0.5?'50%':'2px'};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*1.5}s`;
+    container.appendChild(p);
+    setTimeout(()=>p.remove(),(4000+i*50));
+  }
+}
+
+// ========== INIT ==========
+document.addEventListener('DOMContentLoaded',()=>{
+  ['t1','t2','t3','t4','t5'].forEach(t=>{
+    if(!progress[t]) progress[t]={};
+    renderTF(t);renderMC(t);renderDev(t);
+  });
+  buildExam(1,EXAM1);
+  buildExam(2,EXAM2);
+  updateDashboard();
+});
+</script>
+</body>
+</html>

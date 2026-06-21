@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>App de Estudio — CAECE</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1B3A6B,#006064 55%,#2E7D32);padding:24px;color:#fff}
+.wrap{max-width:760px;width:100%;text-align:center}
+h1{font-size:2.1rem;font-weight:800;margin-bottom:8px}
+.sub{opacity:.85;margin-bottom:34px;font-size:1rem}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:620px){.cards{grid-template-columns:1fr}h1{font-size:1.7rem}}
+.mat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);border-radius:18px;padding:30px 24px;text-decoration:none;color:#fff;transition:.22s;backdrop-filter:blur(4px);display:block}
+.mat:hover{transform:translateY(-5px);background:rgba(255,255,255,.18);box-shadow:0 14px 36px rgba(0,0,0,.28)}
+.mat .emoji{font-size:3rem;display:block;margin-bottom:14px}
+.mat h2{font-size:1.3rem;margin-bottom:8px}
+.mat p{opacity:.82;font-size:.88rem;line-height:1.5}
+.mat .tag{display:inline-block;margin-top:14px;font-size:.74rem;letter-spacing:.5px;text-transform:uppercase;background:rgba(255,255,255,.18);padding:4px 12px;border-radius:99px}
+.foot{margin-top:30px;font-size:.78rem;opacity:.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📚 App de Estudio</h1>
+  <p class="sub">Universidad CAECE · Mar del Plata — Elegí la materia que querés repasar</p>
+  <div class="cards">
+    <a class="mat" href="marketing.html">
+      <span class="emoji">📈</span>
+      <h2>Marketing II</h2>
+      <p>Marketing estratégico, producto y precio, distribución, comunicación y marketing digital con IA.</p>
+      <span class="tag">2do Parcial</span>
+    </a>
+    <a class="mat" href="contabilidad.html">
+      <span class="emoji">🧮</span>
+      <h2>Contabilidad I</h2>
+      <p>La empresa, activo/pasivo/PN, variaciones patrimoniales, resultados, partida doble y estados contables.</p>
+      <span class="tag">1er Parcial</span>
+    </a>
+  </div>
+  <p class="foot">Teoría explicada · ejemplos · práctica interactiva · exámenes simulacro</p>
+</div>
+</body>
+</html>

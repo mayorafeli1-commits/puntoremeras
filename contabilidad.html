@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contabilidad I — App de Estudio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1B3A6B;--green:#2E7D32;--green2:#43A047;--orange:#C75B12;--bg:#F1F5F4;--card:#fff;--text:#1a202c;--muted:#64748b;--ok:#16a34a;--no:#dc2626}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);display:flex;min-height:100vh}
+/* SIDEBAR */
+#sidebar{width:270px;background:linear-gradient(165deg,var(--navy),var(--green));color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100}
+#sidebar .logo{padding:22px 20px 14px;border-bottom:1px solid rgba(255,255,255,.15)}
+#sidebar .logo h1{font-size:1.1rem;font-weight:700;letter-spacing:.4px}
+#sidebar .logo p{font-size:.74rem;opacity:.75;margin-top:4px}
+#sidebar .logo a{color:#cfe8d4;font-size:.72rem;text-decoration:none;display:inline-block;margin-top:8px;padding:3px 8px;border:1px solid rgba(255,255,255,.25);border-radius:6px}
+#sidebar .logo a:hover{background:rgba(255,255,255,.12)}
+#sidebar nav{padding:10px 0 30px;flex:1}
+#sidebar nav a{display:flex;align-items:center;gap:10px;padding:10px 20px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.86rem;transition:.2s;cursor:pointer;border-left:3px solid transparent}
+#sidebar nav a:hover,#sidebar nav a.active{background:rgba(255,255,255,.13);color:#fff;border-left-color:#9ccc65}
+#sidebar nav a .icon{width:22px;text-align:center;font-size:1rem}
+#sidebar nav .section-label{padding:15px 20px 5px;font-size:.66rem;text-transform:uppercase;letter-spacing:1px;opacity:.5}
+/* MAIN */
+#main{margin-left:270px;flex:1;padding:28px;min-height:100vh;max-width:1100px}
+.page{display:none}.page.active{display:block;animation:fade .3s}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border-radius:14px;box-shadow:0 2px 12px rgba(0,0,0,.07);padding:24px;margin-bottom:20px}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px;margin-bottom:24px}
+.topic-card{background:var(--card);border-radius:14px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.07);border-top:4px solid var(--green);cursor:pointer;transition:.2s}
+.topic-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(0,0,0,.12)}
+.topic-card .emoji{font-size:2rem;margin-bottom:10px}
+.topic-card h3{font-size:1rem;margin-bottom:6px;color:var(--navy)}
+.progress-bar{height:7px;background:#e2e8f0;border-radius:99px;overflow:hidden;margin-top:10px}
+.progress-bar .fill{height:100%;background:linear-gradient(90deg,var(--green),var(--green2));border-radius:99px;transition:.6s}
+.progress-label{font-size:.74rem;color:var(--muted);margin-top:4px}
+.page-header{margin-bottom:22px}
+.page-header h2{font-size:1.55rem;color:var(--navy);font-weight:700}
+.page-header p{color:var(--muted);margin-top:4px}
+/* TABS */
+.tabs{display:flex;margin-bottom:20px;border-bottom:2px solid #e2e8f0;flex-wrap:wrap}
+.tab-btn{padding:10px 20px;background:none;border:none;cursor:pointer;font-size:.88rem;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-2px;font-weight:500}
+.tab-btn.active{color:var(--green);border-bottom-color:var(--green)}
+.tab-content{display:none}.tab-content.active{display:block}
+/* ACCORDION */
+.accordion{margin-bottom:8px;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden}
+.accordion-header{padding:14px 18px;background:#f8fafc;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.92rem;color:var(--navy)}
+.accordion-header:hover{background:#f1f5f9}
+.accordion-header .arrow{transition:.3s;font-size:.8rem}
+.accordion-body{padding:0 18px;max-height:0;overflow:hidden;transition:max-height .4s ease,padding .2s}
+.accordion.open .accordion-body{max-height:1400px;padding:14px 18px}
+.accordion.open .arrow{transform:rotate(180deg)}
+.accordion-body p,.accordion-body li{font-size:.9rem;line-height:1.7;margin-bottom:6px}
+.accordion-body ul,.accordion-body ol{padding-left:20px}
+.accordion-body strong{color:var(--navy)}
+.formula{background:#eef6ef;border:1px solid var(--green2);border-radius:8px;padding:12px 16px;margin:10px 0;font-weight:700;color:var(--green);text-align:center;font-size:1rem;letter-spacing:.5px}
+.note{background:#fff7ed;border-left:4px solid var(--orange);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:.85rem}
+.note strong{color:var(--orange)}
+.example-box{background:linear-gradient(135deg,#e8f5e9,#f1f8f4);border-left:4px solid var(--green2);border-radius:8px;padding:14px 16px;margin-bottom:12px}
+.example-box .ex-title{font-weight:700;color:var(--green);font-size:.85rem;margin-bottom:6px}
+.example-box p{font-size:.88rem;line-height:1.6}
+.mini-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.84rem}
+.mini-table th{background:var(--navy);color:#fff;padding:8px 10px;text-align:left;font-weight:600}
+.mini-table td{padding:7px 10px;border-bottom:1px solid #e2e8f0}
+.mini-table tr:nth-child(even) td{background:#f8fafc}
+/* PRACTICE */
+.question-card,.dev-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px}
+.q-num{font-size:.72rem;color:var(--muted);margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.q-text{font-size:.92rem;font-weight:600;margin-bottom:12px;line-height:1.5}
+.tf-btns{display:flex;gap:10px}
+.tf-btn,.mc-opt{padding:9px 18px;border-radius:8px;border:2px solid #e2e8f0;background:#fff;cursor:pointer;font-size:.87rem;font-weight:500;transition:.15s}
+.tf-btn:hover,.mc-opt:hover{border-color:var(--green2)}
+.tf-btn.correct,.mc-opt.correct{background:#dcfce7;border-color:var(--ok);color:var(--ok)}
+.tf-btn.wrong,.mc-opt.wrong{background:#fee2e2;border-color:var(--no);color:var(--no)}
+.mc-opts{display:flex;flex-direction:column;gap:8px}
+.mc-opt{text-align:left;padding:10px 14px}
+.feedback{font-size:.83rem;margin-top:10px;padding:8px 12px;border-radius:6px;font-weight:500}
+.feedback.ok{background:#dcfce7;color:var(--ok)}
+.feedback.no{background:#fee2e2;color:var(--no)}
+.show-ans-btn{padding:8px 16px;background:var(--green);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600}
+.show-ans-btn:hover{background:var(--green2)}
+.answer-box{background:#fff;border:1px solid var(--green2);border-radius:8px;padding:14px;margin-top:12px;display:none;font-size:.88rem;line-height:1.7}
+.answer-box.visible{display:block}
+/* CLASIFICAR / ASIENTOS */
+.op-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:14px}
+.op-card .op-head{font-size:.92rem;font-weight:600;margin-bottom:10px}
+.op-card .op-head .opn{display:inline-block;background:var(--navy);color:#fff;border-radius:6px;padding:1px 9px;margin-right:8px;font-size:.8rem}
+.var-btns{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+.var-btn{padding:7px 14px;border:2px solid #e2e8f0;background:#fff;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:600}
+.var-btn:hover{border-color:var(--green2)}
+.var-btn.correct{background:#dcfce7;border-color:var(--ok);color:var(--ok)}
+.var-btn.wrong{background:#fee2e2;border-color:var(--no);color:var(--no)}
+.reveal-box{margin-top:10px;display:none}.reveal-box.visible{display:block}
+.asiento-table{width:100%;border-collapse:collapse;font-size:.85rem;margin-top:6px}
+.asiento-table th{background:var(--green);color:#fff;padding:7px 10px;text-align:left}
+.asiento-table td{padding:6px 10px;border-bottom:1px solid #e2e8f0}
+.asiento-table td.num{text-align:right;font-variant-numeric:tabular-nums}
+.asiento-table .haber-row td:first-child{padding-left:28px;color:var(--muted)}
+/* ESTADOS */
+.est-inputs{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:14px 0}
+.est-inputs label{font-size:.82rem;font-weight:600;color:var(--navy);display:block;margin-bottom:4px}
+.est-inputs input{width:100%;padding:9px 12px;border:2px solid #e2e8f0;border-radius:8px;font-size:.9rem}
+.est-inputs input.ok{border-color:var(--ok);background:#dcfce7}
+.est-inputs input.no{border-color:var(--no);background:#fee2e2}
+.btn{padding:10px 22px;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600;color:#fff;background:var(--green)}
+.btn:hover{opacity:.92}.btn.alt{background:var(--navy)}
+.eecc-table{width:100%;border-collapse:collapse;font-size:.85rem;margin:10px 0}
+.eecc-table th{background:var(--navy);color:#fff;padding:8px 10px;text-align:left}
+.eecc-table td{padding:6px 10px;border-bottom:1px solid #e2e8f0}
+.eecc-table td.num{text-align:right;font-variant-numeric:tabular-nums}
+.eecc-table tr.total td{font-weight:700;border-top:2px solid var(--navy);background:#eef6ef}
+/* EXAM */
+.exam-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;background:linear-gradient(135deg,var(--navy),var(--green));color:#fff;padding:20px 24px;border-radius:14px}
+.exam-header h3{font-size:1.15rem}
+.timer{font-size:1.8rem;font-weight:800;font-variant-numeric:tabular-nums}
+.timer-warn{color:#fde047}
+.exam-q{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:16px;margin-bottom:12px}
+.exam-q .q-label{font-size:.72rem;color:var(--muted);margin-bottom:6px;font-weight:600}
+.exam-tf,.exam-mc{display:flex;flex-direction:column;gap:8px}.exam-tf{flex-direction:row}
+.exam-q label{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:.87rem;padding:8px 14px;border:2px solid #e2e8f0;border-radius:8px;background:#fff}
+.exam-q label:hover{border-color:var(--green2)}
+.submit-exam-btn{display:block;margin:20px auto 0;padding:14px 40px;background:linear-gradient(135deg,var(--navy),var(--green));color:#fff;border:none;border-radius:12px;font-size:1rem;font-weight:700;cursor:pointer}
+.result-box{background:linear-gradient(135deg,var(--navy),var(--green));color:#fff;border-radius:14px;padding:28px;text-align:center;margin-top:20px;display:none}
+.result-box .score{font-size:3rem;font-weight:800;margin:12px 0}
+.dash-welcome{background:linear-gradient(135deg,var(--navy),var(--green));color:#fff;border-radius:14px;padding:28px;margin-bottom:24px}
+.dash-welcome h2{font-size:1.5rem;font-weight:800;margin-bottom:6px}
+.dash-welcome p{opacity:.88}
+.dash-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px}
+.stat-card{background:#fff;border-radius:12px;padding:18px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.stat-card .n{font-size:2rem;font-weight:800;color:var(--green)}
+.stat-card .l{font-size:.78rem;color:var(--muted);margin-top:4px}
+.confetti-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999}
+.confetti-piece{position:absolute;width:10px;height:10px;top:-10px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:0}}
+@media(max-width:760px){#sidebar{width:100%;height:auto;position:relative}#main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div class="logo">
+    <h1>🧮 Contabilidad I</h1>
+    <p>CAECE Mar del Plata · 1er Parcial</p>
+    <a href="estudiar.html">← Cambiar materia</a>
+  </div>
+  <nav>
+    <a onclick="showPage('dashboard')" class="active"><span class="icon">🏠</span> Inicio</a>
+    <div class="section-label">Teoría</div>
+    <a onclick="showPage('c1')"><span class="icon">🏢</span> 1 · La empresa y la contabilidad</a>
+    <a onclick="showPage('c2')"><span class="icon">📋</span> 2 · Normas, modelos y usuarios</a>
+    <a onclick="showPage('c3')"><span class="icon">⚖️</span> 3 · Activo, Pasivo y PN</a>
+    <a onclick="showPage('c4')"><span class="icon">🔄</span> 4 · Variaciones patrimoniales</a>
+    <a onclick="showPage('c5')"><span class="icon">📊</span> 5 · Resultados</a>
+    <a onclick="showPage('c6')"><span class="icon">✍️</span> 6 · Partida doble y asientos</a>
+    <div class="section-label">Práctica integradora</div>
+    <a onclick="showPage('pr-clasificar')"><span class="icon">🧩</span> Clasificar cuentas y variaciones</a>
+    <a onclick="showPage('pr-asientos')"><span class="icon">📒</span> Asientos en el Libro Diario</a>
+    <a onclick="showPage('pr-estados')"><span class="icon">📑</span> Armar Estados Contables</a>
+    <div class="section-label">Exámenes</div>
+    <a onclick="showPage('examc1')"><span class="icon">📝</span> Parcial Simulacro 1</a>
+    <a onclick="showPage('examc2')"><span class="icon">📝</span> Parcial Simulacro 2</a>
+  </nav>
+</nav>
+
+<main id="main">
+
+<!-- DASHBOARD -->
+<div id="page-dashboard" class="page active">
+  <div class="dash-welcome">
+    <h2>Contabilidad Básica I 🧮</h2>
+    <p>Todo el primer parcial: teoría explicada, ejemplos, práctica y armado de estados contables como en los exámenes.</p>
+  </div>
+  <div class="dash-stats">
+    <div class="stat-card"><div class="n" id="stat-done">0</div><div class="l">Ejercicios completados</div></div>
+    <div class="stat-card"><div class="n">6</div><div class="l">Temas de teoría</div></div>
+    <div class="stat-card"><div class="n">3</div><div class="l">Prácticas integradoras</div></div>
+  </div>
+  <h3 style="margin-bottom:16px;color:var(--navy)">Progreso por tema</h3>
+  <div class="card-grid">
+    <div class="topic-card" onclick="showPage('c1')"><div class="emoji">🏢</div><h3>La empresa y la contabilidad</h3><p style="font-size:.8rem;color:var(--muted)">Patrimonio · Ciclos económico y financiero</p><div class="progress-bar"><div class="fill" id="p1" style="width:0%"></div></div><div class="progress-label" id="pl1">0 / 10</div></div>
+    <div class="topic-card" onclick="showPage('c2')"><div class="emoji">📋</div><h3>Normas, modelos y usuarios</h3><p style="font-size:.8rem;color:var(--muted)">Datos contables · Ejercicio · EECC</p><div class="progress-bar"><div class="fill" id="p2" style="width:0%"></div></div><div class="progress-label" id="pl2">0 / 10</div></div>
+    <div class="topic-card" onclick="showPage('c3')"><div class="emoji">⚖️</div><h3>Activo, Pasivo y PN</h3><p style="font-size:.8rem;color:var(--muted)">Ecuación contable · Características</p><div class="progress-bar"><div class="fill" id="p3" style="width:0%"></div></div><div class="progress-label" id="pl3">0 / 10</div></div>
+    <div class="topic-card" onclick="showPage('c4')"><div class="emoji">🔄</div><h3>Variaciones patrimoniales</h3><p style="font-size:.8rem;color:var(--muted)">Modificativa · Permutativa · Mixta</p><div class="progress-bar"><div class="fill" id="p4" style="width:0%"></div></div><div class="progress-label" id="pl4">0 / 10</div></div>
+    <div class="topic-card" onclick="showPage('c5')"><div class="emoji">📊</div><h3>Resultados</h3><p style="font-size:.8rem;color:var(--muted)">Devengado · Realización · Gasto vs costo</p><div class="progress-bar"><div class="fill" id="p5" style="width:0%"></div></div><div class="progress-label" id="pl5">0 / 10</div></div>
+    <div class="topic-card" onclick="showPage('c6')"><div class="emoji">✍️</div><h3>Partida doble y asientos</h3><p style="font-size:.8rem;color:var(--muted)">Debe / Haber · Libro Diario</p><div class="progress-bar"><div class="fill" id="p6" style="width:0%"></div></div><div class="progress-label" id="pl6">0 / 10</div></div>
+  </div>
+  <div class="note"><strong>Nota:</strong> según el plan de la materia, la <strong>mayorización (Libro Mayor)</strong> se ve en Contabilidad II, así que esta app no la incluye. Sí podés practicar el armado directo de los <strong>Estados Contables</strong> a partir de los saldos.</div>
+</div>
+
+<!-- ============ TEMA 1 ============ -->
+<div id="page-c1" class="page">
+  <div class="page-header"><h2>🏢 La empresa y la contabilidad</h2><p>Qué es una empresa · Patrimonio · Ciclo económico y financiero</p></div>
+  <div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'c1-t')">📖 Teoría</button><button class="tab-btn" onclick="switchTab(this,'c1-e')">💡 Ejemplos</button><button class="tab-btn" onclick="switchTab(this,'c1-p')">✏️ Práctica</button></div>
+  <div id="c1-t" class="tab-content active">
+    <div class="accordion open"><div class="accordion-header" onclick="toggleAcc(this)">¿Qué es una empresa? <span class="arrow">▾</span></div><div class="accordion-body"><p>Una empresa es una <strong>organización cuya finalidad es realizar una actividad productiva</strong>, orientada a satisfacer necesidades de sus clientes, generando ingresos por sus ventas que le permiten sostener su funcionamiento operativo.</p><p>La idea clave es que la empresa <strong>produce</strong> (bienes o servicios) y <strong>vende</strong> para obtener el dinero con el que paga sus compromisos y, si le va bien, genera ganancia.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Funcionamiento de la empresa <span class="arrow">▾</span></div><div class="accordion-body"><p>El precio facturado por las ventas genera <strong>ingresos</strong>, que una vez cobrados producen el dinero necesario para pagar las compras de bienes y servicios.</p><p>La diferencia entre ingresos y gastos define el <strong>resultado</strong>:</p><ul><li>Si los ingresos <strong>superan</strong> a los gastos → hay <strong>ganancia</strong> (parte de la cual puede distribuirse como <strong>dividendos</strong>).</li><li>Si los gastos superan a los ingresos → hay <strong>pérdida</strong>.</li></ul><p>Ante planes de expansión o crisis, la empresa puede recurrir a <strong>otras fuentes de financiación</strong> distintas de la cobranza de ventas: nuevos <strong>aportes de capital</strong> (de socios actuales o nuevos) o <strong>préstamos bancarios</strong>.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">El patrimonio <span class="arrow">▾</span></div><div class="accordion-body"><p>El <strong>PATRIMONIO</strong> expresa el conjunto de <strong>bienes económicos</strong> (materiales e inmateriales) pertenecientes a una persona o asociación, a disposición inmediata o diferida, así como las <strong>cargas</strong> que los gravan.</p><p>Dicho simple: el patrimonio es <em>lo que tengo</em> (bienes y derechos) menos <em>lo que debo</em> (obligaciones).</p><div class="formula">ACTIVO − PASIVO = PATRIMONIO NETO</div></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Separación del patrimonio (empresa vs dueños) <span class="arrow">▾</span></div><div class="accordion-body"><p>El patrimonio de la empresa se <strong>separa</strong> del patrimonio de sus dueños. Es una <strong>condición necesaria para medir su evolución en el tiempo</strong>.</p><p>Aunque están conectados (la inversión que hace el socio es parte de su patrimonio personal y le da derecho a recibir los beneficios que la empresa distribuya), contablemente se tratan como dos patrimonios distintos: el "ente" tiene vida propia.</p><table class="mini-table"><tr><th>Activo</th><th>$</th><th>Financiación</th><th>$</th></tr><tr><td>Efectivo y otros</td><td>10.000</td><td>Deudas con proveedores</td><td>100.000</td></tr><tr><td>Bienes para revender</td><td>100.000</td><td>Aportes de los socios</td><td>10.000</td></tr><tr><td><strong>TOTAL</strong></td><td><strong>110.000</strong></td><td><strong>TOTAL</strong></td><td><strong>110.000</strong></td></tr></table></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">El ciclo económico y el ciclo financiero <span class="arrow">▾</span></div><div class="accordion-body"><table class="mini-table"><tr><th>Ciclo</th><th>Consiste en</th><th>Define</th></tr><tr><td><strong>Económico</strong></td><td>Comprar → Vender bienes y/o servicios</td><td>La <strong>rentabilidad</strong> (que la venta supere el costo de las compras)</td></tr><tr><td><strong>Financiero</strong></td><td>Pagar las compras → Cobrar las ventas</td><td>El <strong>flujo de fondos</strong> (tener dinero suficiente y oportuno para cumplir los vencimientos)</td></tr></table><p>Una empresa puede ser <em>rentable</em> (ciclo económico OK) pero tener problemas <em>financieros</em> si vende a crédito y no cobra a tiempo para pagar sus deudas.</p></div></div>
+  </div>
+  <div id="c1-e" class="tab-content">
+    <div class="example-box"><div class="ex-title">🏭 Empresa que produce y vende</div><p>Una fábrica de remeras compra tela e hilos (costo), produce remeras y las vende. El dinero de las ventas paga la tela, los sueldos y, si sobra, queda como ganancia para los socios.</p></div>
+    <div class="example-box"><div class="ex-title">💸 Rentable pero sin plata (económico vs financiero)</div><p>Un comercio vende $1.000.000 con buena ganancia (ciclo económico sano), pero todo a 90 días. Mientras tanto debe pagar sueldos y proveedores hoy. Tiene un problema <strong>financiero</strong> aunque sea rentable. Por eso ambos ciclos se miran por separado.</p></div>
+    <div class="example-box"><div class="ex-title">🤝 Separación del patrimonio</div><p>Si el socio Juan pone su auto personal a nombre de la empresa como aporte, ese auto pasa al patrimonio de la empresa. La heladera de la casa de Juan <em>no</em> es de la empresa: son patrimonios separados.</p></div>
+  </div>
+  <div id="c1-p" class="tab-content"><h3 style="margin-bottom:14px;color:var(--navy)">Verdadero o Falso</h3><div id="tf-c1"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Múltiple opción</h3><div id="mc-c1"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Desarrollo</h3><div id="dev-c1"></div></div>
+</div>
+
+<!-- ============ TEMA 2 ============ -->
+<div id="page-c2" class="page">
+  <div class="page-header"><h2>📋 La contabilidad: normas, modelos y usuarios</h2><p>Definición · Datos contables · Ejercicio · Usuarios</p></div>
+  <div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'c2-t')">📖 Teoría</button><button class="tab-btn" onclick="switchTab(this,'c2-e')">💡 Ejemplos</button><button class="tab-btn" onclick="switchTab(this,'c2-p')">✏️ Práctica</button></div>
+  <div id="c2-t" class="tab-content active">
+    <div class="accordion open"><div class="accordion-header" onclick="toggleAcc(this)">¿Qué es la contabilidad? <span class="arrow">▾</span></div><div class="accordion-body"><p>La contabilidad es una <strong>disciplina técnica</strong> que, a partir del procesamiento de datos sobre la composición y evolución del patrimonio del ente, los bienes de terceros en su poder y ciertas contingencias, <strong>produce información</strong> para la toma de decisiones de administradores y terceros interesados, y para la vigilancia de los recursos y obligaciones del ente.</p><p>En criollo: la contabilidad <strong>registra y ordena</strong> lo que le pasa al patrimonio para poder <strong>informar</strong> y <strong>decidir</strong>.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Características de los datos contables <span class="arrow">▾</span></div><div class="accordion-body"><p>Para que un dato sea "<strong>contable</strong>" debe cumplir estas condiciones:</p><ul><li><strong>a)</strong> Ser susceptible de un <strong>valor monetario objetivo y fiable</strong> (se puede medir en dinero de manera verificable).</li><li><strong>b)</strong> Referirse a <strong>variaciones del patrimonio</strong> originadas en: (i) <strong>transacciones con terceros</strong> (compras, ventas); (ii) el <strong>contexto</strong> (ej. variación del tipo de cambio); (iii) <strong>cambios internos</strong> (ej. el crecimiento natural de una siembra).</li><li><strong>c)</strong> Referirse a <strong>bienes de terceros</strong> en poder del ente (ej. mercadería recibida en consignación).</li><li><strong>d)</strong> Incluir <strong>contingencias negativas probables</strong>, aunque no estén confirmadas (ej. indicios de incobrabilidad de un cliente, o un juicio con alta probabilidad de condena).</li></ul><p>El proceso contable es <strong>cronológico</strong> (ordena los hechos según su fecha) y <strong>sistemático</strong> (anota en cuentas los movimientos de un mismo concepto).</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">El ejercicio contable <span class="arrow">▾</span></div><div class="accordion-body"><p>El <strong>ejercicio</strong> es la división de la marcha de la empresa en <strong>períodos de igual duración</strong>, normalmente anuales, para generar información contable periódica. Tiene un <strong>inicio</strong>, un <strong>desarrollo</strong> y un <strong>cierre</strong>.</p><table class="mini-table"><tr><th>1/1</th><th>1/1 al 31/12</th><th>31/12</th><th>1/1</th><th>30/4</th></tr><tr><td>Inicio del ejercicio</td><td>Desarrollo</td><td>Cierre</td><td>Apertura del nuevo ejercicio</td><td>Presentación de los EECC</td></tr></table><p>Que los ejercicios tengan <strong>igual duración</strong> permite la <strong>comparabilidad</strong> de la información entre uno y otro.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">La información contable: EECC e informes internos <span class="arrow">▾</span></div><div class="accordion-body"><p>Los <strong>Estados Contables (EECC)</strong> son la información de salida que se presenta a terceros. <strong>Responsables de su preparación y emisión:</strong></p><ul><li>En la <strong>S.A.</strong>: el presidente del directorio.</li><li>En la <strong>S.R.L.</strong>: el gerente.</li><li>En una <strong>asociación civil</strong>: los integrantes de la comisión directiva (normalmente presidente y tesorero).</li></ul></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Usuarios de la información contable <span class="arrow">▾</span></div><div class="accordion-body"><table class="mini-table"><tr><th>Internos</th><th>Externos</th></tr><tr><td>Administradores · Fiscalizadores</td><td>Propietarios ajenos a la administración · el Estado · proveedores · bancos · sindicatos · otros</td></tr></table><p>Un mismo informe puede tener usuarios cruzados: un <strong>banco</strong> (externo) puede pedir un informe interno de ventas para evaluar un crédito; o el área impositiva de la empresa (interno) puede usar el <strong>Estado de Resultados</strong> (EECC) para la declaración jurada.</p></div></div>
+  </div>
+  <div id="c2-e" class="tab-content">
+    <div class="example-box"><div class="ex-title">📦 Bienes de terceros (consignación)</div><p>Una librería recibe libros en consignación: no son suyos, pero están en su poder. Es un dato contable (característica c): hay que informarlo aunque la propiedad sea de la editorial.</p></div>
+    <div class="example-box"><div class="ex-title">⚠️ Contingencia negativa probable</div><p>Un cliente que debe $200.000 entró en cesación de pagos y es muy probable que no cobremos. Aunque todavía no es seguro, por prudencia se reconoce la posible incobrabilidad (característica d).</p></div>
+    <div class="example-box"><div class="ex-title">🏦 Usuario externo</div><p>El banco, antes de dar un préstamo, pide los Estados Contables de la empresa para ver si es solvente. El banco es un usuario <strong>externo</strong>.</p></div>
+  </div>
+  <div id="c2-p" class="tab-content"><h3 style="margin-bottom:14px;color:var(--navy)">Verdadero o Falso</h3><div id="tf-c2"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Múltiple opción</h3><div id="mc-c2"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Desarrollo</h3><div id="dev-c2"></div></div>
+</div>
+
+<!-- ============ TEMA 3 ============ -->
+<div id="page-c3" class="page">
+  <div class="page-header"><h2>⚖️ Activo, Pasivo y Patrimonio Neto</h2><p>La ecuación contable y las características de cada elemento</p></div>
+  <div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'c3-t')">📖 Teoría</button><button class="tab-btn" onclick="switchTab(this,'c3-e')">💡 Ejemplos</button><button class="tab-btn" onclick="switchTab(this,'c3-p')">✏️ Práctica</button></div>
+  <div id="c3-t" class="tab-content active">
+    <div class="accordion open"><div class="accordion-header" onclick="toggleAcc(this)">La ecuación contable básica <span class="arrow">▾</span></div><div class="accordion-body"><div class="formula">ACTIVO − PASIVO = PATRIMONIO NETO</div><p>También se escribe como <strong>ACTIVO = PASIVO + PATRIMONIO NETO</strong>. Esta igualdad <strong>siempre se cumple</strong>: todo lo que la empresa tiene (Activo) está financiado por terceros (Pasivo) o por los dueños (PN). Es la base de toda la registración.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Activo: definición y características <span class="arrow">▾</span></div><div class="accordion-body"><p>El <strong>activo</strong> es el conjunto de <strong>recursos económicos</strong> en poder de la empresa, del cual se espera obtener <strong>beneficios o rendimientos en el futuro</strong>.</p><p><strong>Características que debe poseer un recurso para ser activo:</strong></p><ul><li><strong>Control de los beneficios económicos:</strong> el bien tiene <strong>valor de cambio</strong> (puede canjearse por dinero u otro activo, o cancelar una obligación) o <strong>valor de uso</strong> (se emplea en la actividad productiva).</li><li><strong>Se origina en un hecho anterior:</strong> compra, permuta, aporte de capital, donación, fabricación, extracción, crecimiento natural, etc. Una transacción que <em>se espera</em> ocurra en el futuro <strong>no genera</strong>, por sí misma, un activo (RT 16).</li><li><strong>Medida monetaria objetiva y verificable:</strong> sólo se contabiliza si admite una medición fiable (ej. el valor de una factura emitida por un proveedor independiente).</li></ul></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Tipos de activos <span class="arrow">▾</span></div><div class="accordion-body"><table class="mini-table"><tr><th>Clasificación</th><th>Detalle</th></tr><tr><td>Identificables / no identificables</td><td><strong>Identificable:</strong> puede separarse de la empresa para su venta. <strong>No identificable:</strong> sólo se realiza vendiendo la empresa en su conjunto (ej. la "llave" o valor llave autogenerado por buena gestión).</td></tr><tr><td>Monetarios / no monetarios</td><td><strong>Monetarios:</strong> efectivo y derechos de cobro en cantidades fijas de moneda nacional. <strong>No monetarios:</strong> cambian su valor en pesos con el tiempo (moneda extranjera, mercaderías, bienes de uso).</td></tr><tr><td>Materiales / inmateriales</td><td><strong>Materiales:</strong> tienen cuerpo físico perceptible. <strong>Inmateriales o intangibles:</strong> franquicias, concesiones, licencias de marca (no tienen cuerpo físico).</td></tr></table></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Pasivo: definición y características <span class="arrow">▾</span></div><div class="accordion-body"><p>El <strong>pasivo</strong> es una <strong>obligación de contenido económico</strong>, a cancelar entregando dinero u otros bienes, o prestando un servicio.</p><p><strong>Características:</strong></p><ul><li>Su cancelación <strong>no depende de la voluntad del deudor</strong> (resulta ineludible).</li><li>Puede ser <strong>cierta o probable</strong>.</li><li>Tiene un <strong>plazo de vencimiento</strong> determinado o determinable.</li><li>Su existencia proviene de un <strong>hecho ya ocurrido</strong>.</li></ul></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Formas de cancelación del pasivo <span class="arrow">▾</span></div><div class="accordion-body"><ul><li><strong>Con dinero:</strong> el peso tiene poder cancelatorio inmediato e ilimitado; el acreedor no puede negarse a recibirlo, salvo pacto en contrario.</li><li><strong>Con otros bienes (pago en especie):</strong> ej. cancelar con moneda extranjera pactada, o entregando mercaderías para cumplir un anticipo recibido.</li><li><strong>Prestando un servicio:</strong> el deudor queda liberado al cumplir el servicio en las condiciones pactadas.</li></ul></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Otras alternativas de cancelación o transformación <span class="arrow">▾</span></div><div class="accordion-body"><ul><li><strong>Refinanciación:</strong> da lugar a un <strong>nuevo pasivo</strong> (se reemplaza una deuda por otra).</li><li><strong>Capitalización:</strong> el acreedor se transforma en <strong>socio</strong> (la deuda pasa a ser capital).</li><li><strong>Prescripción liberatoria:</strong> por el transcurso de un plazo legal sin que el acreedor reclame el cobro.</li><li><strong>Condonación:</strong> el acreedor <strong>perdona</strong> la deuda.</li></ul></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Pasivo contingente <span class="arrow">▾</span></div><div class="accordion-body"><p>Si en el presente hay <strong>alta probabilidad</strong> de que se produzca un hecho futuro que genere un pasivo cierto, debe <strong>reconocérselo contablemente</strong> sin esperar su concreción, actuando con <strong>prudencia</strong> (sin caer en conservadurismo extremo).</p><div class="note"><strong>Ejemplo:</strong> una demanda judicial donde el asesor letrado estima alta probabilidad de condena.</div></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Patrimonio neto y roles del aportante <span class="arrow">▾</span></div><div class="accordion-body"><p>El <strong>patrimonio neto</strong> es el valor <strong>real y residual</strong> de la empresa: la diferencia entre lo que se posee (Activo) y lo que se debe (Pasivo). Representa la inversión de los propietarios más las ganancias retenidas.</p><p>Quien entrega recursos a la empresa puede asumir distintos <strong>roles</strong>:</p><table class="mini-table"><tr><th>Rol</th><th>Efecto para la empresa</th></tr><tr><td><strong>Acreedor</strong></td><td>La empresa queda obligada a devolver → es un <strong>pasivo cierto</strong>.</td></tr><tr><td><strong>Donatario</strong></td><td>Recibe recursos sin obligación de devolución ni de reconocer participación → <strong>resultado positivo (ganancia)</strong>.</td></tr><tr><td><strong>Capitalista</strong></td><td>No hay obligación de devolver, pero sí se reconoce una <strong>mayor participación en el capital</strong>.</td></tr></table><p>El aporte de capital <strong>no obliga a su devolución</strong>, salvo casos puntuales. Cuando los socios deciden <strong>no retirar</strong> utilidades líquidas y realizadas (capitalizándolas o reservándolas), esa decisión es otra forma de financiar a la empresa.</p><table class="mini-table"><tr><th>Aportes de los propietarios</th><th>Resultados acumulados</th></tr><tr><td>Aportes capitalizados (Capital Social) · Aportes no capitalizados</td><td>Utilidades diferidas · Ganancias reservadas · No asignados</td></tr></table></div></div>
+  </div>
+  <div id="c3-e" class="tab-content">
+    <div class="example-box"><div class="ex-title">🚚 Activo por valor de uso</div><p>El camión de reparto de la empresa no se vende, pero se usa en la actividad productiva (reparte mercadería). Tiene <strong>valor de uso</strong> → es un activo (Bienes de uso).</p></div>
+    <div class="example-box"><div class="ex-title">💰 Activo por valor de cambio</div><p>Las mercaderías en depósito se pueden vender por dinero. Tienen <strong>valor de cambio</strong> → activo.</p></div>
+    <div class="example-box"><div class="ex-title">🔮 Lo futuro NO es activo</div><p>"El mes que viene voy a vender" no genera un activo hoy. Recién cuando la operación ocurre (hecho anterior) nace el activo. Una expectativa no se contabiliza.</p></div>
+    <div class="example-box"><div class="ex-title">⚖️ Pasivo ineludible</div><p>Le debo $500.000 a un proveedor con vencimiento a 30 días. Aunque yo no "quiera" pagar, la obligación existe igual: su cancelación no depende de mi voluntad. Es un pasivo.</p></div>
+    <div class="example-box"><div class="ex-title">🎁 Donatario = ganancia</div><p>El Municipio le dona a la empresa un terreno sin pedir nada a cambio. No hay que devolverlo ni se reconoce más capital de un socio → genera un <strong>resultado positivo</strong> (ganancia).</p></div>
+  </div>
+  <div id="c3-p" class="tab-content"><h3 style="margin-bottom:14px;color:var(--navy)">Verdadero o Falso</h3><div id="tf-c3"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Múltiple opción</h3><div id="mc-c3"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Desarrollo</h3><div id="dev-c3"></div></div>
+</div>
+
+<!-- ============ TEMA 4 ============ -->
+<div id="page-c4" class="page">
+  <div class="page-header"><h2>🔄 Variaciones patrimoniales</h2><p>Modificativas · Permutativas · Mixtas · Cómo reconocerlas</p></div>
+  <div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'c4-t')">📖 Teoría</button><button class="tab-btn" onclick="switchTab(this,'c4-e')">💡 Ejemplos</button><button class="tab-btn" onclick="switchTab(this,'c4-p')">✏️ Práctica</button></div>
+  <div id="c4-t" class="tab-content active">
+    <div class="accordion open"><div class="accordion-header" onclick="toggleAcc(this)">¿Qué son las variaciones patrimoniales? <span class="arrow">▾</span></div><div class="accordion-body"><p>Son <strong>cambios cualitativos y/o cuantitativos</strong> provocados en el patrimonio de un ente, por diferentes hechos o actos ciertos (o con alta probabilidad de ocurrencia), <strong>cuantificables objetivamente en moneda</strong>.</p><p>El patrimonio se modifica por hechos originados en: <strong>transacciones con terceros</strong>, transacciones con los <strong>propietarios</strong>, situaciones del <strong>contexto</strong> o <strong>sucesos internos</strong>.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Variaciones MODIFICATIVAS <span class="arrow">▾</span></div><div class="accordion-body"><p>Son las que <strong>VARÍAN el total del Patrimonio Neto</strong>. Aparecen cuando hay un <strong>resultado</strong> (ingreso/ganancia o gasto/pérdida) o un movimiento con los propietarios (aportes, retiros).</p><p><strong>Ejemplos:</strong> aportes de capital, ventas de mercaderías, alquiler devengado del local, recibir una factura de un servicio.</p><div class="note"><strong>Idea fuerte:</strong> si toca una cuenta de <strong>resultado</strong> (R+ o R−) o el capital, el total del PN cambia → es <strong>modificativa</strong>.</div></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Variaciones PERMUTATIVAS <span class="arrow">▾</span></div><div class="accordion-body"><p>Son las que <strong>NO varían el total del Patrimonio Neto</strong>. Solo cambian la <strong>composición</strong> del activo y/o pasivo (una cuenta sube y otra baja por el mismo importe, sin tocar resultados).</p><p><strong>Ejemplos:</strong> capitalización de utilidades, compra de mercaderías (a crédito o al contado), pago de una deuda, depósito de efectivo en el banco, cobro a un cliente.</p><div class="note"><strong>Idea fuerte:</strong> si solo se mueven Activo y Pasivo (compras, cobros, pagos) <strong>sin resultados</strong>, el total del PN no cambia → es <strong>permutativa</strong>.</div></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Variaciones MIXTAS <span class="arrow">▾</span></div><div class="accordion-body"><p>Combinan una <strong>permutativa</strong> y una <strong>modificativa</strong> en un mismo hecho.</p><p><strong>Ejemplo típico:</strong> la <strong>venta de mercaderías</strong>. Se permutan activos (entra un derecho de cobro o efectivo, sale mercadería) y a la vez nace un <strong>resultado</strong> (la ganancia o pérdida por vender por encima/por debajo del costo). Por eso la venta con su costo es <strong>mixta</strong>.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Notación que se usa en el parcial <span class="arrow">▾</span></div><div class="accordion-body"><p>En los ejercicios de clasificación se usan estas siglas para indicar qué pasa con cada cuenta:</p><table class="mini-table"><tr><th>Sigla</th><th>Significa</th></tr><tr><td><strong>Aa</strong></td><td>Activo aumenta (A+)</td></tr><tr><td><strong>Ad</strong></td><td>Activo disminuye (A−)</td></tr><tr><td><strong>Pa</strong></td><td>Pasivo aumenta (P+)</td></tr><tr><td><strong>Pd</strong></td><td>Pasivo disminuye (P−)</td></tr><tr><td><strong>RP / R+</strong></td><td>Resultado Positivo (ingreso/ganancia)</td></tr><tr><td><strong>RN / R−</strong></td><td>Resultado Negativo (gasto/pérdida)</td></tr></table><p>Combinaciones frecuentes en los exámenes:</p><ul><li><strong>Aa = Pa</strong> → permutativa (ej. compro mercadería a crédito)</li><li><strong>Aa = Ad</strong> → permutativa (ej. deposito efectivo en el banco)</li><li><strong>Pd = Ad</strong> → permutativa (ej. pago una deuda en efectivo)</li><li><strong>Pd = Pa</strong> → permutativa (ej. pago una deuda firmando un cheque a 30 días)</li><li><strong>R− = Pa</strong> → modificativa (ej. recibo una factura de servicio impaga)</li><li><strong>Aa = R+</strong> → modificativa (ej. gano intereses)</li></ul></div></div>
+  </div>
+  <div id="c4-e" class="tab-content">
+    <div class="example-box"><div class="ex-title">🟢 Modificativa — Aporte de capital</div><p>Dos socios aportan $100.000. Entra Caja (A+) y sube Capital Social (PN+). El total del PN <strong>aumenta</strong> → modificativa. Ecuación: A(+) = PN(+).</p></div>
+    <div class="example-box"><div class="ex-title">🔵 Permutativa — Compra a crédito</div><p>Compro mercaderías por $200.000 en cuenta corriente. Entra Mercadería (A+) y sube Proveedores (P+). El PN total no cambia → permutativa. Ecuación: A(+) = P(+).</p></div>
+    <div class="example-box"><div class="ex-title">🟣 Mixta — Venta de mercaderías</div><p>Vendo mercadería que costó $100.000 en $200.000 a crédito. Parte permutativa: sale mercadería (A−), entra Deudores (A+). Parte modificativa: nace la Venta (R+ $200.000) y el CMV (R− $100.000). Resultado neto de ganancia $100.000 → el PN cambia. Es <strong>mixta</strong>.</p></div>
+    <div class="example-box"><div class="ex-title">🔵 Permutativa — Pago con cheque diferido</div><p>Tengo una deuda y la cancelo entregando un cheque de pago diferido a 30 días. Baja "Proveedores" (Pd) y sube "Cheques a pagar / Obligaciones a pagar" (Pa). Cambia un pasivo por otro: <strong>Pd = Pa</strong>, permutativa.</p></div>
+  </div>
+  <div id="c4-p" class="tab-content"><h3 style="margin-bottom:14px;color:var(--navy)">Verdadero o Falso</h3><div id="tf-c4"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Múltiple opción</h3><div id="mc-c4"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Desarrollo</h3><div id="dev-c4"></div></div>
+</div>
+
+<!-- ============ TEMA 5 ============ -->
+<div id="page-c5" class="page">
+  <div class="page-header"><h2>📊 Resultados: ingresos, gastos, ganancias y pérdidas</h2><p>Devengado · Realización · Gasto vs costo · Reglas de imputación</p></div>
+  <div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'c5-t')">📖 Teoría</button><button class="tab-btn" onclick="switchTab(this,'c5-e')">💡 Ejemplos</button><button class="tab-btn" onclick="switchTab(this,'c5-p')">✏️ Práctica</button></div>
+  <div id="c5-t" class="tab-content active">
+    <div class="accordion open"><div class="accordion-header" onclick="toggleAcc(this)">Ingresos, gastos, ganancias y pérdidas <span class="arrow">▾</span></div><div class="accordion-body"><table class="mini-table"><tr><th>Cuenta</th><th>Definición</th></tr><tr><td><strong>Ingresos (+)</strong></td><td>Aumentos del PN no originados en aportes de los propietarios. Provienen, por lo general, de la <strong>venta de bienes/servicios</strong> a terceros (actividades <strong>principales</strong>). Para obtenerlos se generan gastos.</td></tr><tr><td><strong>Gastos (−)</strong></td><td>Disminuciones del PN vinculadas directa o indirectamente con la generación de ingresos. <strong>No hay ingresos sin gastos, ni gastos sin ingresos.</strong></td></tr><tr><td><strong>Ganancias (+)</strong></td><td>Aumentos del PN originados en operaciones <strong>secundarias o accesorias</strong> (salvo aportes de propietarios).</td></tr><tr><td><strong>Pérdidas (−)</strong></td><td>Disminuciones del PN originadas en operaciones <strong>secundarias o accesorias</strong> (salvo distribuciones a propietarios).</td></tr></table><p>Diferencia clave: ingresos/gastos = actividad <strong>principal</strong>; ganancias/pérdidas = actividad <strong>secundaria</strong>.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Gasto vs Costo <span class="arrow">▾</span></div><div class="accordion-body"><table class="mini-table"><tr><th>Concepto</th><th>Definición</th></tr><tr><td><strong>Gasto</strong></td><td>Sacrificio de recursos económicos efectuado para obtener ingresos. Representa capacidad <strong>ya agotada</strong> para generar ingresos.</td></tr><tr><td><strong>Costo</strong></td><td>Todo sacrificio económico para obtener un bien o servicio. Mientras conserve su utilidad económica, forma parte del <strong>Activo</strong>; cuando se consume, se transforma en <strong>gasto</strong>.</td></tr></table><div class="note"><strong>Idea fuerte:</strong> un bien comprado es un <strong>costo</strong> (Activo) mientras conserve su utilidad; se vuelve <strong>gasto</strong> recién cuando se consume. Ej.: el "costo de las mercaderías vendidas" (CMV) ya es un gasto, porque esa mercadería se entregó.</div></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">El devengado y el hecho generador <span class="arrow">▾</span></div><div class="accordion-body"><p>El <strong>devengado</strong> es aplicable a toda variación patrimonial producida por transacciones con propietarios o por resultados; debe reconocerse en el <strong>período contable donde se produjo su hecho generador</strong>, <strong>sin importar si se produjo la entrada o salida de fondos</strong> relacionada.</p><p>Es decir: lo que importa es <strong>cuándo ocurre el hecho</strong>, no cuándo se cobra o se paga.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">El Principio de Realización (¡clave!) <span class="arrow">▾</span></div><div class="accordion-body"><p>Los resultados se producen por <strong>hechos generadores</strong> que pueden ser transacciones con terceros, hechos del contexto o sucesos internos.</p><p>En las <strong>transacciones con terceros</strong>, el ingreso se reconoce <strong>cuando se deja de tener el control de los beneficios del bien entregado</strong> → eso es el <strong>Principio de Realización</strong>.</p><div class="note"><strong>Definición:</strong> los resultados económicos se registran cuando la operación que los origina queda <strong>perfeccionada desde el punto de vista de la legislación o de las prácticas comerciales</strong>, y se hayan ponderado todos los riesgos inherentes a la operación. El concepto "realizado" participa del concepto de "devengado".</div><p><strong>En una venta de mercaderías, el hecho generador es la ENTREGA</strong> de la mercadería (no el cobro ni el anticipo).</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Las tres reglas para imputar los gastos <span class="arrow">▾</span></div><div class="accordion-body"><ul><li><strong>a) Vinculación directa con un ingreso particular:</strong> el gasto se imputa al período en que ese ingreso se reconoce. Ej.: toda venta genera un ingreso y el <strong>costo de la mercadería vendida</strong> se reconoce junto con esa venta.</li><li><strong>b) Vinculación con un período de tiempo:</strong> si lo anterior no es posible, se carga al período correspondiente. Ej.: los <strong>sueldos del mes</strong> del personal administrativo.</li><li><strong>c) Cuando se toma conocimiento:</strong> si no se cumple ninguna de las anteriores. Ej.: un <strong>faltante de mercaderías</strong> detectado en un recuento físico.</li></ul></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Ingreso vs entrada de dinero <span class="arrow">▾</span></div><div class="accordion-body"><p>El término <strong>ingreso</strong> tiene un sentido distinto al de <strong>entrada de dinero</strong>:</p><ul><li><strong>Ingreso:</strong> es un resultado devengado, independiente de su cobro.</li><li><strong>Entrada de dinero:</strong> proviene de las cobranzas.</li></ul><p>Solo coinciden si el ingreso se cobra al contado.</p><table class="mini-table"><tr><th>Situación</th><th>Tratamiento</th></tr><tr><td>Costo de mercadería comprada, almacenada en depósito</td><td><strong>Activo</strong></td></tr><tr><td>Costo de mercadería entregada al cliente al venderla</td><td><strong>Gasto</strong> (CMV)</td></tr></table></div></div>
+  </div>
+  <div id="c5-e" class="tab-content">
+    <div class="example-box"><div class="ex-title">📅 Devengado — Alquiler</div><p>El alquiler de marzo se devenga en marzo aunque lo pague en abril. El gasto va al período donde ocurrió el hecho (uso del local en marzo), sin importar cuándo sale la plata.</p></div>
+    <div class="example-box"><div class="ex-title">📦 Realización — La venta se reconoce al entregar</div><p>Un cliente paga un anticipo el 05/05, la mercadería se entrega el 15/05 y el resto se cobra el 20/05. <strong>La Venta (R+) se devenga el 15/05</strong>, cuando se entrega la mercadería (principio de realización). El anticipo del 05/05 no es venta todavía: es un <strong>pasivo</strong> (anticipo de clientes).</p></div>
+    <div class="example-box"><div class="ex-title">🔗 Regla A — El CMV acompaña a la venta</div><p>En ese mismo caso, el <strong>CMV (R−) también se devenga el 15/05</strong>, junto con la venta, por la regla de vinculación directa: el costo de lo vendido se imputa cuando se reconoce el ingreso de la venta.</p></div>
+    <div class="example-box"><div class="ex-title">📥 Ingreso ≠ entrada de dinero</div><p>Vendo a crédito el 10/06: ahí hay <strong>ingreso</strong> (devengado), pero todavía no hay entrada de dinero. La plata entra recién cuando el cliente paga, el 10/07.</p></div>
+  </div>
+  <div id="c5-p" class="tab-content"><h3 style="margin-bottom:14px;color:var(--navy)">Verdadero o Falso</h3><div id="tf-c5"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Múltiple opción</h3><div id="mc-c5"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Desarrollo</h3><div id="dev-c5"></div></div>
+</div>
+
+<!-- ============ TEMA 6 ============ -->
+<div id="page-c6" class="page">
+  <div class="page-header"><h2>✍️ Registración contable: la partida doble</h2><p>Debe y Haber · Cuentas · Asientos en el Libro Diario</p></div>
+  <div class="tabs"><button class="tab-btn active" onclick="switchTab(this,'c6-t')">📖 Teoría</button><button class="tab-btn" onclick="switchTab(this,'c6-e')">💡 Ejemplos</button><button class="tab-btn" onclick="switchTab(this,'c6-p')">✏️ Práctica</button></div>
+  <div id="c6-t" class="tab-content active">
+    <div class="accordion open"><div class="accordion-header" onclick="toggleAcc(this)">La partida doble y el Debe / Haber <span class="arrow">▾</span></div><div class="accordion-body"><p>En todo asiento, la suma del <strong>Debe</strong> es igual a la suma del <strong>Haber</strong> (partida doble). Cada cuenta aumenta o disminuye según su naturaleza:</p><table class="mini-table"><tr><th>Activo y Gastos (o Pérdidas) → DEBE</th><th>Pasivo, Capital e Ingresos (o Ganancias) → HABER</th></tr><tr><td>Tienen saldo <strong>DEUDOR</strong>. Aumentan con <strong>débitos</strong>, disminuyen con <strong>créditos</strong>.</td><td>Tienen saldo <strong>ACREEDOR</strong>. Aumentan con <strong>créditos</strong>, disminuyen con <strong>débitos</strong>.</td></tr></table><p><strong>Acciones:</strong> anotar en el Debe = <strong>debitar</strong> o cargar; anotar en el Haber = <strong>acreditar</strong> o abonar. El <strong>saldo</strong> es la diferencia entre la suma de débitos y la de créditos.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">La cuenta <span class="arrow">▾</span></div><div class="accordion-body"><p>La <strong>cuenta</strong> es el soporte (gráfico, virtual o impreso) donde se anotan los datos contables referidos a un <strong>mismo objeto</strong> y sus referencias aclaratorias (fecha, detalle, documento, número de asiento).</p><p><strong>Análisis de una cuenta — ejemplo "Caja":</strong></p><ul><li><strong>Su saldo representa:</strong> la existencia de dinero en efectivo (billetes, monedas y equivalentes) emitido en el país.</li><li><strong>Se debita:</strong> por entradas de efectivo, correcciones de errores y en el asiento de apertura.</li><li><strong>Se acredita:</strong> por salidas de efectivo, correcciones de errores y en el asiento de cierre.</li></ul></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">El asiento contable y el Libro Diario <span class="arrow">▾</span></div><div class="accordion-body"><p>El <strong>asiento contable</strong> es la anotación, en un libro de contabilidad, de un hecho económico con contenido patrimonial. El <strong>Libro Diario</strong> es el registro <strong>cronológico</strong> donde los hechos se anotan en el orden en que suceden.</p><table class="asiento-table"><tr><th>Fecha</th><th>Cuenta</th><th class="num">Debe</th><th class="num">Haber</th></tr><tr><td>1 Feb</td><td>Caja</td><td class="num">10.000</td><td class="num"></td></tr><tr class="haber-row"><td></td><td>a Capital Social</td><td class="num"></td><td class="num">10.000</td></tr><tr><td>3 Feb</td><td>Mercaderías</td><td class="num">8.000</td><td class="num"></td></tr><tr class="haber-row"><td></td><td>a Proveedores</td><td class="num"></td><td class="num">8.000</td></tr></table><p>La cuenta que va en el <strong>Haber</strong> se escribe con la palabra "<strong>a</strong>" adelante y suele ir indentada.</p></div></div>
+    <div class="accordion"><div class="accordion-header" onclick="toggleAcc(this)">Tipos de cuentas <span class="arrow">▾</span></div><div class="accordion-body"><table class="mini-table"><tr><th>Clasificación</th><th>Detalle</th></tr><tr><td><strong>Patrimoniales</strong></td><td>Del Activo, del Pasivo y del PN (incluye "Resultado del Ejercicio"). Existen además cuentas <strong>regularizadoras</strong>, que corrigen la medición de otra cuenta en sentido contrario.</td></tr><tr><td><strong>De resultados</strong></td><td>Ingresos, Ganancias, Gastos y Pérdidas. Acumulan movimientos durante el ejercicio y se cancelan (refunden) al cierre.</td></tr><tr><td><strong>De orden</strong></td><td>Registran bienes de terceros en poder del ente (ej. consignación) o contingencias de probabilidad indefinida (ej. avales otorgados).</td></tr><tr><td><strong>De movimiento</strong></td><td>Acumulan el flujo de ciertas operaciones durante un lapso y se cancelan al cierre contra la cuenta del concepto final (ej. "Compras" se cancela contra "Mercaderías").</td></tr></table></div></div>
+    <div class="note"><strong>Recordá:</strong> la <strong>mayorización</strong> (pasar los asientos al Libro Mayor) y el <strong>balance de sumas y saldos</strong> corresponden a Contabilidad II, así que no entran en este parcial. Acá practicamos hasta el armado de los <strong>Estados Contables</strong> a partir de los saldos.</div>
+  </div>
+  <div id="c6-e" class="tab-content">
+    <div class="example-box"><div class="ex-title">💵 Caja se debita y se acredita</div><p>Cuando un socio aporta efectivo, <strong>Caja se debita</strong> (entra plata). Cuando pago un gasto en efectivo, <strong>Caja se acredita</strong> (sale plata).</p></div>
+    <div class="example-box"><div class="ex-title">✍️ Asiento de compra a crédito</div><p>Compro mercadería por $8.000 en cuenta corriente: <br><strong>Mercaderías</strong> 8.000 (Debe) <br>&nbsp;&nbsp;&nbsp; a <strong>Proveedores</strong> 8.000 (Haber). <br>Activo aumenta (debe) y Pasivo aumenta (haber).</p></div>
+    <div class="example-box"><div class="ex-title">🔵 Saldo deudor vs acreedor</div><p>Mercaderías (Activo) tiene saldo <strong>deudor</strong>: aumenta por el Debe. Proveedores (Pasivo) tiene saldo <strong>acreedor</strong>: aumenta por el Haber.</p></div>
+  </div>
+  <div id="c6-p" class="tab-content"><h3 style="margin-bottom:14px;color:var(--navy)">Verdadero o Falso</h3><div id="tf-c6"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Múltiple opción</h3><div id="mc-c6"></div><h3 style="margin:20px 0 14px;color:var(--navy)">Desarrollo</h3><div id="dev-c6"></div></div>
+</div>
+
+<!-- ============ PRÁCTICA: CLASIFICAR ============ -->
+<div id="page-pr-clasificar" class="page">
+  <div class="page-header"><h2>🧩 Clasificar cuentas y variaciones</h2><p>Como el ejercicio 3 del parcial: identificá el tipo de variación y revisá las cuentas que intervienen.</p></div>
+  <div class="note">Para cada operación, elegí si la variación es <strong>Permutativa</strong>, <strong>Modificativa</strong> o <strong>Mixta</strong>. Después tocá "Ver cuentas" para revisar las cuentas, la variación de cada una y el documento.</div>
+  <div id="clasificar-list"></div>
+</div>
+
+<!-- ============ PRÁCTICA: ASIENTOS ============ -->
+<div id="page-pr-asientos" class="page">
+  <div class="page-header"><h2>📒 Asientos en el Libro Diario</h2><p>Como el ejercicio 4 del parcial: pensá el asiento, clasificá la variación y verificá con la solución.</p></div>
+  <div class="note">Primero clasificá la variación (Permutativa / Modificativa / Mixta), después tocá "Ver asiento" para comparar con la registración correcta en Debe y Haber.</div>
+  <div id="asientos-list"></div>
+</div>
+
+<!-- ============ PRÁCTICA: ESTADOS CONTABLES ============ -->
+<div id="page-pr-estados" class="page">
+  <div class="page-header"><h2>📑 Armar Estados Contables</h2><p>Practicá el armado del Estado de Situación Patrimonial y el Estado de Resultados, como en la parte final del parcial.</p></div>
+  <div class="note"><strong>Cómo se hace:</strong> con los saldos finales de cada cuenta se separan en Activo, Pasivo, Patrimonio Neto y Resultados. El <strong>Resultado del ejercicio</strong> = Ingresos − Egresos, y se suma al PN. Siempre debe cumplirse <strong>Activo = Pasivo + Patrimonio Neto</strong>.</div>
+  <div id="estados-list"></div>
+</div>
+
+<!-- ============ EXÁMENES ============ -->
+<div id="page-examc1" class="page">
+  <div class="exam-header"><div><h3>📝 Parcial Simulacro 1</h3><p style="opacity:.85;margin-top:4px">18 preguntas · 40 minutos · se aprueba con 50%</p></div><div class="timer" id="timerc1">40:00</div></div>
+  <div id="examc1-questions"></div>
+  <button class="submit-exam-btn" onclick="submitExam(1)">Entregar Parcial</button>
+  <div class="result-box" id="resultc1"></div>
+</div>
+<div id="page-examc2" class="page">
+  <div class="exam-header"><div><h3>📝 Parcial Simulacro 2</h3><p style="opacity:.85;margin-top:4px">18 preguntas · 40 minutos · se aprueba con 50%</p></div><div class="timer" id="timerc2">40:00</div></div>
+  <div id="examc2-questions"></div>
+  <button class="submit-exam-btn" onclick="submitExam(2)">Entregar Parcial</button>
+  <div class="result-box" id="resultc2"></div>
+</div>
+
+</main>
+<div id="confetti-container" class="confetti-container"></div>
+
+<script>
+// ===================== DATA: TF / MC / DEV =====================
+const TF = {
+ c1:[
+  {q:"El patrimonio de la empresa se separa del patrimonio de sus dueños.",a:true,exp:"VERDADERO: es condición necesaria para medir la evolución de la empresa en el tiempo."},
+  {q:"El ciclo financiero consiste en comprar y vender bienes o servicios.",a:false,exp:"FALSO: eso es el ciclo ECONÓMICO. El financiero es pagar las compras y cobrar las ventas."},
+  {q:"Una empresa rentable nunca puede tener problemas financieros.",a:false,exp:"FALSO: puede ser rentable (ciclo económico OK) y aún así no tener dinero a tiempo para pagar (problema financiero)."},
+  {q:"El patrimonio neto se obtiene como Activo menos Pasivo.",a:true,exp:"VERDADERO: ACTIVO − PASIVO = PATRIMONIO NETO."},
+  {q:"Un préstamo bancario es una de las fuentes de financiación de la empresa.",a:true,exp:"VERDADERO: junto con los aportes de capital, es financiación distinta de las cobranzas de ventas."}
+ ],
+ c2:[
+  {q:"Para que un dato sea contable debe poder medirse con un valor monetario objetivo y fiable.",a:true,exp:"VERDADERO: es la primera condición de un dato contable."},
+  {q:"La mercadería recibida en consignación (de un tercero) no es un dato contable.",a:false,exp:"FALSO: los bienes de terceros en poder del ente SÍ son datos contables (característica c)."},
+  {q:"Los ejercicios contables deben tener igual duración para permitir la comparabilidad.",a:true,exp:"VERDADERO: la igual duración hace comparable la información entre ejercicios."},
+  {q:"Un banco es un usuario interno de la información contable.",a:false,exp:"FALSO: el banco es un usuario EXTERNO."},
+  {q:"En una S.A., el responsable de la emisión de los EECC es el presidente del directorio.",a:true,exp:"VERDADERO. En la S.R.L. es el gerente; en una asociación civil, la comisión directiva."}
+ ],
+ c3:[
+  {q:"Una transacción que se espera ocurra en el futuro genera, por sí misma, un activo.",a:false,exp:"FALSO: el activo nace de un hecho YA ocurrido (RT 16). Lo futuro no es activo."},
+  {q:"Todo activo debe tener cuerpo físico perceptible.",a:false,exp:"FALSO: existen activos inmateriales/intangibles (licencias, concesiones, marcas)."},
+  {q:"La cancelación de un pasivo no depende de la voluntad del deudor.",a:true,exp:"VERDADERO: es una característica central del pasivo (resulta ineludible)."},
+  {q:"Cuando el acreedor se transforma en socio, hablamos de condonación.",a:false,exp:"FALSO: eso es CAPITALIZACIÓN. La condonación es cuando el acreedor perdona la deuda."},
+  {q:"El donatario genera para la empresa un resultado positivo (ganancia).",a:true,exp:"VERDADERO: recibe recursos sin obligación de devolver ni reconocer participación → ganancia."}
+ ],
+ c4:[
+  {q:"Las variaciones modificativas cambian el total del Patrimonio Neto.",a:true,exp:"VERDADERO: aparecen con resultados o movimientos de capital."},
+  {q:"La compra de mercaderías a crédito es una variación modificativa.",a:false,exp:"FALSO: es PERMUTATIVA (A+ = P+), no cambia el total del PN."},
+  {q:"El pago de una deuda es una variación permutativa.",a:true,exp:"VERDADERO: baja el pasivo y baja el activo (Pd = Ad), sin tocar el PN."},
+  {q:"La venta de mercaderías al contado, considerando su costo, es una variación mixta.",a:true,exp:"VERDADERO: combina una permutativa (entra dinero, sale mercadería) y una modificativa (nace el resultado)."},
+  {q:"Recibir una factura de un servicio impaga es una variación permutativa.",a:false,exp:"FALSO: es MODIFICATIVA (R− = Pa): nace un gasto y un pasivo, baja el PN."}
+ ],
+ c5:[
+  {q:"El devengado se reconoce en el período del hecho generador, sin importar el cobro o pago.",a:true,exp:"VERDADERO: lo que importa es cuándo ocurre el hecho, no cuándo entra/sale la plata."},
+  {q:"En una venta de mercaderías, el ingreso se devenga cuando se cobra el anticipo.",a:false,exp:"FALSO: se devenga cuando se ENTREGA la mercadería (principio de realización). El anticipo es un pasivo."},
+  {q:"El CMV se imputa por vinculación directa con el ingreso de la venta.",a:true,exp:"VERDADERO: regla A. El costo de lo vendido se reconoce junto con la venta."},
+  {q:"Un bien comprado y almacenado en depósito ya es un gasto.",a:false,exp:"FALSO: mientras conserva su utilidad es un COSTO (Activo). Se vuelve gasto cuando se consume/vende."},
+  {q:"Ingreso y entrada de dinero son siempre lo mismo.",a:false,exp:"FALSO: solo coinciden si la venta es al contado. El ingreso se devenga aunque todavía no se cobre."}
+ ],
+ c6:[
+  {q:"Las cuentas de Activo y de Gastos tienen saldo deudor.",a:true,exp:"VERDADERO: aumentan por el Debe (débitos)."},
+  {q:"Las cuentas de Pasivo, Capital e Ingresos tienen saldo acreedor.",a:true,exp:"VERDADERO: aumentan por el Haber (créditos)."},
+  {q:"Anotar en el Haber se llama debitar o cargar.",a:false,exp:"FALSO: anotar en el Haber es ACREDITAR o abonar. Debitar es anotar en el Debe."},
+  {q:"El Libro Diario registra los hechos en orden cronológico.",a:true,exp:"VERDADERO: anota los hechos en el orden en que suceden."},
+  {q:"En todo asiento, la suma del Debe debe ser igual a la suma del Haber.",a:true,exp:"VERDADERO: es el principio de la partida doble."}
+ ]
+};
+
+const MC = {
+ c1:[
+  {q:"La empresa es una organización cuya finalidad principal es:",opts:["Pagar impuestos al Estado","Realizar una actividad productiva para satisfacer necesidades de los clientes","Acumular dinero sin producir","Repartir dividendos únicamente"],a:1},
+  {q:"La diferencia entre ingresos y gastos define:",opts:["El patrimonio neto","El resultado (ganancia o pérdida)","El activo total","La financiación"],a:1},
+  {q:"El ciclo económico de la empresa consiste en:",opts:["Pagar las compras y cobrar las ventas","Comprar y luego vender bienes y/o servicios","Aportar y retirar capital","Tomar y devolver préstamos"],a:1},
+  {q:"El ciclo financiero define principalmente:",opts:["La rentabilidad","El flujo de fondos (tener dinero oportuno para los vencimientos)","El patrimonio de los socios","El valor de la marca"],a:1},
+  {q:"¿Por qué se separa el patrimonio de la empresa del de sus dueños?",opts:["Por una exigencia del banco","Para poder medir la evolución de la empresa en el tiempo","Porque lo pide el cliente","Porque el dueño no tiene patrimonio"],a:1}
+ ],
+ c2:[
+  {q:"La contabilidad informa sobre:",opts:["Solo el dinero en caja","La composición y evolución del patrimonio del ente y los bienes de terceros en su poder","Únicamente las ventas del mes","Los gustos de los clientes"],a:1},
+  {q:"¿Cuál NO es una condición de un dato contable?",opts:["Tener un valor monetario objetivo y fiable","Referirse a variaciones del patrimonio","Coincidir con la opinión del dueño","Incluir contingencias negativas probables"],a:2},
+  {q:"El ejercicio contable es:",opts:["El recuento físico de mercaderías","La división de la marcha de la empresa en períodos de igual duración","La firma del balance","El pago de impuestos"],a:1},
+  {q:"¿Cuál es un usuario EXTERNO de la información contable?",opts:["Los administradores","Los fiscalizadores internos","Un banco que evalúa un crédito","El gerente de la empresa"],a:2},
+  {q:"En una S.R.L., el responsable de la emisión de los EECC es:",opts:["El presidente del directorio","El gerente","El tesorero de la comisión","El síndico"],a:1}
+ ],
+ c3:[
+  {q:"La ecuación contable básica es:",opts:["Activo + Pasivo = PN","Activo − Pasivo = Patrimonio Neto","Activo = Pasivo − PN","Pasivo = Activo + PN"],a:1},
+  {q:"Una característica del activo es:",opts:["Que siempre sea dinero en efectivo","El control de los beneficios económicos (valor de uso o de cambio)","Que no pueda medirse en dinero","Que provenga de un hecho futuro"],a:1},
+  {q:"Para que un activo se registre contablemente se le debe poder dar:",opts:["Una medida monetaria objetiva y verificable","Una opinión del gerente","Un valor estimado a criterio del dueño","Un precio de venta futuro"],a:0},
+  {q:"¿Cuál es una característica del pasivo?",opts:["Su cancelación depende de la voluntad del deudor","Tiene un plazo de vencimiento determinado o determinable","Nunca tiene vencimiento","Surge de un hecho futuro"],a:1},
+  {q:"Cuando el acreedor perdona la deuda, hablamos de:",opts:["Refinanciación","Capitalización","Prescripción liberatoria","Condonación"],a:3}
+ ],
+ c4:[
+  {q:"Una variación es modificativa cuando:",opts:["Solo cambia la composición del activo","Cambia el total del Patrimonio Neto","Nunca toca resultados","Solo mueve pasivos"],a:1},
+  {q:"El aporte de capital de los socios es una variación:",opts:["Permutativa","Modificativa","Mixta","De orden"],a:1},
+  {q:"Depositar efectivo en la cuenta corriente del banco es una variación:",opts:["Modificativa (Aa = R+)","Permutativa (Aa = Ad)","Mixta","Modificativa (R− = Pa)"],a:1},
+  {q:"La venta de mercaderías considerando su costo es una variación:",opts:["Permutativa pura","Modificativa pura","Mixta","De orden"],a:2},
+  {q:"Pagar una factura entregando un cheque de pago diferido a 30 días es:",opts:["Modificativa (Aa = R+)","Permutativa (Pd = Pa)","Permutativa (Pd = Ad)","Mixta"],a:1}
+ ],
+ c5:[
+  {q:"El 'costo de las mercaderías vendidas' representa:",opts:["Un activo","Un gasto (capacidad ya agotada para generar ingresos)","Un pasivo","Una ganancia"],a:1},
+  {q:"Según el principio de realización, el ingreso por venta se reconoce cuando:",opts:["Se recibe el anticipo","Se deja de tener el control del bien entregado (entrega)","Se firma el presupuesto","Se cobra el saldo final"],a:1},
+  {q:"El sueldo del mes del personal administrativo se imputa por:",opts:["Vinculación directa con un ingreso","Vinculación con un período de tiempo","Cuando se toma conocimiento","No se imputa"],a:1},
+  {q:"Un faltante de mercaderías detectado en un recuento físico se imputa:",opts:["Por vinculación directa con un ingreso","Por período de tiempo","Cuando se toma conocimiento","Recién en el próximo ejercicio"],a:2},
+  {q:"La mercadería comprada y almacenada en depósito (todavía sin vender) es:",opts:["Un gasto","Un activo","Una pérdida","Un ingreso"],a:1}
+ ],
+ c6:[
+  {q:"Las cuentas que tienen saldo DEUDOR son:",opts:["Pasivo e Ingresos","Activo y Gastos","Capital y Ganancias","Pasivo y Capital"],a:1},
+  {q:"Anotar un importe en el Haber se llama:",opts:["Debitar","Cargar","Acreditar o abonar","Mayorizar"],a:2},
+  {q:"El Libro Diario se caracteriza por registrar los hechos:",opts:["Por cuenta","En orden cronológico","Solo al cierre","Por importe"],a:1},
+  {q:"La cuenta Caja se acredita por:",opts:["Entradas de efectivo","Salidas de efectivo","El aporte inicial","Una compra a crédito"],a:1},
+  {q:"Las cuentas de resultado (ingresos, gastos, ganancias, pérdidas):",opts:["Son patrimoniales y nunca se cancelan","Acumulan movimientos del ejercicio y se cancelan (refunden) al cierre","Registran bienes de terceros","Son cuentas de orden"],a:1}
+ ]
+};
+
+const DEV = {
+ c1:[
+  {q:"Explique la diferencia entre el ciclo económico y el ciclo financiero. Dé un ejemplo.",a:"El ciclo ECONÓMICO consiste en comprar y vender bienes/servicios, y define la RENTABILIDAD (que la venta supere el costo). El ciclo FINANCIERO consiste en pagar las compras y cobrar las ventas, y define el FLUJO DE FONDOS (tener dinero oportuno para los vencimientos). Ejemplo: una empresa vende con buena ganancia (económico sano) pero todo a 90 días; mientras tanto debe pagar sueldos hoy. Es rentable pero tiene un problema financiero."},
+  {q:"¿Qué es el patrimonio y por qué se separa el de la empresa del de los dueños?",a:"El patrimonio es el conjunto de bienes económicos (materiales e inmateriales) pertenecientes a una persona o asociación, más las cargas que los gravan. Contablemente: Activo − Pasivo = Patrimonio Neto. Se separa el patrimonio de la empresa del de sus dueños porque es condición necesaria para medir la evolución de la empresa en el tiempo: el ente tiene vida propia, aunque la inversión del socio sea parte de su patrimonio personal y le dé derecho a los beneficios que la empresa distribuya."}
+ ],
+ c2:[
+  {q:"Enumere y explique las características que debe cumplir un dato para ser 'contable'.",a:"a) Ser susceptible de un valor monetario objetivo y fiable. b) Referirse a variaciones del patrimonio originadas en transacciones con terceros, en el contexto (ej. tipo de cambio) o en cambios internos (ej. crecimiento de una siembra). c) Referirse a bienes de terceros en poder del ente (ej. consignación). d) Incluir contingencias negativas probables aunque no estén confirmadas (ej. incobrabilidad probable, juicio con alta probabilidad de condena). Además, el proceso contable es cronológico y sistemático."},
+  {q:"Distinga usuarios internos y externos de la información contable, y dé un ejemplo de uso cruzado.",a:"Usuarios internos: administradores y fiscalizadores. Usuarios externos: propietarios ajenos a la administración, el Estado, proveedores, bancos, sindicatos, etc. Ejemplo de uso cruzado: un banco (externo) puede pedir un informe interno de ventas para evaluar un crédito; o el área impositiva de la empresa (interno) puede usar el Estado de Resultados (que es un EECC) para la declaración jurada."}
+ ],
+ c3:[
+  {q:"¿Cuáles son las características que debe poseer un recurso económico para ser considerado un ACTIVO?",a:"1) Control de los beneficios económicos: el bien tiene valor de cambio (se puede canjear por dinero u otro activo, o cancelar una obligación) o valor de uso (se emplea en la actividad productiva). 2) Se origina en un hecho anterior (compra, permuta, aporte, donación, fabricación, etc.); una transacción que se espera ocurra en el futuro no genera un activo por sí misma. 3) Admite una medida monetaria objetiva y verificable (ej. el valor de una factura de un proveedor independiente)."},
+  {q:"Mencione las características del PASIVO y sus formas de cancelación.",a:"Características: su cancelación no depende de la voluntad del deudor (es ineludible); puede ser cierta o probable; tiene plazo de vencimiento determinado o determinable; proviene de un hecho ya ocurrido. Formas de cancelación: con dinero (poder cancelatorio inmediato e ilimitado), con otros bienes / pago en especie (ej. entregar mercadería para cumplir un anticipo), o prestando un servicio. Otras alternativas: refinanciación (nuevo pasivo), capitalización (el acreedor se hace socio), prescripción liberatoria y condonación (el acreedor perdona)."}
+ ],
+ c4:[
+  {q:"Explique los tres tipos de variaciones patrimoniales y dé un ejemplo de cada uno.",a:"MODIFICATIVAS: varían el total del Patrimonio Neto (hay resultado o movimiento de capital). Ej.: aporte de capital, venta, alquiler devengado, recibir una factura de servicio. PERMUTATIVAS: no varían el total del PN, solo cambia la composición del activo/pasivo. Ej.: compra de mercaderías, pago de una deuda, depósito de efectivo, cobro a un cliente. MIXTAS: combinan una permutativa y una modificativa en el mismo hecho. Ej.: venta de mercaderías con su costo (se permutan activos y a la vez nace un resultado)."},
+  {q:"¿Por qué la venta de mercaderías al contado es una variación mixta?",a:"Porque en un mismo hecho conviven dos efectos: una parte PERMUTATIVA (entra dinero/efectivo y sale la mercadería, solo cambia la composición del activo) y una parte MODIFICATIVA (nace el resultado: la cuenta Ventas (R+) y el Costo de Mercaderías Vendidas (R−), que modifican el total del Patrimonio Neto). Al haber resultado, el PN total cambia, por eso no es puramente permutativa."}
+ ],
+ c5:[
+  {q:"Explique el principio de 'Realización'. ¿En qué momento se devenga el R+ Ventas?",a:"El principio de realización indica que los resultados económicos se registran cuando la operación que los origina queda perfeccionada desde el punto de vista de la legislación o de las prácticas comerciales, habiéndose ponderado todos los riesgos. En una transacción con terceros, el ingreso se reconoce cuando se deja de tener el control de los beneficios del bien entregado. Por eso, el R+ Ventas se devenga el día en que se ENTREGA la mercadería, no cuando se recibe un anticipo ni cuando se cobra el saldo. El anticipo recibido antes de la entrega es un pasivo (anticipo de clientes)."},
+  {q:"Explique las tres reglas para imputar los gastos, con un ejemplo de cada una.",a:"a) Vinculación directa con un ingreso particular: el gasto se imputa al período en que se reconoce ese ingreso. Ej.: el costo de la mercadería vendida (CMV) se imputa junto con la venta. b) Vinculación con un período de tiempo: si no se puede vincular a un ingreso puntual, se carga al período correspondiente. Ej.: los sueldos del mes del personal administrativo. c) Cuando se toma conocimiento: si no se cumple ninguna de las anteriores. Ej.: un faltante de mercaderías detectado en un recuento físico."}
+ ],
+ c6:[
+  {q:"Explique el funcionamiento del Debe y el Haber según el tipo de cuenta.",a:"Las cuentas de Activo y Gastos (o Pérdidas) tienen saldo DEUDOR: aumentan con débitos (Debe) y disminuyen con créditos (Haber). Las cuentas de Pasivo, Capital e Ingresos (o Ganancias) tienen saldo ACREEDOR: aumentan con créditos (Haber) y disminuyen con débitos (Debe). Anotar en el Debe es debitar/cargar; anotar en el Haber es acreditar/abonar. El saldo de una cuenta es la diferencia entre la suma de débitos y la de créditos. En todo asiento, la suma del Debe debe igualar la del Haber (partida doble)."},
+  {q:"¿Qué es un asiento contable y qué registra el Libro Diario?",a:"El asiento contable es la anotación, en un libro de contabilidad, de un hecho económico con contenido patrimonial. Indica qué cuentas se debitan y cuáles se acreditan, por iguales importes. El Libro Diario es el registro cronológico donde los hechos se anotan en el orden en que suceden. La cuenta que va en el Haber se escribe con la palabra 'a' adelante. (La mayorización al Libro Mayor corresponde a Contabilidad II.)"}
+ ]
+};
+
+// ===================== CLASIFICAR =====================
+const CLASIF = [
+ {op:"Dos socios aportan mercaderías a la empresa.",tipo:"Modificativa",det:[["Mercaderías","Activo (Aa)"],["Capital Social","Patrimonio Neto (+)"]],doc:"Contrato social",exp:"Entra un activo (Mercaderías) y aumenta el Capital → varía el total del PN. Modificativa."},
+ {op:"Se deposita efectivo en la cuenta corriente del Banco.",tipo:"Permutativa",det:[["Banco cta cte","Activo (Aa)"],["Caja","Activo (Ad)"]],doc:"Boleta / nota de depósito",exp:"Sube un activo (Banco) y baja otro (Caja). Aa = Ad, el PN total no cambia. Permutativa."},
+ {op:"Se recibe la factura de teléfono del local de ventas (queda impaga).",tipo:"Modificativa",det:[["Gastos de servicios","Resultado Negativo (RN)"],["Acreedores varios","Pasivo (Pa)"]],doc:"Factura",exp:"Nace un gasto (RN) y un pasivo (Pa). R− = Pa, baja el PN total. Modificativa."},
+ {op:"Se compran muebles de oficina en cuenta corriente (a crédito).",tipo:"Permutativa",det:[["Muebles y útiles (Bienes de uso)","Activo (Aa)"],["Acreedores varios","Pasivo (Pa)"]],doc:"Factura",exp:"Sube un activo y sube un pasivo. Aa = Pa, no toca resultados. Permutativa."},
+ {op:"Se venden mercaderías a crédito (considerando su costo).",tipo:"Mixta",det:[["Deudores por ventas","Activo (Aa)"],["Ventas","Resultado Positivo (RP)"],["CMV","Resultado Negativo (RN)"],["Mercaderías","Activo (Ad)"]],doc:"Factura",exp:"Permutativa (entra Deudores, sale Mercadería) + modificativa (Ventas R+ y CMV R−). Es Mixta."},
+ {op:"Se compran mercaderías en cuenta corriente.",tipo:"Permutativa",det:[["Mercaderías","Activo (Aa)"],["Proveedores","Pasivo (Pa)"]],doc:"Factura",exp:"Sube activo y sube pasivo. Aa = Pa, sin resultados. Permutativa."},
+ {op:"Se paga a un proveedor con un cheque común.",tipo:"Permutativa",det:[["Proveedores","Pasivo (Pd)"],["Banco cta cte","Activo (Ad)"]],doc:"Cheque / orden de pago",exp:"Baja el pasivo y baja el activo. Pd = Ad, sin tocar el PN. Permutativa."},
+ {op:"Se paga en efectivo, por adelantado, el seguro del camión de la empresa.",tipo:"Permutativa",det:[["Seguro pagado por adelantado","Activo (Aa)"],["Caja","Activo (Ad)"]],doc:"Recibo / factura",exp:"El seguro pagado por adelantado es un activo (un derecho). Aa = Ad. Permutativa."},
+ {op:"Se compra una estantería en cuenta corriente.",tipo:"Permutativa",det:[["Muebles y útiles (Bienes de uso)","Activo (Aa)"],["Acreedores varios","Pasivo (Pa)"]],doc:"Factura",exp:"Sube un bien de uso y sube un pasivo. Aa = Pa. Permutativa."},
+ {op:"Se ganan intereses por el saldo depositado en la cuenta del banco.",tipo:"Modificativa",det:[["Banco cta cte","Activo (Aa)"],["Intereses ganados","Resultado Positivo (RP)"]],doc:"Resumen bancario / nota de crédito",exp:"Sube el activo y nace un ingreso. Aa = R+, aumenta el PN. Modificativa."}
+];
+
+// ===================== ASIENTOS =====================
+const ASIENTOS = [
+ {op:"Dos socios aportan en efectivo $400.000 cada uno en concepto de capital.",tipo:"Modificativa",debe:[["Caja",800000]],haber:[["a Capital Social",800000]],exp:"Entra efectivo (Aa) y aumenta el Capital (PN+). Modificativa."},
+ {op:"Se pagan por adelantado, en efectivo, 24 meses de seguro del comercio. Total $240.000.",tipo:"Permutativa",debe:[["Seguro pagado por adelantado",240000]],haber:[["a Caja",240000]],exp:"El seguro pagado por adelantado es un activo (derecho). Aa = Ad. Permutativa."},
+ {op:"Compra mercaderías en cuenta corriente comercial por $1.000.000.",tipo:"Permutativa",debe:[["Mercaderías",1000000]],haber:[["a Proveedores",1000000]],exp:"Sube activo y sube pasivo. Aa = Pa. Permutativa."},
+ {op:"Vende en cuenta corriente el 60% de la mercadería (costo $600.000) con un margen de ganancia del 100% → venta $1.200.000.",tipo:"Mixta",debe:[["Deudores por ventas",1200000],["CMV",600000]],haber:[["a Ventas",1200000],["a Mercaderías",600000]],exp:"Asiento de venta (Deudores a Ventas) + asiento de costo (CMV a Mercaderías). Combina permutativa y modificativa → Mixta."},
+ {op:"Cobra con un cheque común la mitad de la venta anterior ($600.000) y lo deposita en el banco.",tipo:"Permutativa",debe:[["Banco cta cte",600000]],haber:[["a Deudores por ventas",600000]],exp:"Entra un activo (Banco) y baja otro (Deudores). Aa = Ad. Permutativa."},
+ {op:"Transcurre el primer mes del seguro contratado (240.000 / 24 = 10.000).",tipo:"Modificativa",debe:[["Gasto seguro (seguro consumido)",10000]],haber:[["a Seguro pagado por adelantado",10000]],exp:"Se consume una porción del activo y nace un gasto. R− = Ad. Modificativa."},
+ {op:"Compra mercaderías y paga con un cheque común por $200.000.",tipo:"Permutativa",debe:[["Mercaderías",200000]],haber:[["a Banco cta cte",200000]],exp:"Sube un activo (Mercaderías) y baja otro (Banco). Aa = Ad. Permutativa."},
+ {op:"Recibe la factura del community manager de la empresa por $100.000 (queda impaga).",tipo:"Modificativa",debe:[["Gastos de publicidad / servicios",100000]],haber:[["a Acreedores varios",100000]],exp:"Nace un gasto (R−) y un pasivo (Pa). R− = Pa. Modificativa."},
+ {op:"Recibe y paga con una transferencia bancaria la factura de luz del local de ventas, por $23.000.",tipo:"Modificativa",debe:[["Gastos de servicios (luz)",23000]],haber:[["a Banco cta cte",23000]],exp:"Nace un gasto (R−) y baja un activo (Banco). R− = Ad. Modificativa."},
+ {op:"Se ganan $5.000 de intereses, acreditados en la cuenta del banco.",tipo:"Modificativa",debe:[["Banco cta cte",5000]],haber:[["a Intereses ganados",5000]],exp:"Sube el activo y nace un ingreso. Aa = R+. Modificativa."}
+];
+
+// ===================== ESTADOS CONTABLES =====================
+const ESTADOS = [
+ {
+  titulo:"Caso 1 — 'La Deportiva S.A.'",
+  enunciado:"Durante el ejercicio se registraron las siguientes operaciones (todas ya devengadas). Con los saldos finales armá el Estado de Situación Patrimonial y el Estado de Resultados.",
+  ops:["Dos socios aportan $400.000 c/u en efectivo.","Se depositan $400.000 en la cuenta corriente del banco.","Compra de mercaderías en cta cte por $1.000.000.","Paga por adelantado, en efectivo, $240.000 de seguro (24 meses).","Vende a crédito el 60% de la mercadería (costo $600.000) con margen 100% → venta $1.200.000.","Cobra la mitad de esa venta ($600.000) con cheque depositado en el banco.","Paga a proveedores $500.000 con cheque del banco.","Devenga el primer mes del seguro: $10.000.","Recibe la factura de luz del local por $23.000 (impaga).","Se acreditan $5.000 de intereses en el banco."],
+  saldos:[["Caja","A",160000],["Banco cta cte","A",505000],["Deudores por ventas","A",600000],["Mercaderías","A",400000],["Seguro pagado por adelantado","A",230000],["Proveedores","P",500000],["Acreedores varios","P",23000],["Capital Social","PN",800000],["Ventas","R+",1200000],["Intereses ganados","R+",5000],["CMV","R-",600000],["Gasto seguro","R-",10000],["Gastos de servicios (luz)","R-",23000]],
+  activo:1895000,pasivo:523000,resultado:572000,pn:1372000
+ },
+ {
+  titulo:"Caso 2 — Comercio 'El Sol'",
+  enunciado:"Operaciones del período. Armá los estados contables a partir de los saldos finales.",
+  ops:["Aporte de capital en efectivo por $100.000.","Compra de mercaderías en cta cte por $60.000.","Vende al contado el 50% de la mercadería (costo $30.000) en $50.000.","Paga el alquiler del local en efectivo: $8.000.","Paga a proveedores $20.000 en efectivo."],
+  saldos:[["Caja","A",122000],["Mercaderías","A",30000],["Proveedores","P",40000],["Capital Social","PN",100000],["Ventas","R+",50000],["CMV","R-",30000],["Gasto alquiler","R-",8000]],
+  activo:152000,pasivo:40000,resultado:12000,pn:112000
+ }
+];
+
+// ===================== EXÁMENES =====================
+const EXAM1 = [
+ {type:'tf',q:"La cancelación de un pasivo no depende de la voluntad del deudor.",a:true},
+ {type:'tf',q:"El patrimonio de la empresa se separa del patrimonio de sus dueños.",a:true},
+ {type:'tf',q:"Todo activo debe tener cuerpo físico perceptible.",a:false},
+ {type:'tf',q:"El ingreso y la entrada de dinero son siempre lo mismo.",a:false},
+ {type:'tf',q:"Una transacción que se espera ocurra en el futuro genera, por sí misma, un activo.",a:false},
+ {type:'mc',q:"ACTIVO − PASIVO = ?",opts:["Ingresos","Patrimonio Neto","Resultado","Capital de terceros"],a:1},
+ {type:'mc',q:"¿Cuál es una característica del pasivo?",opts:["Surge de un hecho futuro","Tiene un plazo de vencimiento determinado o determinable","Su cancelación depende de la voluntad del deudor","Nunca puede cancelarse con bienes"],a:1},
+ {type:'mc',q:"La contabilidad informa, entre otras cosas, sobre:",opts:["Los gustos personales del dueño","La composición y evolución del patrimonio del ente","El clima de la ciudad","La vida privada de los socios"],a:1},
+ {type:'mc',q:"Para registrar un activo se le debe poder dar:",opts:["Una medida monetaria objetiva y verificable","Una estimación libre del gerente","Un valor de venta futuro","La opinión de un cliente"],a:0},
+ {type:'mc',q:"La compra de mercaderías a crédito es una variación:",opts:["Modificativa","Permutativa (Aa = Pa)","Mixta","De orden"],a:1},
+ {type:'mc',q:"El aporte de capital de los socios es una variación:",opts:["Permutativa","Modificativa","Mixta","De movimiento"],a:1},
+ {type:'mc',q:"La venta de mercaderías al contado (con su costo) es una variación:",opts:["Permutativa pura","Modificativa pura","Mixta","De orden"],a:2},
+ {type:'mc',q:"Se recibe la factura de internet del mes (impaga). La variación es:",opts:["Modificativa: R− = Pa","Permutativa: Aa = Ad","Permutativa: Pd = Pa","Modificativa: Aa = R+"],a:0},
+ {type:'mc',q:"Se paga en efectivo la factura del mes anterior. La variación es:",opts:["Modificativa: R− = Pa","Permutativa: Pd = Ad","Permutativa: Pd = Pa","Modificativa: Aa = R+"],a:1},
+ {type:'mc',q:"Si esa factura se paga con un cheque de pago diferido a 30 días, la variación es:",opts:["Modificativa: R− = Pa","Permutativa: Pd = Ad","Permutativa: Pd = Pa","Mixta"],a:2},
+ {type:'mc',q:"El 'costo de las mercaderías vendidas' representa:",opts:["Un activo","Un gasto","Un pasivo","Una ganancia accesoria"],a:1},
+ {type:'mc',q:"Las cuentas de Activo y Gastos tienen saldo:",opts:["Acreedor","Deudor","Mixto","Cero"],a:1},
+ {type:'mc',q:"Las cuentas de Pasivo, Capital e Ingresos tienen saldo:",opts:["Deudor","Acreedor","Nulo","Variable"],a:1}
+];
+const EXAM2 = [
+ {type:'tf',q:"El patrimonio neto es el valor residual: Activo − Pasivo.",a:true},
+ {type:'tf',q:"El donatario genera para la empresa un pasivo cierto.",a:false},
+ {type:'tf',q:"El devengado se reconoce recién cuando entra o sale el dinero.",a:false},
+ {type:'tf',q:"El principio de realización indica que el ingreso por venta se reconoce cuando se deja de tener el control del bien entregado.",a:true},
+ {type:'tf',q:"Un costo se transforma en gasto cuando se consume.",a:true},
+ {type:'mc',q:"El ciclo económico consiste en:",opts:["Pagar las compras y cobrar las ventas","Comprar y luego vender bienes y/o servicios","Aportar y retirar capital","Emitir los estados contables"],a:1},
+ {type:'mc',q:"El ciclo financiero consiste en:",opts:["Comprar y vender","Pagar las compras y cobrar las ventas","Fabricar el producto","Calcular la rentabilidad"],a:1},
+ {type:'mc',q:"¿Cuál de estos es un usuario EXTERNO de la información contable?",opts:["Los administradores","Un banco","Los fiscalizadores internos","El gerente"],a:1},
+ {type:'mc',q:"Una empresa entrega la mercadería al cliente al venderla. El costo de esa mercadería es:",opts:["Un activo","Un gasto (CMV)","Un pasivo","Una ganancia"],a:1},
+ {type:'mc',q:"La mercadería comprada y almacenada en depósito (sin vender) es:",opts:["Un gasto","Un activo","Una pérdida","Un ingreso"],a:1},
+ {type:'mc',q:"Refinanciar una deuda:",opts:["La condona","Da lugar a un nuevo pasivo","Convierte al acreedor en socio","La prescribe"],a:1},
+ {type:'mc',q:"Cuando el acreedor perdona la deuda, hablamos de:",opts:["Refinanciación","Capitalización","Condonación","Prescripción"],a:2},
+ {type:'mc',q:"La capitalización de una deuda significa que:",opts:["Se paga en efectivo","El acreedor se transforma en socio","Se firma un cheque","Se anula la factura"],a:1},
+ {type:'mc',q:"La regla para imputar el CMV es:",opts:["Vinculación directa con un ingreso particular (la venta)","Vinculación con un período de tiempo","Cuando se toma conocimiento","No se imputa"],a:0},
+ {type:'mc',q:"Los sueldos del mes del personal administrativo se imputan por:",opts:["Vinculación directa con un ingreso","Vinculación con un período de tiempo","Cuando se toma conocimiento","Realización"],a:1},
+ {type:'mc',q:"Un faltante de mercaderías detectado en un recuento físico se imputa:",opts:["Por vinculación directa con un ingreso","Por período de tiempo","Cuando se toma conocimiento","En el próximo ejercicio"],a:2},
+ {type:'mc',q:"Depositar efectivo en la cuenta corriente del banco es una variación:",opts:["Modificativa","Permutativa (Aa = Ad)","Mixta","De orden"],a:1},
+ {type:'mc',q:"Un cliente paga un anticipo y luego se le entrega la mercadería. El R+ Venta se devenga:",opts:["Cuando se cobra el anticipo","Cuando se entrega la mercadería","Cuando se firma el presupuesto","Cuando se cobra el saldo final"],a:1}
+];
+
+// ===================== STATE =====================
+let progress = JSON.parse(localStorage.getItem('cont_progress')||'{}');
+['c1','c2','c3','c4','c5','c6'].forEach(t=>{if(!progress[t])progress[t]={};});
+let timers={};
+function save(){localStorage.setItem('cont_progress',JSON.stringify(progress));}
+
+// ===================== NAV =====================
+function showPage(id){
+ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+ document.querySelectorAll('#sidebar nav a').forEach(a=>a.classList.remove('active'));
+ document.getElementById('page-'+id).classList.add('active');
+ const links=document.querySelectorAll('#sidebar nav a');
+ const map={dashboard:0,c1:1,c2:2,c3:3,c4:4,c5:5,c6:6,'pr-clasificar':7,'pr-asientos':8,'pr-estados':9,examc1:10,examc2:11};
+ if(map[id]!==undefined)links[map[id]].classList.add('active');
+ updateDash();
+ window.scrollTo(0,0);
+ if(id==='examc1'&&!timers[1])startTimer(1);
+ if(id==='examc2'&&!timers[2])startTimer(2);
+}
+function switchTab(btn,cid){
+ const parent=btn.closest('.page');
+ parent.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+ parent.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+ btn.classList.add('active');document.getElementById(cid).classList.add('active');
+}
+function toggleAcc(h){
+ const acc=h.parentElement,was=acc.classList.contains('open');
+ h.closest('.tab-content').querySelectorAll('.accordion').forEach(a=>a.classList.remove('open'));
+ if(!was)acc.classList.add('open');
+}
+
+// ===================== RENDER PRACTICE =====================
+function renderTF(t){
+ const el=document.getElementById('tf-'+t);if(!el||el.childElementCount>0)return;
+ TF[t].forEach((it,i)=>{
+  const done=progress[t]['tf'+i];
+  const d=document.createElement('div');d.className='question-card';d.id=`tf-${t}-${i}`;
+  d.innerHTML=`<div class="q-num">Pregunta ${i+1} de ${TF[t].length}</div><div class="q-text">${it.q}</div><div class="tf-btns"><button class="tf-btn" onclick="ansTF('${t}',${i},true,this)">✅ Verdadero</button><button class="tf-btn" onclick="ansTF('${t}',${i},false,this)">❌ Falso</button></div>`;
+  el.appendChild(d);
+  if(done!==undefined)markTF(t,i,done);
+ });
+}
+function markTF(t,i,answer){
+ const it=TF[t][i],card=document.getElementById(`tf-${t}-${i}`),btns=card.querySelectorAll('.tf-btn');
+ btns.forEach(b=>{const v=b.textContent.includes('Verdadero');b.classList.remove('correct','wrong');if(v===it.a)b.classList.add('correct');else if(v===answer&&answer!==it.a)b.classList.add('wrong');});
+ let fb=card.querySelector('.feedback');if(!fb){fb=document.createElement('div');card.appendChild(fb);}
+ const ok=answer===it.a;fb.className='feedback '+(ok?'ok':'no');fb.textContent=(ok?'✓ Correcto':'✗ Incorrecto')+' — '+it.exp;
+}
+function ansTF(t,i,answer,btn){
+ markTF(t,i,answer);
+ if(progress[t]['tf'+i]===undefined){progress[t]['tf'+i]=answer;save();updateDash();}
+}
+function renderMC(t){
+ const el=document.getElementById('mc-'+t);if(!el||el.childElementCount>0)return;
+ MC[t].forEach((it,i)=>{
+  const done=progress[t]['mc'+i];
+  const d=document.createElement('div');d.className='question-card';d.id=`mc-${t}-${i}`;
+  const opts=it.opts.map((o,j)=>`<button class="mc-opt" onclick="ansMC('${t}',${i},${j},this)">${String.fromCharCode(65+j)}) ${o}</button>`).join('');
+  d.innerHTML=`<div class="q-num">Pregunta ${i+1} de ${MC[t].length}</div><div class="q-text">${it.q}</div><div class="mc-opts">${opts}</div>`;
+  el.appendChild(d);
+  if(done!==undefined)markMC(t,i,done);
+ });
+}
+function markMC(t,i,chosen){
+ const it=MC[t][i],card=document.getElementById(`mc-${t}-${i}`),opts=card.querySelectorAll('.mc-opt');
+ opts.forEach((b,j)=>{b.classList.remove('correct','wrong');if(j===it.a)b.classList.add('correct');else if(j===chosen&&chosen!==it.a)b.classList.add('wrong');});
+ let fb=card.querySelector('.feedback');if(!fb){fb=document.createElement('div');card.appendChild(fb);}
+ const ok=chosen===it.a;fb.className='feedback '+(ok?'ok':'no');fb.textContent=ok?'✓ Correcto':'✗ Incorrecto — Respuesta correcta: '+String.fromCharCode(65+it.a)+') '+it.opts[it.a];
+}
+function ansMC(t,i,chosen){
+ markMC(t,i,chosen);
+ if(progress[t]['mc'+i]===undefined){progress[t]['mc'+i]=chosen;save();updateDash();}
+}
+function renderDev(t){
+ const el=document.getElementById('dev-'+t);if(!el||el.childElementCount>0)return;
+ DEV[t].forEach((it)=>{
+  const d=document.createElement('div');d.className='dev-card';
+  d.innerHTML=`<div class="q-text">📝 ${it.q}</div><button class="show-ans-btn" onclick="toggleAns(this)">Ver respuesta modelo</button><div class="answer-box"><strong>Respuesta modelo:</strong><br><br>${it.a}</div>`;
+  el.appendChild(d);
+ });
+}
+function toggleAns(b){const x=b.nextElementSibling;x.classList.toggle('visible');b.textContent=x.classList.contains('visible')?'Ocultar respuesta':'Ver respuesta modelo';}
+
+// ===================== CLASIFICAR RENDER =====================
+function renderClasif(){
+ const el=document.getElementById('clasificar-list');if(el.childElementCount>0)return;
+ CLASIF.forEach((it,i)=>{
+  const d=document.createElement('div');d.className='op-card';d.id='cl-'+i;
+  const rows=it.det.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('');
+  d.innerHTML=`<div class="op-head"><span class="opn">${i+1}</span>${it.op}</div>
+   <div class="var-btns">
+     <button class="var-btn" onclick="ansClasif(${i},'Permutativa',this)">Permutativa</button>
+     <button class="var-btn" onclick="ansClasif(${i},'Modificativa',this)">Modificativa</button>
+     <button class="var-btn" onclick="ansClasif(${i},'Mixta',this)">Mixta</button>
+   </div>
+   <div class="feedback" style="display:none"></div>
+   <button class="show-ans-btn" style="margin-top:8px" onclick="revealClasif(${i})">Ver cuentas</button>
+   <div class="reveal-box" id="clr-${i}">
+     <table class="mini-table" style="margin-top:8px"><tr><th>Cuenta</th><th>Clasificación / variación</th></tr>${rows}</table>
+     <p style="font-size:.83rem;margin-top:6px"><strong>Documento:</strong> ${it.doc}</p>
+     <p style="font-size:.83rem;margin-top:4px"><strong>Por qué:</strong> ${it.exp}</p>
+   </div>`;
+  el.appendChild(d);
+ });
+}
+function ansClasif(i,choice,btn){
+ const it=CLASIF[i],card=document.getElementById('cl-'+i),ok=choice===it.tipo;
+ card.querySelectorAll('.var-btn').forEach(b=>{b.classList.remove('correct','wrong');if(b.textContent===it.tipo)b.classList.add('correct');else if(b===btn&&!ok)b.classList.add('wrong');});
+ const fb=card.querySelector('.feedback');fb.style.display='block';fb.className='feedback '+(ok?'ok':'no');
+ fb.textContent=ok?'✓ Correcto: es '+it.tipo:'✗ Incorrecto. La variación correcta es '+it.tipo;
+}
+function revealClasif(i){const x=document.getElementById('clr-'+i);x.classList.toggle('visible');}
+
+// ===================== ASIENTOS RENDER =====================
+function fmt(n){return n.toLocaleString('es-AR');}
+function renderAsientos(){
+ const el=document.getElementById('asientos-list');if(el.childElementCount>0)return;
+ ASIENTOS.forEach((it,i)=>{
+  const d=document.createElement('div');d.className='op-card';d.id='as-'+i;
+  const debe=it.debe.map(r=>`<tr><td>${r[0]}</td><td class="num">${fmt(r[1])}</td><td class="num"></td></tr>`).join('');
+  const haber=it.haber.map(r=>`<tr class="haber-row"><td>${r[0]}</td><td class="num"></td><td class="num">${fmt(r[1])}</td></tr>`).join('');
+  d.innerHTML=`<div class="op-head"><span class="opn">${i+1}</span>${it.op}</div>
+   <div class="var-btns">
+     <button class="var-btn" onclick="ansAsiento(${i},'Permutativa',this)">Permutativa</button>
+     <button class="var-btn" onclick="ansAsiento(${i},'Modificativa',this)">Modificativa</button>
+     <button class="var-btn" onclick="ansAsiento(${i},'Mixta',this)">Mixta</button>
+   </div>
+   <div class="feedback" style="display:none"></div>
+   <button class="show-ans-btn" style="margin-top:8px" onclick="revealAsiento(${i})">Ver asiento</button>
+   <div class="reveal-box" id="asr-${i}">
+     <table class="asiento-table"><tr><th>Cuenta</th><th class="num">Debe</th><th class="num">Haber</th></tr>${debe}${haber}</table>
+     <p style="font-size:.83rem;margin-top:6px"><strong>${it.tipo}.</strong> ${it.exp}</p>
+   </div>`;
+  el.appendChild(d);
+ });
+}
+function ansAsiento(i,choice,btn){
+ const it=ASIENTOS[i],card=document.getElementById('as-'+i),ok=choice===it.tipo;
+ card.querySelectorAll('.var-btn').forEach(b=>{b.classList.remove('correct','wrong');if(b.textContent===it.tipo)b.classList.add('correct');else if(b===btn&&!ok)b.classList.add('wrong');});
+ const fb=card.querySelector('.feedback');fb.style.display='block';fb.className='feedback '+(ok?'ok':'no');
+ fb.textContent=ok?'✓ Correcto: es '+it.tipo:'✗ Incorrecto. La variación correcta es '+it.tipo;
+}
+function revealAsiento(i){document.getElementById('asr-'+i).classList.toggle('visible');}
+
+// ===================== ESTADOS RENDER =====================
+function renderEstados(){
+ const el=document.getElementById('estados-list');if(el.childElementCount>0)return;
+ ESTADOS.forEach((c,i)=>{
+  const ops=c.ops.map((o,j)=>`<li>${o}</li>`).join('');
+  const saldos=c.saldos.map(s=>`<tr><td>${s[0]}</td><td>${({A:'Activo',P:'Pasivo',PN:'Patrimonio Neto','R+':'Ingreso (R+)','R-':'Egreso (R−)'})[s[1]]}</td><td class="num">${fmt(s[2])}</td></tr>`).join('');
+  const d=document.createElement('div');d.className='card';
+  d.innerHTML=`<h3 style="color:var(--navy);margin-bottom:8px">${c.titulo}</h3>
+   <p style="font-size:.88rem;color:var(--muted);margin-bottom:10px">${c.enunciado}</p>
+   <ol style="font-size:.85rem;line-height:1.6;padding-left:20px;margin-bottom:14px">${ops}</ol>
+   <h4 style="color:var(--navy);margin-bottom:6px;font-size:.95rem">Saldos finales de las cuentas</h4>
+   <table class="mini-table"><tr><th>Cuenta</th><th>Tipo</th><th class="num">Saldo $</th></tr>${saldos}</table>
+   <h4 style="color:var(--navy);margin:16px 0 6px;font-size:.95rem">Completá los totales</h4>
+   <div class="est-inputs">
+     <div><label>Total Activo</label><input type="number" id="ea-${i}" placeholder="$"></div>
+     <div><label>Total Pasivo</label><input type="number" id="ep-${i}" placeholder="$"></div>
+     <div><label>Resultado del Ejercicio</label><input type="number" id="er-${i}" placeholder="$"></div>
+     <div><label>Total Patrimonio Neto</label><input type="number" id="en-${i}" placeholder="$"></div>
+   </div>
+   <div style="display:flex;gap:10px;flex-wrap:wrap">
+     <button class="btn" onclick="checkEstado(${i})">Verificar</button>
+     <button class="btn alt" onclick="solEstado(${i})">Ver solución completa</button>
+   </div>
+   <div class="feedback" id="ef-${i}" style="display:none"></div>
+   <div class="reveal-box" id="esr-${i}"></div>`;
+  el.appendChild(d);
+ });
+}
+function checkEstado(i){
+ const c=ESTADOS[i];
+ const map={['ea-'+i]:c.activo,['ep-'+i]:c.pasivo,['er-'+i]:c.resultado,['en-'+i]:c.pn};
+ let okAll=true;
+ Object.keys(map).forEach(id=>{
+  const inp=document.getElementById(id),val=parseFloat(inp.value);
+  const ok=val===map[id];inp.classList.remove('ok','no');inp.classList.add(ok?'ok':'no');if(!ok)okAll=false;
+ });
+ const fb=document.getElementById('ef-'+i);fb.style.display='block';fb.className='feedback '+(okAll?'ok':'no');
+ fb.innerHTML=okAll?'✓ ¡Perfecto! Activo = Pasivo + PN se cumple ('+fmt(c.activo)+' = '+fmt(c.pasivo)+' + '+fmt(c.pn)+').':'✗ Hay totales mal. Revisá: el Resultado = Ingresos − Egresos, y el PN = Capital + Resultado. Recordá que Activo = Pasivo + PN.';
+}
+function solEstado(i){
+ const c=ESTADOS[i],box=document.getElementById('esr-'+i);
+ if(box.classList.contains('visible')){box.classList.remove('visible');box.innerHTML='';return;}
+ const A=c.saldos.filter(s=>s[1]==='A'),P=c.saldos.filter(s=>s[1]==='P'),ing=c.saldos.filter(s=>s[1]==='R+'),egr=c.saldos.filter(s=>s[1]==='R-'),cap=c.saldos.filter(s=>s[1]==='PN');
+ const rows=arr=>arr.map(s=>`<tr><td>${s[0]}</td><td class="num">${fmt(s[2])}</td></tr>`).join('');
+ const totIng=ing.reduce((a,s)=>a+s[2],0),totEgr=egr.reduce((a,s)=>a+s[2],0);
+ box.innerHTML=`
+  <h4 style="color:var(--navy);margin:14px 0 6px">Estado de Resultados</h4>
+  <table class="eecc-table">
+   <tr><th>Concepto</th><th class="num">$</th></tr>
+   ${ing.map(s=>`<tr><td>${s[0]}</td><td class="num">${fmt(s[2])}</td></tr>`).join('')}
+   ${egr.map(s=>`<tr><td>${s[0]}</td><td class="num">(${fmt(s[2])})</td></tr>`).join('')}
+   <tr class="total"><td>Resultado del Ejercicio (${totIng>totEgr?'Ganancia':'Pérdida'})</td><td class="num">${fmt(c.resultado)}</td></tr>
+  </table>
+  <h4 style="color:var(--navy);margin:14px 0 6px">Estado de Situación Patrimonial</h4>
+  <table class="eecc-table">
+   <tr><th>ACTIVO</th><th class="num">$</th></tr>
+   ${rows(A)}
+   <tr class="total"><td>TOTAL ACTIVO</td><td class="num">${fmt(c.activo)}</td></tr>
+  </table>
+  <table class="eecc-table">
+   <tr><th>PASIVO</th><th class="num">$</th></tr>
+   ${rows(P)}
+   <tr class="total"><td>TOTAL PASIVO</td><td class="num">${fmt(c.pasivo)}</td></tr>
+  </table>
+  <table class="eecc-table">
+   <tr><th>PATRIMONIO NETO</th><th class="num">$</th></tr>
+   ${rows(cap)}
+   <tr><td>Resultado del Ejercicio</td><td class="num">${fmt(c.resultado)}</td></tr>
+   <tr class="total"><td>TOTAL PATRIMONIO NETO</td><td class="num">${fmt(c.pn)}</td></tr>
+  </table>
+  <p style="font-size:.84rem;margin-top:8px;background:#eef6ef;padding:8px 12px;border-radius:8px"><strong>Control:</strong> Pasivo + PN = ${fmt(c.pasivo)} + ${fmt(c.pn)} = <strong>${fmt(c.activo)}</strong> = Total Activo ✓</p>`;
+ box.classList.add('visible');
+}
+
+// ===================== DASHBOARD =====================
+function updateDash(){
+ let total=0;
+ ['c1','c2','c3','c4','c5','c6'].forEach((t,i)=>{
+  const done=Object.keys(progress[t]).length,pct=Math.round(done/10*100);total+=done;
+  const bar=document.getElementById('p'+(i+1)),lbl=document.getElementById('pl'+(i+1));
+  if(bar)bar.style.width=pct+'%';if(lbl)lbl.textContent=done+' / 10';
+ });
+ const s=document.getElementById('stat-done');if(s)s.textContent=total;
+}
+
+// ===================== EXAMS =====================
+function buildExam(n,qs){
+ const el=document.getElementById('examc'+n+'-questions');if(el.childElementCount>0)return;
+ qs.forEach((q,i)=>{
+  const d=document.createElement('div');d.className='exam-q';d.id=`eq${n}-${i}`;
+  if(q.type==='tf'){
+   d.innerHTML=`<div class="q-label">Pregunta ${i+1} — Verdadero / Falso</div><div class="q-text">${q.q}</div><div class="exam-tf"><label><input type="radio" name="eq${n}${i}" value="true"><span>✅ Verdadero</span></label><label><input type="radio" name="eq${n}${i}" value="false"><span>❌ Falso</span></label></div>`;
+  }else{
+   const opts=q.opts.map((o,j)=>`<label><input type="radio" name="eq${n}${i}" value="${j}"><span>${String.fromCharCode(65+j)}) ${o}</span></label>`).join('');
+   d.innerHTML=`<div class="q-label">Pregunta ${i+1} — Múltiple opción</div><div class="q-text">${q.q}</div><div class="exam-mc">${opts}</div>`;
+  }
+  el.appendChild(d);
+ });
+}
+function startTimer(n){
+ let secs=2400;const el=document.getElementById('timerc'+n);
+ timers[n]=setInterval(()=>{
+  secs--;const m=Math.floor(secs/60),s=secs%60;
+  el.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  if(secs<=300)el.classList.add('timer-warn');
+  if(secs<=0){clearInterval(timers[n]);submitExam(n);}
+ },1000);
+}
+function submitExam(n){
+ clearInterval(timers[n]);const qs=n===1?EXAM1:EXAM2;let score=0,missed=[];
+ qs.forEach((q,i)=>{
+  const inp=document.querySelector(`input[name="eq${n}${i}"]:checked`);
+  const card=document.getElementById(`eq${n}-${i}`);
+  if(!inp){missed.push(i+1);card.style.border='1px solid #d97706';return;}
+  const val=q.type==='tf'?(inp.value==='true'):parseInt(inp.value);
+  const ok=val===q.a;if(ok)score++;
+  card.style.background=ok?'#dcfce7':'#fee2e2';card.style.border='1px solid '+(ok?'#16a34a':'#dc2626');
+ });
+ const r=document.getElementById('resultc'+n);r.style.display='block';
+ const pct=Math.round(score/qs.length*100),pass=score>=Math.ceil(qs.length*0.5);
+ r.innerHTML=`<h3>${pass?'🎉 ¡Aprobado!':'📚 A repasar'}</h3><div class="score">${score}/${qs.length}</div><p>${pct}% correctas${missed.length?' · Sin responder: '+missed.join(', '):''}</p><p style="margin-top:12px;font-size:.9rem">${pass?'Superaste el 50% requerido para aprobar. ¡Muy bien!':'Necesitás al menos el 50%. Revisá las preguntas en rojo y reforzá esos temas.'}</p>`;
+ r.scrollIntoView({behavior:'smooth'});
+ if(pass)confetti();
+}
+function confetti(){
+ const c=document.getElementById('confetti-container'),cols=['#2E7D32','#1B3A6B','#43A047','#C75B12','#fde047','#16a34a'];
+ for(let i=0;i<80;i++){const p=document.createElement('div');p.className='confetti-piece';
+  p.style.cssText=`left:${Math.random()*100}%;background:${cols[Math.floor(Math.random()*cols.length)]};width:${6+Math.random()*8}px;height:${6+Math.random()*8}px;border-radius:${Math.random()>.5?'50%':'2px'};animation-duration:${2+Math.random()*2}s;animation-delay:${Math.random()*1.5}s`;
+  c.appendChild(p);setTimeout(()=>p.remove(),4000+i*50);}
+}
+
+// ===================== INIT =====================
+document.addEventListener('DOMContentLoaded',()=>{
+ ['c1','c2','c3','c4','c5','c6'].forEach(t=>{renderTF(t);renderMC(t);renderDev(t);});
+ renderClasif();renderAsientos();renderEstados();
+ buildExam(1,EXAM1);buildExam(2,EXAM2);
+ updateDash();
+});
+</script>
+</body>
+</html>

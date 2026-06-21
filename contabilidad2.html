@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contabilidad II — Estados Contables</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#1B3A6B;--green:#1565C0;--accent:#E65100;--light:#E3F2FD;--bg:#F0F4F8}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh}
+/* SIDEBAR */
+#sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:linear-gradient(180deg,var(--primary),#0D2348);color:#fff;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+#sidebar .logo{padding:22px 18px 14px;border-bottom:1px solid rgba(255,255,255,.15)}
+#sidebar .logo h2{font-size:1rem;font-weight:800;letter-spacing:.3px}
+#sidebar .logo p{font-size:.72rem;opacity:.7;margin-top:3px}
+#sidebar nav{padding:12px 0;flex:1}
+#sidebar nav a{display:flex;align-items:center;gap:10px;padding:10px 18px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.85rem;transition:.18s;cursor:pointer}
+#sidebar nav a:hover,#sidebar nav a.active{background:rgba(255,255,255,.12);color:#fff}
+#sidebar nav a .ico{font-size:1rem;width:20px;text-align:center}
+#sidebar .back-link{padding:14px 18px;border-top:1px solid rgba(255,255,255,.15)}
+#sidebar .back-link a{color:rgba(255,255,255,.65);font-size:.78rem;text-decoration:none;display:flex;align-items:center;gap:6px}
+#sidebar .back-link a:hover{color:#fff}
+/* MAIN */
+#main{margin-left:240px;min-height:100vh;padding:28px}
+/* DASHBOARD */
+#dash{display:block}
+.dash-header{background:linear-gradient(135deg,var(--primary),var(--green));color:#fff;border-radius:16px;padding:30px;margin-bottom:24px}
+.dash-header h1{font-size:1.8rem;font-weight:800}
+.dash-header p{opacity:.85;margin-top:6px}
+.progress-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.prog-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);cursor:pointer;transition:.2s}
+.prog-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.prog-card .ptitle{font-size:.8rem;font-weight:700;color:var(--primary);margin-bottom:8px}
+.prog-bar{background:#e0e0e0;border-radius:99px;height:7px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),#42A5F5);border-radius:99px;transition:.5s}
+.prog-card .pct{font-size:.72rem;color:#666;margin-top:5px}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.qa-btn{background:#fff;border-radius:12px;padding:18px;text-align:center;cursor:pointer;border:2px solid transparent;transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.qa-btn:hover{border-color:var(--green);background:var(--light)}
+.qa-btn .qico{font-size:2rem;display:block;margin-bottom:8px}
+.qa-btn h3{font-size:.9rem;font-weight:700;color:var(--primary)}
+.qa-btn p{font-size:.76rem;color:#666;margin-top:4px}
+/* TOPIC PAGES */
+.topic-page{display:none}
+.topic-page.visible{display:block}
+.topic-header{background:linear-gradient(135deg,var(--primary),var(--green));color:#fff;border-radius:14px;padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.topic-header .th-ico{font-size:2.2rem}
+.topic-header h2{font-size:1.3rem;font-weight:800}
+.topic-header p{font-size:.84rem;opacity:.85;margin-top:3px}
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.tab-btn{padding:8px 18px;border:none;border-radius:8px;font-size:.83rem;font-weight:600;cursor:pointer;background:#dde4ee;color:var(--primary);transition:.18s}
+.tab-btn.active{background:var(--primary);color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+/* THEORY ACCORDION */
+.accordion{margin-bottom:10px;border-radius:12px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.acc-head{background:#fff;padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--primary);font-size:.92rem;transition:.18s}
+.acc-head:hover{background:var(--light)}
+.acc-arrow{transition:.25s;font-size:.8rem}
+.acc-body{background:#fff;padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s}
+.acc-body.open{max-height:1200px;padding:6px 20px 18px}
+.acc-body p,.acc-body li{font-size:.88rem;line-height:1.7;color:#2c2c3e;margin-bottom:8px}
+.acc-body ul,.acc-body ol{padding-left:18px}
+.acc-body .nota{background:#FFF3E0;border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:.84rem}
+.acc-body .nota strong{color:var(--accent)}
+.acc-body .formula{background:#E8F5E9;border-left:4px solid #2E7D32;border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:.88rem;font-family:monospace}
+/* EXAMPLES */
+.example-card{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:4px solid var(--green)}
+.example-card h4{color:var(--primary);font-size:.92rem;margin-bottom:10px}
+.example-card p,.example-card li{font-size:.86rem;line-height:1.6;color:#2c2c3e;margin-bottom:6px}
+.example-card ul{padding-left:16px}
+.ex-highlight{background:var(--light);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:.84rem}
+/* PRACTICE */
+.practice-section{background:#fff;border-radius:12px;padding:22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.practice-section h3{color:var(--primary);font-size:1rem;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--light)}
+.q-block{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #eee}
+.q-block:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.q-block p{font-size:.88rem;font-weight:600;color:#1a1a2e;margin-bottom:10px}
+.options label{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;font-size:.84rem;cursor:pointer;padding:6px 10px;border-radius:8px;transition:.15s}
+.options label:hover{background:var(--light)}
+.options input[type=radio],.options input[type=checkbox]{margin-top:2px;flex-shrink:0;accent-color:var(--green)}
+.btn{display:inline-block;padding:9px 22px;border-radius:8px;border:none;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--green)}
+.btn-success{background:#2E7D32;color:#fff}
+.btn-success:hover{background:#1B5E20}
+.feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:.84rem;display:none}
+.feedback.correct{background:#E8F5E9;color:#1B5E20;border:1px solid #A5D6A7}
+.feedback.wrong{background:#FFEBEE;color:#B71C1C;border:1px solid #FFCDD2}
+.score-box{background:linear-gradient(135deg,var(--primary),var(--green));color:#fff;border-radius:12px;padding:20px;text-align:center;margin-top:16px;display:none}
+.score-box h3{font-size:1.4rem;font-weight:800}
+.score-box p{opacity:.9;margin-top:4px;font-size:.88rem}
+textarea.dev-ans{width:100%;min-height:80px;border:1px solid #ccc;border-radius:8px;padding:10px;font-size:.84rem;resize:vertical;font-family:inherit}
+/* CASCADE TABLE */
+.cascade-table{width:100%;border-collapse:collapse;margin:10px 0}
+.cascade-table td{padding:7px 12px;font-size:.85rem;border-bottom:1px solid #eee}
+.cascade-table .subtotal td{background:#E3F2FD;font-weight:700;color:var(--primary)}
+.cascade-table .total td{background:var(--primary);color:#fff;font-weight:800}
+.cascade-table .indent td:first-child{padding-left:28px;color:#555}
+/* EXAMS */
+#exam-page{display:none}
+.exam-header{background:linear-gradient(135deg,#B71C1C,#E53935);color:#fff;border-radius:14px;padding:22px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.exam-header h2{font-size:1.2rem;font-weight:800}
+#exam-timer{font-size:1.3rem;font-weight:800;background:rgba(255,255,255,.2);padding:6px 16px;border-radius:8px}
+.exam-q{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.exam-q p.qtext{font-size:.9rem;font-weight:600;margin-bottom:12px;color:#1a1a2e}
+.exam-q .options label{font-size:.85rem}
+.exam-result{background:#fff;border-radius:14px;padding:30px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.exam-result .big-score{font-size:3rem;font-weight:800;color:var(--primary)}
+.exam-result .verdict{font-size:1.1rem;font-weight:700;margin:8px 0}
+.exam-result .verdict.pass{color:#2E7D32}
+.exam-result .verdict.fail{color:#B71C1C}
+/* MAYORIZACIÓN */
+.mayor-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.84rem}
+.mayor-table th{background:var(--primary);color:#fff;padding:8px 12px;text-align:left}
+.mayor-table td{padding:7px 12px;border-bottom:1px solid #eee}
+.mayor-table tr:hover td{background:var(--light)}
+/* RESPONSIVE */
+@media(max-width:700px){#sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap}#main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="logo">
+    <h2>📊 Contabilidad II</h2>
+    <p>Estados Contables · CAECE</p>
+  </div>
+  <nav>
+    <a onclick="showPage('dash')" id="nav-dash" class="active"><span class="ico">🏠</span>Inicio</a>
+    <a onclick="showPage('t1')" id="nav-t1"><span class="ico">📋</span>Estados Contables</a>
+    <a onclick="showPage('t2')" id="nav-t2"><span class="ico">⚖️</span>4 Estados Básicos</a>
+    <a onclick="showPage('t3')" id="nav-t3"><span class="ico">📝</span>Inf. Complementaria</a>
+    <a onclick="showPage('t4')" id="nav-t4"><span class="ico">📊</span>Pre-Balance</a>
+    <a onclick="showPage('t5')" id="nav-t5"><span class="ico">🏢</span>ESP / Balance</a>
+    <a onclick="showPage('t6')" id="nav-t6"><span class="ico">📅</span>Corriente / No Corriente</a>
+    <a onclick="showPage('t7')" id="nav-t7"><span class="ico">📈</span>Estado de Resultados</a>
+    <a onclick="showPage('t8')" id="nav-t8"><span class="ico">📚</span>Registros Obligatorios</a>
+    <a onclick="showPage('exams')" id="nav-exams"><span class="ico">🎯</span>Exámenes</a>
+  </nav>
+  <div class="back-link"><a href="estudiar.html">← Volver al inicio</a></div>
+</div>
+
+<div id="main">
+
+<!-- DASHBOARD -->
+<div id="dash">
+  <div class="dash-header">
+    <h1>📊 Contabilidad II — Estados Contables</h1>
+    <p>Universidad CAECE · Mar del Plata · Módulo Teórico Completo</p>
+  </div>
+  <div class="progress-grid" id="progress-grid"></div>
+  <div class="quick-actions">
+    <div class="qa-btn" onclick="showPage('t1')">
+      <span class="qico">📋</span>
+      <h3>Empezar a Estudiar</h3>
+      <p>Teoría completa con ejemplos y notas clave</p>
+    </div>
+    <div class="qa-btn" onclick="showPage('exams')">
+      <span class="qico">🎯</span>
+      <h3>Ir a los Exámenes</h3>
+      <p>Simulacros cronometrados con corrección</p>
+    </div>
+  </div>
+</div>
+
+<!-- T1: ESTADOS CONTABLES CONCEPTO -->
+<div id="t1" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">📋</span>
+    <div>
+      <h2>Estados Contables: Concepto y Finalidad</h2>
+      <p>Qué son, para qué sirven y a quiénes aplican</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t1','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t1','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t1','practica',this)">Práctica</button>
+  </div>
+
+  <div id="t1-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué son los estados contables? <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>Los <strong>estados contables</strong> son documentos formales que sintetizan la información económica, financiera y patrimonial de un ente en un período determinado.</p>
+        <p>Constituyen el <strong>producto final del proceso contable</strong> y son el principal medio de comunicación entre el ente y los distintos usuarios de la información contable.</p>
+        <p>Su función esencial es la transmisión de información económica sobre la situación y la gestión del ente, permitiendo que terceros puedan tomar decisiones fundadas.</p>
+        <ul>
+          <li><strong>Inversores</strong>: para decidir si invertir o no</li>
+          <li><strong>Acreedores</strong>: para evaluar si prestar dinero</li>
+          <li><strong>Organismos de control</strong>: AFIP, IGJ, CNV</li>
+          <li><strong>Empleados</strong>: para conocer la salud de la empresa</li>
+          <li><strong>El Estado</strong>: para recaudar impuestos y regular</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">¿A qué entes aplican? <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Los estados contables aplican a <strong>TODOS</strong> los tipos de entes, sin distinción de su naturaleza jurídica ni de su finalidad económica:</p>
+        <ul>
+          <li><strong>Entes públicos</strong>: Estado nacional, provincial, municipal y sus organismos</li>
+          <li><strong>Entes privados</strong>: SA, SRL, asociaciones civiles, cooperativas, fundaciones</li>
+          <li><strong>Entes con fines de lucro</strong>: empresas comerciales, industriales, de servicios</li>
+          <li><strong>Entes sin fines de lucro</strong>: clubes deportivos, ONGs, iglesias, fundaciones</li>
+        </ul>
+        <div class="nota"><strong>⚠️ NOTA DE EXAMEN:</strong> La respuesta correcta es siempre la MÁS AMPLIA: "entes públicos o privados, ya fueran estos con o sin fines de lucro". Cualquier limitación a solo un tipo de ente es INCORRECTA.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="t1-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>🏭 Ejemplo 1: Empresa Industrial (ente con fin de lucro)</h4>
+      <p>Metalúrgica del Sur SA cierra su ejercicio el 31/12. Debe presentar sus estados contables ante la IGJ, AFIP, y sus accionistas. Estos documentos muestran si la empresa ganó o perdió, cuánto debe, y cuánto tienen los socios.</p>
+    </div>
+    <div class="example-card">
+      <h4>⛪ Ejemplo 2: ONG (ente sin fin de lucro)</h4>
+      <p>La Fundación Esperanza también debe presentar estados contables aunque no busque ganancias. Sus donantes y el Estado necesitan saber cómo administra los fondos recibidos.</p>
+    </div>
+    <div class="example-card">
+      <h4>🏛️ Ejemplo 3: Municipalidad (ente público)</h4>
+      <p>La Municipalidad de Mar del Plata debe rendir cuentas mediante estados contables para que los ciudadanos y el gobierno provincial puedan controlar el uso de los recursos públicos.</p>
+    </div>
+  </div>
+
+  <div id="t1-practica" class="tab-content">
+    <div class="practice-section">
+      <h3>✅ Verdadero o Falso</h3>
+      <div id="t1-tf"></div>
+      <button class="btn btn-primary" onclick="checkTF('t1')">Ver resultados</button>
+      <div id="t1-tf-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>🔘 Múltiple opción</h3>
+      <div id="t1-mc"></div>
+      <button class="btn btn-primary" onclick="checkMC('t1')">Ver resultados</button>
+      <div id="t1-mc-score" class="score-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T2: 4 ESTADOS BÁSICOS -->
+<div id="t2" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">⚖️</span>
+    <div>
+      <h2>Los 4 Estados Contables Básicos</h2>
+      <p>ESP · Estado de Resultados · EEPN · EFE</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t2','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t2','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t2','practica',this)">Práctica</button>
+  </div>
+
+  <div id="t2-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">1. Estado de Situación Patrimonial (ESP) <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>También llamado <strong>Balance General</strong>. Expone la composición y magnitud del patrimonio del ente en un momento determinado (fecha de cierre del ejercicio). Es un estado <strong>estático</strong>.</p>
+        <ul>
+          <li><strong>Activo:</strong> todos los bienes y derechos de titularidad del ente con valor económico</li>
+          <li><strong>Pasivo:</strong> todas las obligaciones y deudas del ente hacia terceros</li>
+          <li><strong>Patrimonio Neto (PN):</strong> la diferencia entre Activo y Pasivo. Representa la participación de los propietarios</li>
+        </ul>
+        <div class="formula">ACTIVO = PASIVO + PATRIMONIO NETO</div>
+        <div class="nota"><strong>⚠️ CLAVE:</strong> El ESP NO expone resultados directamente en su cuerpo principal. Los resultados se reflejan a través del PN (cuenta Resultados No Asignados), pero el DETALLE corresponde al Estado de Resultados.</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">2. Estado de Resultados (ER) <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Muestra las <strong>causas</strong> que generaron el resultado (ganancia o pérdida) del período. Solo incluye variaciones atribuibles al resultado: ingresos, costos y gastos.</p>
+        <ul>
+          <li><strong>Resultados ordinarios:</strong> habituales y repetitivos (operativos, financieros, por tenencia, inversiones permanentes)</li>
+          <li><strong>Resultados extraordinarios:</strong> atípicos, excepcionales y de escasa repetición</li>
+        </ul>
+        <div class="nota"><strong>⚠️ CLAVE:</strong> El Estado de Resultados NO muestra variaciones patrimoniales totales. Para eso existe el EEPN.</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">3. Estado de Evolución del PN (EEPN) <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Expone las causas de <strong>todos los cambios ocurridos en el Patrimonio Neto</strong> durante el período. Incluye:</p>
+        <ul>
+          <li>Resultados del ejercicio</li>
+          <li>Aportes de capital</li>
+          <li>Distribución de dividendos</li>
+          <li>Ajustes de ejercicios anteriores</li>
+        </ul>
+        <p>Complementa al Estado de Resultados mostrando el panorama completo del PN.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">4. Estado de Flujo de Efectivo (EFE) <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Informa los <strong>ingresos y egresos de efectivo</strong> y equivalentes ocurridos durante el período. Clasifica los movimientos en tres actividades:</p>
+        <ul>
+          <li><strong>Actividades operativas:</strong> relacionadas con la actividad principal del ente</li>
+          <li><strong>Actividades de inversión:</strong> compra/venta de activos no corrientes e inversiones</li>
+          <li><strong>Actividades de financiación:</strong> obtención y devolución de préstamos, aportes de capital</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Los libros contables NO son estados básicos <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Los cuatro estados básicos son: <strong>ESP + ER + EEPN + EFE</strong>.</p>
+        <div class="nota"><strong>⚠️ TRAMPA FRECUENTE:</strong> El Libro Inventario y Balances NO es un estado contable básico. Los libros contables (Diario, Mayor, Inventario y Balances) son <em>registros contables obligatorios</em>, no estados básicos. Cualquier opción que los incluya como "estado básico" es incorrecta.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="t2-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>📊 Los 4 estados de una empresa al 31/12</h4>
+      <ul>
+        <li><strong>ESP:</strong> "Al 31/12, tenemos $500.000 en activos, $200.000 de deudas, y los socios tienen $300.000"</li>
+        <li><strong>ER:</strong> "Durante el año vendimos $800.000, gastamos $650.000, ganamos $150.000"</li>
+        <li><strong>EEPN:</strong> "El PN pasó de $200.000 a $300.000: ganamos $150.000 y los socios aportaron $100.000, pero se pagaron $50.000 de dividendos"</li>
+        <li><strong>EFE:</strong> "Ingresaron $900.000 en efectivo por ventas, salieron $700.000 por compras y gastos, quedamos con $200.000 más en caja"</li>
+      </ul>
+    </div>
+    <div class="example-card">
+      <h4>🔍 Diferencia ER vs EEPN</h4>
+      <p>El ER muestra solo la ganancia/pérdida operativa. El EEPN muestra TODOS los movimientos del PN. Si un socio pone más capital, eso no aparece en el ER pero sí en el EEPN.</p>
+    </div>
+  </div>
+
+  <div id="t2-practica" class="tab-content">
+    <div class="practice-section">
+      <h3>✅ Verdadero o Falso</h3>
+      <div id="t2-tf"></div>
+      <button class="btn btn-primary" onclick="checkTF('t2')">Ver resultados</button>
+      <div id="t2-tf-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>🔘 Múltiple opción</h3>
+      <div id="t2-mc"></div>
+      <button class="btn btn-primary" onclick="checkMC('t2')">Ver resultados</button>
+      <div id="t2-mc-score" class="score-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T3: INFORMACIÓN COMPLEMENTARIA -->
+<div id="t3" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">📝</span>
+    <div>
+      <h2>Información Complementaria</h2>
+      <p>Notas, anexos y datos que completan los estados básicos</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t3','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t3','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t3','practica',this)">Práctica</button>
+  </div>
+
+  <div id="t3-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Concepto de Información Complementaria <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>La información complementaria es aquella que, si bien <strong>no está incluida en el cuerpo principal</strong> de los estados básicos, es necesaria para que la información contable sea útil, comprensible y suficiente para la toma de decisiones.</p>
+        <ul>
+          <li>Es <strong>obligatoria</strong>: debe exponerse aunque no esté en el cuerpo de los estados básicos</li>
+          <li>Es <strong>parte integrante</strong> del conjunto de estados contables: NO es optativa ni accesoria</li>
+          <li>Para ser útil, debe explicarse en forma particular y específica</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Formas de exposición <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Notas:</strong> aclaraciones textuales que explican políticas contables, criterios de valuación, contingencias, etc.</li>
+          <li><strong>Cuadros anexos:</strong> tablas detalladas de rubros específicos (ej.: detalle de bienes de uso, inversiones)</li>
+          <li><strong>Información adicional</strong> exigida por normas o control (IGJ, CNV, AFIP)</li>
+          <li><strong>Planillas complementarias</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="t3-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>📌 Ejemplo de Nota al pie</h4>
+      <p>"Nota 3 - Criterio de valuación de bienes de cambio: Los bienes de cambio se valúan al costo de adquisición o fabricación, sin superar el valor neto de realización, según RT N°9."</p>
+      <div class="ex-highlight">Esta nota explica el CÓMO se valuó, información que no entra en el cuerpo del balance pero es esencial para entender los números.</div>
+    </div>
+    <div class="example-card">
+      <h4>📎 Ejemplo de Cuadro Anexo</h4>
+      <p>Anexo A — Bienes de Uso: una tabla que detalla cada máquina, su valor original, las amortizaciones acumuladas y el valor neto en libros. El ESP solo muestra el total, el anexo el detalle.</p>
+    </div>
+  </div>
+
+  <div id="t3-practica" class="tab-content">
+    <div class="practice-section">
+      <h3>✅ Verdadero o Falso</h3>
+      <div id="t3-tf"></div>
+      <button class="btn btn-primary" onclick="checkTF('t3')">Ver resultados</button>
+      <div id="t3-tf-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>🔘 Múltiple opción</h3>
+      <div id="t3-mc"></div>
+      <button class="btn btn-primary" onclick="checkMC('t3')">Ver resultados</button>
+      <div id="t3-mc-score" class="score-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T4: PRE-BALANCE -->
+<div id="t4" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">📊</span>
+    <div>
+      <h2>Planilla de Pre-Balance (Hoja de Trabajo)</h2>
+      <p>Instrumento auxiliar para confeccionar estados contables</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t4','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t4','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t4','practica',this)">Práctica</button>
+  </div>
+
+  <div id="t4-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es la planilla de pre-balance? <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>Es un <strong>instrumento auxiliar</strong> de la contabilidad que facilita la confección de los estados contables al final del ejercicio.</p>
+        <div class="nota"><strong>⚠️ IMPORTANTE:</strong> NO es un estado contable. NO es un libro obligatorio. Es simplemente una <em>herramienta de trabajo</em> interna del contador.</div>
+        <p>Permite ordenar y verificar la información antes de redactar los estados formales.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Las dos igualdades fundamentales <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>En la planilla existen dos igualdades que <strong>siempre deben cumplirse</strong>:</p>
+        <div class="formula">Igualdad 1: Total columna DEBE = Total columna HABER</div>
+        <div class="formula">Igualdad 2: Total SALDOS DEUDORES = Total SALDOS ACREEDORES</div>
+        <p>Si alguna igualdad no se cumple, hay un error en los registros que debe corregirse antes de continuar.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="t4-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>🗂️ Estructura simplificada de la hoja de trabajo</h4>
+      <table class="mayor-table">
+        <tr><th>Cuenta</th><th>Debe</th><th>Haber</th><th>Saldo Deudor</th><th>Saldo Acreedor</th></tr>
+        <tr><td>Caja</td><td>50.000</td><td>30.000</td><td>20.000</td><td>—</td></tr>
+        <tr><td>Deudores</td><td>80.000</td><td>20.000</td><td>60.000</td><td>—</td></tr>
+        <tr><td>Proveedores</td><td>10.000</td><td>40.000</td><td>—</td><td>30.000</td></tr>
+        <tr><td>Capital</td><td>—</td><td>50.000</td><td>—</td><td>50.000</td></tr>
+        <tr><td><strong>TOTALES</strong></td><td><strong>140.000</strong></td><td><strong>140.000</strong></td><td><strong>80.000</strong></td><td><strong>80.000</strong></td></tr>
+      </table>
+      <div class="ex-highlight">Ambas igualdades se cumplen: Debe = Haber = 140.000 y SD = SA = 80.000 ✓</div>
+    </div>
+  </div>
+
+  <div id="t4-practica" class="tab-content">
+    <div class="practice-section">
+      <h3>✅ Verdadero o Falso</h3>
+      <div id="t4-tf"></div>
+      <button class="btn btn-primary" onclick="checkTF('t4')">Ver resultados</button>
+      <div id="t4-tf-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>🔘 Múltiple opción</h3>
+      <div id="t4-mc"></div>
+      <button class="btn btn-primary" onclick="checkMC('t4')">Ver resultados</button>
+      <div id="t4-mc-score" class="score-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T5: ESP -->
+<div id="t5" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">🏢</span>
+    <div>
+      <h2>Estado de Situación Patrimonial (ESP)</h2>
+      <p>Activo · Pasivo · Patrimonio Neto · Ecuación fundamental</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t5','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t5','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t5','practica',this)">Práctica</button>
+  </div>
+
+  <div id="t5-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Características del ESP <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>El ESP es un <strong>estado contable estático</strong>: retrata la situación del ente en un instante preciso (la fecha de cierre del ejercicio económico).</p>
+        <p>A diferencia del ER que muestra movimientos durante un período, el ESP es una "foto" en un momento dado.</p>
+        <ul>
+          <li><strong>Activo:</strong> bienes y derechos con valor económico</li>
+          <li><strong>Pasivo:</strong> obligaciones hacia terceros</li>
+          <li><strong>PN:</strong> lo que les queda a los propietarios = Activo − Pasivo</li>
+        </ul>
+        <div class="formula">ACTIVO = PASIVO + PATRIMONIO NETO</div>
+        <div class="nota"><strong>⚠️ CLAVE:</strong> El ESP NO expone resultados directamente en su cuerpo principal. Los resultados aparecen en el PN como "Resultados No Asignados", pero el detalle está en el Estado de Resultados.</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Activo Corriente vs No Corriente <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Activo Corriente:</strong> se convierte en dinero en menos de 12 meses desde el cierre</p>
+        <ul><li>Caja, bancos, deudores por ventas, mercaderías</li></ul>
+        <p><strong>Activo No Corriente:</strong> permanece más de 12 meses</p>
+        <ul><li>Inmuebles, maquinarias, marcas, inversiones a largo plazo</li></ul>
+        <p><strong>Pasivo Corriente:</strong> vence dentro de 12 meses desde el cierre</p>
+        <p><strong>Pasivo No Corriente:</strong> vence en más de 12 meses</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Componentes del Patrimonio Neto <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Capital Social:</strong> aportes de los socios</li>
+          <li><strong>Reservas:</strong> ganancias reservadas por obligación legal o voluntad</li>
+          <li><strong>Resultados No Asignados (RNA):</strong> ganancias acumuladas pendientes de distribución</li>
+          <li><strong>Resultado del ejercicio:</strong> la ganancia o pérdida del período actual</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="t5-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>📋 ESP simplificado al 31/12/2024</h4>
+      <table class="mayor-table">
+        <tr><th colspan="2">ACTIVO</th><th colspan="2">PASIVO + PN</th></tr>
+        <tr><td><em>Corriente</em></td><td></td><td><em>Pasivo Corriente</em></td><td></td></tr>
+        <tr><td>Caja y Bancos</td><td>$50.000</td><td>Proveedores</td><td>$80.000</td></tr>
+        <tr><td>Deudores</td><td>$120.000</td><td>Préstamos CP</td><td>$40.000</td></tr>
+        <tr><td>Mercaderías</td><td>$80.000</td><td><em>Pasivo No Corriente</em></td><td></td></tr>
+        <tr><td><em>No Corriente</em></td><td></td><td>Préstamos LP</td><td>$100.000</td></tr>
+        <tr><td>Inmuebles</td><td>$300.000</td><td><strong>Total Pasivo</strong></td><td><strong>$220.000</strong></td></tr>
+        <tr><td>Maquinaria</td><td>$150.000</td><td><em>Patrimonio Neto</em></td><td></td></tr>
+        <tr><td></td><td></td><td>Capital</td><td>$400.000</td></tr>
+        <tr><td></td><td></td><td>RNA</td><td>$80.000</td></tr>
+        <tr><td><strong>TOTAL ACTIVO</strong></td><td><strong>$700.000</strong></td><td><strong>Total P + PN</strong></td><td><strong>$700.000</strong></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="t5-practica" class="tab-content">
+    <div class="practice-section">
+      <h3>✅ Verdadero o Falso</h3>
+      <div id="t5-tf"></div>
+      <button class="btn btn-primary" onclick="checkTF('t5')">Ver resultados</button>
+      <div id="t5-tf-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>🔘 Múltiple opción</h3>
+      <div id="t5-mc"></div>
+      <button class="btn btn-primary" onclick="checkMC('t5')">Ver resultados</button>
+      <div id="t5-mc-score" class="score-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T6: CORRIENTE / NO CORRIENTE -->
+<div id="t6" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">📅</span>
+    <div>
+      <h2>Activos y Pasivos Corrientes</h2>
+      <p>Clasificación temporal: dentro o fuera del año</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t6','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t6','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t6','practica',this)">Práctica</button>
+  </div>
+
+  <div id="t6-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Activos Corrientes <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>Son activos corrientes aquellos que se espera que se <strong>conviertan en dinero o su equivalente en el plazo de un año</strong>, computado desde la fecha de cierre del ejercicio, y los que ya lo son a esa fecha.</p>
+        <ul>
+          <li>Caja y bancos (ya son efectivo)</li>
+          <li>Inversiones a corto plazo (se realizan en menos de 1 año)</li>
+          <li>Créditos a cobrar en menos de 1 año</li>
+          <li>Mercaderías (se venden en el ciclo normal)</li>
+        </ul>
+        <div class="nota"><strong>El criterio es temporal:</strong> se mide desde la fecha de CIERRE DEL EJERCICIO, no desde hoy ni desde que se originó la operación.</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Pasivos Corrientes <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Son pasivos corrientes aquellos cuyo <strong>vencimiento o exigibilidad ocurre dentro del plazo de un año</strong> desde la fecha de cierre del período contable.</p>
+        <p>También incluyen:</p>
+        <ul>
+          <li>Los que ya son exigibles al propio cierre del período</li>
+          <li>Las <strong>previsiones</strong> con probabilidad de exigibilidad dentro del año</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div id="t6-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>📅 Clasificación práctica al 31/12/2024</h4>
+      <table class="mayor-table">
+        <tr><th>Cuenta</th><th>¿Corriente o NC?</th><th>¿Por qué?</th></tr>
+        <tr><td>Caja</td><td>✅ Corriente</td><td>Ya es efectivo</td></tr>
+        <tr><td>Cliente vence 15/06/2025</td><td>✅ Corriente</td><td>Dentro del año</td></tr>
+        <tr><td>Préstamo vence 31/03/2026</td><td>❌ No Corriente</td><td>Más de 12 meses</td></tr>
+        <tr><td>Inmueble</td><td>❌ No Corriente</td><td>No se convierte en 1 año</td></tr>
+        <tr><td>Proveedor vence 28/02/2025</td><td>✅ Corriente (pasivo)</td><td>Dentro del año</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="t6-practica" class="tab-content">
+    <div class="practice-section">
+      <h3>✅ Verdadero o Falso</h3>
+      <div id="t6-tf"></div>
+      <button class="btn btn-primary" onclick="checkTF('t6')">Ver resultados</button>
+      <div id="t6-tf-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>🔘 Múltiple opción</h3>
+      <div id="t6-mc"></div>
+      <button class="btn btn-primary" onclick="checkMC('t6')">Ver resultados</button>
+      <div id="t6-mc-score" class="score-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T7: ESTADO DE RESULTADOS -->
+<div id="t7" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">📈</span>
+    <div>
+      <h2>Estado de Resultados</h2>
+      <p>Estructura en cascada · Resultado operativo · Ordinario y Extraordinario</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t7','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t7','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t7','practica',this)">Práctica</button>
+  </div>
+
+  <div id="t7-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Estructura en cascada del ER <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>El Estado de Resultados sigue una <strong>estructura en cascada</strong>: cada nivel de resultado se obtiene del anterior.</p>
+        <table class="cascade-table">
+          <tr><td>Ventas netas</td></tr>
+          <tr class="indent"><td>(−) Costo de ventas</td></tr>
+          <tr class="subtotal"><td>= RESULTADO BRUTO</td></tr>
+          <tr class="indent"><td>(−) Gastos de comercialización</td></tr>
+          <tr class="indent"><td>(−) Gastos de administración</td></tr>
+          <tr class="subtotal"><td>= RESULTADO OPERATIVO</td></tr>
+          <tr class="indent"><td>(+/−) Resultados financieros y por tenencia</td></tr>
+          <tr class="indent"><td>(+/−) Resultados de inversiones permanentes</td></tr>
+          <tr class="subtotal"><td>= RESULTADO ORDINARIO ANTES DE IMPUESTO</td></tr>
+          <tr class="indent"><td>(−) Impuesto a las ganancias</td></tr>
+          <tr class="subtotal"><td>= RESULTADO ORDINARIO</td></tr>
+          <tr class="indent"><td>(+/−) Resultados extraordinarios</td></tr>
+          <tr class="total"><td>= RESULTADO DEL EJERCICIO</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Resultado Ordinario vs Extraordinario <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Ordinarios:</strong> habituales y repetitivos de la actividad</p>
+        <ul>
+          <li><em>Operativos:</em> ventas, costo de ventas, gastos de comercialización y administración</li>
+          <li><em>Financieros y por tenencia:</em> intereses, diferencias de cambio, resultado por exposición a la inflación</li>
+          <li><em>Inversiones permanentes:</em> resultado de participaciones en otras empresas</li>
+        </ul>
+        <p><strong>Extraordinarios:</strong> atípicos, de escasa repetición, fuera de la actividad habitual</p>
+        <ul>
+          <li>Siniestros (incendio, inundación)</li>
+          <li>Expropiaciones</li>
+          <li>Resultados de discontinuación de operaciones</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Resultado Bruto y Resultado Operativo <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Resultado Bruto</strong> = Ventas netas − Costo de ventas</p>
+        <p>Mide la rentabilidad pura de la actividad comercial, antes de cargar gastos de estructura.</p>
+        <p><strong>Resultado Operativo</strong> = Resultado Bruto − Gastos de comercialización − Gastos de administración</p>
+        <p>Muestra cuánto gana la empresa por su operación, antes de resultados financieros e impuestos.</p>
+        <div class="nota"><strong>En examen:</strong> te pueden dar los números y pedir que calcules el resultado operativo paso a paso usando la cascada.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="t7-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>🧮 Ejemplo completo de Estado de Resultados</h4>
+      <table class="cascade-table">
+        <tr><td>Ventas brutas</td><td style="text-align:right">$1.200.000</td></tr>
+        <tr class="indent"><td>(−) Devoluciones y descuentos</td><td style="text-align:right">($50.000)</td></tr>
+        <tr class="subtotal"><td>Ventas netas</td><td style="text-align:right">$1.150.000</td></tr>
+        <tr class="indent"><td>(−) Costo de ventas</td><td style="text-align:right">($700.000)</td></tr>
+        <tr class="subtotal"><td>RESULTADO BRUTO</td><td style="text-align:right">$450.000</td></tr>
+        <tr class="indent"><td>(−) Gastos de comercialización</td><td style="text-align:right">($120.000)</td></tr>
+        <tr class="indent"><td>(−) Gastos de administración</td><td style="text-align:right">($80.000)</td></tr>
+        <tr class="subtotal"><td>RESULTADO OPERATIVO</td><td style="text-align:right">$250.000</td></tr>
+        <tr class="indent"><td>(−) Intereses pagados</td><td style="text-align:right">($30.000)</td></tr>
+        <tr class="subtotal"><td>RDO. ORDINARIO ANTES IMP.</td><td style="text-align:right">$220.000</td></tr>
+        <tr class="indent"><td>(−) Impuesto a las ganancias (35%)</td><td style="text-align:right">($77.000)</td></tr>
+        <tr class="subtotal"><td>RESULTADO ORDINARIO</td><td style="text-align:right">$143.000</td></tr>
+        <tr class="indent"><td>(+) Resultado extraordinario (seguro cobrado)</td><td style="text-align:right">$20.000</td></tr>
+        <tr class="total"><td>RESULTADO DEL EJERCICIO</td><td style="text-align:right">$163.000</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div id="t7-practica" class="tab-content">
+    <div class="practice-section">
+      <h3>✅ Verdadero o Falso</h3>
+      <div id="t7-tf"></div>
+      <button class="btn btn-primary" onclick="checkTF('t7')">Ver resultados</button>
+      <div id="t7-tf-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>🔘 Múltiple opción</h3>
+      <div id="t7-mc"></div>
+      <button class="btn btn-primary" onclick="checkMC('t7')">Ver resultados</button>
+      <div id="t7-mc-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>📐 Ejercicio: Completá el Estado de Resultados</h3>
+      <p style="font-size:.88rem;margin-bottom:14px">Datos: Ventas $800.000 | Costo de ventas $480.000 | Gastos de comercialización $60.000 | Gastos de administración $40.000 | Intereses cobrados $10.000 | Imp. ganancias $80.500</p>
+      <div id="er-exercise">
+        <div class="q-block">
+          <p>1. ¿Cuál es el Resultado Bruto?</p>
+          <input type="number" id="er-q1" placeholder="Ingresá el valor" style="padding:8px;border-radius:8px;border:1px solid #ccc;font-size:.88rem;width:200px">
+        </div>
+        <div class="q-block">
+          <p>2. ¿Cuál es el Resultado Operativo?</p>
+          <input type="number" id="er-q2" placeholder="Ingresá el valor" style="padding:8px;border-radius:8px;border:1px solid #ccc;font-size:.88rem;width:200px">
+        </div>
+        <div class="q-block">
+          <p>3. ¿Cuál es el Resultado Ordinario (después de impuesto)?</p>
+          <input type="number" id="er-q3" placeholder="Ingresá el valor" style="padding:8px;border-radius:8px;border:1px solid #ccc;font-size:.88rem;width:200px">
+        </div>
+        <button class="btn btn-success" onclick="checkERExercise()">Verificar</button>
+        <div id="er-feedback" class="feedback"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- T8: REGISTROS OBLIGATORIOS -->
+<div id="t8" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">📚</span>
+    <div>
+      <h2>Registros Contables Obligatorios</h2>
+      <p>Libro Diario · Libro Inventario y Balances · Código Civil y Comercial</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t8','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t8','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t8','practica',this)">Práctica</button>
+  </div>
+
+  <div id="t8-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Libros obligatorios según el CCC <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>El <strong>Código Civil y Comercial de la Nación</strong> establece dos libros contables indispensables:</p>
+        <ol>
+          <li><strong>Libro Diario:</strong> registro cronológico de todas las operaciones del ente. Cada operación se asienta en orden de fecha con su correspondiente asiento contable.</li>
+          <li><strong>Libro Inventario y Balances:</strong> se transcribe en él el inventario de apertura del ejercicio y, al cierre, se transcriben los estados contables aprobados.</li>
+        </ol>
+        <div class="nota"><strong>⚠️ TRAMPAS DE EXAMEN:</strong> El Libro Mayor, el Libro de Sumas y Saldos y los estados contables básicos NO son "libros obligatorios" en el sentido del CCC. Son herramientas importantes pero no los menciona el código como obligatorios.</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Diferencia: Libros vs Estados Contables <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <table class="mayor-table">
+          <tr><th>Libros Contables</th><th>Estados Contables</th></tr>
+          <tr><td>Registros de las operaciones</td><td>Síntesis de la información</td></tr>
+          <tr><td>Uso interno</td><td>Comunicación externa</td></tr>
+          <tr><td>Libro Diario, Mayor, etc.</td><td>ESP, ER, EEPN, EFE</td></tr>
+          <tr><td>Obligatorios por el CCC</td><td>Obligatorios por normas contables (RT8, RT9)</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="t8-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>📖 Libro Diario — Ejemplo de asiento</h4>
+      <table class="mayor-table">
+        <tr><th>Fecha</th><th>Cuenta</th><th>Debe</th><th>Haber</th></tr>
+        <tr><td>15/03</td><td>Caja</td><td>$50.000</td><td>—</td></tr>
+        <tr><td></td><td>  Ventas</td><td>—</td><td>$50.000</td></tr>
+        <tr><td colspan="4" style="font-size:.78rem;color:#666">Por venta de mercadería al contado</td></tr>
+      </table>
+    </div>
+    <div class="example-card">
+      <h4>📋 Libro Inventario y Balances</h4>
+      <p>Al inicio del ejercicio, el contador transcribe el detalle de todos los bienes y deudas de la empresa (inventario). Al cierre del ejercicio, transcribe el balance general y estado de resultados aprobados por los socios o directorio.</p>
+    </div>
+  </div>
+
+  <div id="t8-practica" class="tab-content">
+    <div class="practice-section">
+      <h3>✅ Verdadero o Falso</h3>
+      <div id="t8-tf"></div>
+      <button class="btn btn-primary" onclick="checkTF('t8')">Ver resultados</button>
+      <div id="t8-tf-score" class="score-box"></div>
+    </div>
+    <div class="practice-section">
+      <h3>🔘 Múltiple opción</h3>
+      <div id="t8-mc"></div>
+      <button class="btn btn-primary" onclick="checkMC('t8')">Ver resultados</button>
+      <div id="t8-mc-score" class="score-box"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXAMS PAGE -->
+<div id="exams" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">🎯</span>
+    <div>
+      <h2>Exámenes Simulacro</h2>
+      <p>Poné a prueba todo lo que estudiaste</p>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="qa-btn" onclick="startExam(1)">
+      <span class="qico">📝</span>
+      <h3>Examen 1</h3>
+      <p>20 preguntas · 35 minutos · Todos los temas</p>
+    </div>
+    <div class="qa-btn" onclick="startExam(2)">
+      <span class="qico">🏆</span>
+      <h3>Examen 2</h3>
+      <p>20 preguntas · 35 minutos · Foco en ESP y ER</p>
+    </div>
+  </div>
+</div>
+
+<!-- EXAM PAGE -->
+<div id="exam-page">
+  <div class="exam-header">
+    <h2 id="exam-title">Examen</h2>
+    <div id="exam-timer">35:00</div>
+  </div>
+  <div id="exam-questions"></div>
+  <div id="exam-result" class="exam-result" style="display:none"></div>
+  <div style="margin-top:16px;display:flex;gap:12px">
+    <button class="btn btn-success" id="btn-submit-exam" onclick="submitExam()">Entregar examen</button>
+    <button class="btn btn-primary" onclick="showPage('exams')">Cancelar</button>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// ===== DATA =====
+const TF = {
+  t1:[
+    {q:"Los estados contables son documentos que sintetizan la información económica, financiera y patrimonial de un ente.",a:true,exp:"Correcto. Esa es la definición exacta de estados contables."},
+    {q:"Los estados contables solo aplican a entes privados con fines de lucro.",a:false,exp:"FALSO. Aplican a todos los entes: públicos o privados, con o sin fines de lucro."},
+    {q:"Una ONG debe presentar estados contables porque recibe fondos de terceros.",a:true,exp:"Correcto. Los estados contables aplican a todos los entes sin importar su finalidad."},
+    {q:"Los estados contables solo sirven para inversores y accionistas.",a:false,exp:"FALSO. Los usan inversores, acreedores, empleados, el Estado, organismos de control, etc."},
+    {q:"Los estados contables son el producto final del proceso contable.",a:true,exp:"Correcto. Constituyen la síntesis del ciclo contable completo."}
+  ],
+  t2:[
+    {q:"Los cuatro estados básicos son: ESP, Estado de Resultados, EEPN y Estado de Flujo de Efectivo.",a:true,exp:"Correcto. Esos son los cuatro estados básicos según RT N°8 y RT N°9."},
+    {q:"El Libro Inventario y Balances es uno de los cuatro estados contables básicos.",a:false,exp:"FALSO. Es un libro obligatorio según el CCC, pero NO es un estado contable básico."},
+    {q:"El Estado de Resultados muestra todos los cambios que ocurrieron en el Patrimonio Neto durante el ejercicio.",a:false,exp:"FALSO. El ER solo muestra las causas del resultado (ingresos y gastos). Los cambios totales del PN los muestra el EEPN."},
+    {q:"El Estado de Flujo de Efectivo clasifica los movimientos en: operativas, de inversión y de financiación.",a:true,exp:"Correcto. Esas son las tres categorías del EFE."},
+    {q:"El EEPN complementa al Estado de Resultados mostrando todos los cambios del PN.",a:true,exp:"Correcto. El EEPN incluye resultados + aportes + dividendos + ajustes de ejercicios anteriores."}
+  ],
+  t3:[
+    {q:"La información complementaria es parte integrante de los estados contables.",a:true,exp:"Correcto. No es optativa; es obligatoria e integra el conjunto."},
+    {q:"La información complementaria puede presentarse solo como notas al pie.",a:false,exp:"FALSO. Puede presentarse como notas, cuadros anexos, planillas complementarias o información adicional exigida."},
+    {q:"La información complementaria es optativa: si el cuerpo del estado es claro, no hace falta.",a:false,exp:"FALSO. Es OBLIGATORIA aunque no esté en el cuerpo principal."},
+    {q:"Las políticas contables aplicadas (criterios de valuación) se explican en la información complementaria.",a:true,exp:"Correcto. Las notas aclaratorias son la forma típica de exponer políticas y criterios."}
+  ],
+  t4:[
+    {q:"La planilla de pre-balance es un estado contable básico.",a:false,exp:"FALSO. Es un instrumento auxiliar, una herramienta de trabajo. NO es un estado contable."},
+    {q:"En la planilla de pre-balance, el total del Debe debe coincidir con el total del Haber.",a:true,exp:"Correcto. Esa es la primera igualdad fundamental de la planilla."},
+    {q:"En la planilla de pre-balance, los saldos deudores deben coincidir con los saldos acreedores.",a:true,exp:"Correcto. Esa es la segunda igualdad fundamental."},
+    {q:"La planilla de pre-balance es un libro obligatorio según el Código Civil y Comercial.",a:false,exp:"FALSO. Solo el Libro Diario y el Libro Inventario y Balances son obligatorios según el CCC."}
+  ],
+  t5:[
+    {q:"El Estado de Situación Patrimonial es un estado estático porque muestra la situación en un momento determinado.",a:true,exp:"Correcto. Es una 'foto' al cierre del ejercicio, no muestra movimientos."},
+    {q:"El ESP expone directamente los resultados del ejercicio en su cuerpo principal.",a:false,exp:"FALSO. Los resultados se reflejan en el PN (RNA), pero el detalle corresponde al Estado de Resultados."},
+    {q:"La ecuación del ESP es: Activo = Pasivo + Patrimonio Neto.",a:true,exp:"Correcto. Esa es la ecuación fundamental del Estado de Situación Patrimonial."},
+    {q:"Los Resultados No Asignados forman parte del Activo del ente.",a:false,exp:"FALSO. Los RNA forman parte del Patrimonio Neto, no del Activo."},
+    {q:"Si el Activo es $500.000 y el Pasivo es $200.000, el PN es $300.000.",a:true,exp:"Correcto. PN = Activo − Pasivo = $500.000 − $200.000 = $300.000."}
+  ],
+  t6:[
+    {q:"Un crédito que vence a 18 meses desde el cierre del ejercicio es un activo corriente.",a:false,exp:"FALSO. Al vencer en más de 12 meses desde el cierre, es un activo NO corriente."},
+    {q:"La caja y bancos siempre son activos corrientes.",a:true,exp:"Correcto. Ya son efectivo, son inmediatamente disponibles."},
+    {q:"El plazo para distinguir corriente/no corriente se mide desde la fecha de la operación.",a:false,exp:"FALSO. Se mide desde la FECHA DE CIERRE DEL EJERCICIO, no desde la operación."},
+    {q:"Una deuda que ya es exigible al cierre del período es un pasivo corriente.",a:true,exp:"Correcto. Los pasivos ya exigibles al cierre también son corrientes."},
+    {q:"Un inmueble comprado para uso propio es generalmente un activo no corriente.",a:true,exp:"Correcto. No se convierte en efectivo dentro del año; permanece en la empresa."}
+  ],
+  t7:[
+    {q:"El Resultado Bruto se obtiene restando el costo de ventas a las ventas netas.",a:true,exp:"Correcto. RB = Ventas netas − Costo de ventas."},
+    {q:"Los gastos de administración se restan del Resultado Bruto para obtener el Resultado Operativo.",a:true,exp:"Correcto. RO = RB − Gastos de comercialización − Gastos de administración."},
+    {q:"Los resultados extraordinarios son habituales y repetitivos de la actividad del ente.",a:false,exp:"FALSO. Los resultados extraordinarios son atípicos y de escasa repetición. Los ordinarios son los habituales."},
+    {q:"El impuesto a las ganancias se resta antes del Resultado Ordinario.",a:true,exp:"Correcto. Se resta del Resultado Ordinario Antes de Impuesto para obtener el Resultado Ordinario."},
+    {q:"El Resultado del Ejercicio incluye tanto resultados ordinarios como extraordinarios.",a:true,exp:"Correcto. Resultado del Ejercicio = Resultado Ordinario +/− Resultados extraordinarios."}
+  ],
+  t8:[
+    {q:"Los libros obligatorios según el CCC son el Libro Diario y el Libro Inventario y Balances.",a:true,exp:"Correcto. El CCC establece esos dos como indispensables."},
+    {q:"El Libro Mayor es un libro obligatorio según el Código Civil y Comercial.",a:false,exp:"FALSO. El Mayor es una herramienta útil pero no es obligatorio según el CCC."},
+    {q:"El Libro Diario registra cronológicamente todas las operaciones del ente.",a:true,exp:"Correcto. Esa es su función: el registro cronológico de operaciones."},
+    {q:"Los estados contables básicos son libros contables obligatorios.",a:false,exp:"FALSO. Los estados básicos son ESP, ER, EEPN y EFE. Los libros obligatorios son Diario e Inventario y Balances."}
+  ]
+};
+
+const MC = {
+  t1:[
+    {q:"¿A qué entes aplican los estados contables?",opts:["Solo a empresas con fines de lucro","Solo a entidades financieras","A todos los entes: públicos o privados, con o sin fines de lucro","Solo a entes privados"],a:2,exp:"Aplican a TODOS los entes. La respuesta más amplia siempre es la correcta."},
+    {q:"¿Cuál es la función esencial de los estados contables?",opts:["Determinar los impuestos a pagar","Transmitir información económica sobre la situación y gestión del ente","Registrar las operaciones diarias","Confeccionar el libro diario"],a:1,exp:"Su función esencial es transmitir información para que terceros tomen decisiones fundadas."},
+    {q:"¿Quiénes son usuarios de los estados contables?",opts:["Solo los dueños de la empresa","Solo el Estado y la AFIP","Inversores, acreedores, empleados, organismos de control y el Estado","Solo los contadores y auditores"],a:2,exp:"Son usuarios todos los interesados: inversores, acreedores, empleados, el Estado, etc."},
+    {q:"Los estados contables constituyen...",opts:["El punto de partida del proceso contable","El producto final del proceso contable","Un libro obligatorio","Una herramienta auxiliar del contador"],a:1,exp:"Son el producto final del proceso contable, no el punto de partida."}
+  ],
+  t2:[
+    {q:"¿Cuáles son los cuatro estados contables básicos?",opts:["Diario, Mayor, Balance, Resultados","ESP, ER, EEPN y Estado de Flujo de Efectivo","Balance, Inventario, Resultados y Flujo de Fondos","ESP, ER, Libro Diario y EEPN"],a:1,exp:"Los cuatro estados básicos son ESP + ER + EEPN + EFE según RT N°8 y RT N°9."},
+    {q:"¿Qué muestra el Estado de Evolución del Patrimonio Neto?",opts:["Solo los resultados del ejercicio","Las causas de todos los cambios en el PN durante el período","Los movimientos de caja del ejercicio","El detalle del activo y pasivo"],a:1,exp:"El EEPN muestra todos los cambios del PN: resultados + aportes + dividendos + ajustes."},
+    {q:"¿En cuántas categorías clasifica el EFE los movimientos de efectivo?",opts:["Dos: ingresos y egresos","Cuatro: operativas, inversión, financiación y reservas","Tres: operativas, inversión y financiación","Una sola categoría global"],a:2,exp:"El EFE clasifica en tres: actividades operativas, de inversión y de financiación."},
+    {q:"¿Qué diferencia al ER del EEPN?",opts:["El ER muestra todos los cambios del PN; el EEPN solo los resultados","El ER muestra solo ingresos; el EEPN muestra gastos","El ER muestra las causas del resultado; el EEPN muestra todos los cambios del PN","No hay diferencia, son el mismo estado"],a:2,exp:"El ER detalla causas del resultado. El EEPN abarca todos los cambios del PN, incluso aportes y dividendos."}
+  ],
+  t3:[
+    {q:"¿Qué característica tiene la información complementaria?",opts:["Es opcional si el cuerpo del estado es claro","Es obligatoria y parte integrante de los estados","Solo aplica a grandes empresas","Solo se usa en auditorías externas"],a:1,exp:"La información complementaria es OBLIGATORIA y parte integrante del conjunto de estados contables."},
+    {q:"¿Cuál es una forma de presentar información complementaria?",opts:["Solo en el cuerpo del ESP","Notas al pie, cuadros anexos y planillas complementarias","Únicamente en el Estado de Resultados","En el Libro Mayor"],a:1,exp:"Puede presentarse como notas, cuadros anexos, planillas o información adicional exigida."},
+    {q:"¿Para qué sirve la información complementaria?",opts:["Para reemplazar los estados básicos","Para que la información contable sea útil, comprensible y suficiente","Para auditar a la empresa","Para calcular impuestos"],a:1,exp:"Su propósito es completar los estados básicos para que la información sea útil para la toma de decisiones."}
+  ],
+  t4:[
+    {q:"¿Qué es la planilla de pre-balance?",opts:["Un estado contable básico","Un libro obligatorio según el CCC","Un instrumento auxiliar para confeccionar estados contables","El Estado de Situación Patrimonial preliminar"],a:2,exp:"Es un instrumento auxiliar, herramienta de trabajo del contador. No es estado contable ni libro obligatorio."},
+    {q:"¿Cuántas igualdades fundamentales tiene la planilla de pre-balance?",opts:["Una: Debe = Haber","Dos: Debe = Haber y Saldos Deudores = Saldos Acreedores","Tres: Debe, Haber y Saldos","No tiene igualdades"],a:1,exp:"Tiene dos igualdades: Debe=Haber y Saldos Deudores=Saldos Acreedores."},
+    {q:"Si en la planilla de pre-balance el total del Debe no coincide con el Haber, indica...",opts:["Que hay una ganancia en el ejercicio","Que hay un error en los registros contables","Que el PN es negativo","Que los impuestos están mal calculados"],a:1,exp:"La falta de igualdad Debe=Haber indica un error en los registros que debe corregirse."}
+  ],
+  t5:[
+    {q:"¿Qué tipo de estado es el ESP?",opts:["Dinámico, muestra movimientos del período","Estático, muestra la situación en un momento determinado","Mixto, combina situación y movimientos","Proyectivo, muestra situación futura"],a:1,exp:"El ESP es estático: es una 'foto' de la situación patrimonial en la fecha de cierre."},
+    {q:"¿Qué es el Patrimonio Neto?",opts:["El total de los activos del ente","El total de las deudas del ente","La diferencia entre Activo y Pasivo","La suma de Activo más Pasivo"],a:2,exp:"PN = Activo − Pasivo. Representa la participación de los propietarios."},
+    {q:"Si Activo = $800.000 y PN = $350.000, ¿cuánto es el Pasivo?",opts:["$1.150.000","$350.000","$450.000","$800.000"],a:2,exp:"Pasivo = Activo − PN = $800.000 − $350.000 = $450.000."},
+    {q:"¿Dónde aparecen los resultados en el ESP?",opts:["En el Activo, como caja generada","Directamente como línea en el cuerpo del ESP","En el PN, como Resultados No Asignados","En el Pasivo, como obligaciones con socios"],a:2,exp:"Los resultados se reflejan en el PN mediante la cuenta RNA. El detalle está en el ER."}
+  ],
+  t6:[
+    {q:"¿Cómo se define un activo corriente?",opts:["Todo bien que la empresa posee","Activo que se convierte en dinero en más de 2 años","Activo que se convierte en dinero en hasta 12 meses desde el cierre","Solo caja y bancos"],a:2,exp:"Corriente = se convierte en dinero en hasta 12 meses desde la fecha de cierre del ejercicio."},
+    {q:"Un préstamo bancario a pagar en 24 meses desde el cierre es...",opts:["Pasivo corriente","Pasivo no corriente","Activo corriente","Patrimonio Neto"],a:1,exp:"Al vencer en más de 12 meses, es un pasivo NO corriente."},
+    {q:"¿Desde cuándo se mide el plazo de 12 meses para clasificar corriente/no corriente?",opts:["Desde la fecha de la operación","Desde la fecha de cierre del ejercicio","Desde el inicio del ejercicio","Desde la fecha de la factura"],a:1,exp:"Siempre desde la FECHA DE CIERRE DEL EJERCICIO."},
+    {q:"Las mercaderías en stock de una empresa comercial generalmente son...",opts:["Activo no corriente","Pasivo corriente","Activo corriente","Patrimonio Neto"],a:2,exp:"Las mercaderías se venden en el ciclo normal (menos de 1 año), por eso son activo corriente."}
+  ],
+  t7:[
+    {q:"¿Cómo se calcula el Resultado Bruto?",opts:["Ventas netas − Gastos de administración","Ventas netas − Costo de ventas","Ventas brutas − Impuesto","Resultado Operativo + Gastos financieros"],a:1,exp:"RB = Ventas netas − Costo de ventas."},
+    {q:"¿Qué se resta al Resultado Bruto para obtener el Resultado Operativo?",opts:["Impuesto a las ganancias y resultados financieros","Solo el costo de ventas","Gastos de comercialización y gastos de administración","Resultados extraordinarios"],a:2,exp:"RO = RB − Gastos de comercialización − Gastos de administración."},
+    {q:"Un incendio que destruyó parte del depósito genera un resultado...",opts:["Ordinario operativo","Ordinario financiero","Extraordinario","No se registra"],a:2,exp:"Los siniestros son atípicos y excepcionales, por eso son resultados extraordinarios."},
+    {q:"¿En qué orden se restan los elementos en el Estado de Resultados?",opts:["Gastos financieros → Costo de ventas → Gastos operativos → Impuesto","Costo de ventas → Gastos operativos → Resultados financieros → Impuesto → Extraordinarios","Impuesto → Costos → Gastos → Extraordinarios","No importa el orden"],a:1,exp:"La cascada sigue ese orden exacto según las normas contables."}
+  ],
+  t8:[
+    {q:"¿Cuáles son los libros obligatorios según el Código Civil y Comercial?",opts:["Libro Diario y Libro Mayor","Libro Diario y Libro Inventario y Balances","ESP y Estado de Resultados","Libro Mayor y Libro de Sumas y Saldos"],a:1,exp:"El CCC establece como obligatorios el Libro Diario y el Libro Inventario y Balances."},
+    {q:"¿Qué registra el Libro Diario?",opts:["El inventario de apertura del ejercicio","Los estados contables aprobados","Cronológicamente todas las operaciones del ente","El detalle de los activos fijos"],a:2,exp:"El Libro Diario registra en orden cronológico todas las operaciones mediante asientos contables."},
+    {q:"¿El Libro Mayor es obligatorio según el CCC?",opts:["Sí, junto con el Diario","No, el CCC solo exige el Diario y el Inventario y Balances","Sí, es el más importante","Solo para empresas grandes"],a:1,exp:"El Libro Mayor NO es obligatorio según el CCC, aunque es una herramienta fundamental en la práctica."},
+    {q:"¿Qué se transcribe en el Libro Inventario y Balances al cierre del ejercicio?",opts:["Solo el inventario de bienes","Los estados contables aprobados","Los asientos del ejercicio","El detalle de los créditos"],a:1,exp:"Al cierre se transcriben los estados contables aprobados. Al inicio, el inventario de apertura."}
+  ]
+};
+
+// EXAM QUESTIONS
+const EXAMS = [
+  [ // Exam 1
+    {q:"¿Cuáles son los cuatro estados contables básicos según RT N°8 y RT N°9?",opts:["Diario, Mayor, Balance, Resultados","ESP, ER, EEPN y Estado de Flujo de Efectivo","Balance, Inventario, Resultados y Cash Flow","ESP, ER, Libro Diario y EEPN"],a:1},
+    {q:"Los estados contables aplican a:",opts:["Solo entes privados con fines de lucro","Solo entidades financieras reguladas","Todos los entes: públicos o privados, con o sin fines de lucro","Solo sociedades anónimas"],a:2},
+    {q:"¿Qué tipo de estado es el ESP?",opts:["Dinámico","Estático","Proyectivo","Mixto"],a:1},
+    {q:"La ecuación fundamental del ESP es:",opts:["Activo = Pasivo − PN","Activo + Pasivo = PN","Activo = Pasivo + PN","PN = Activo + Pasivo"],a:2},
+    {q:"¿Cuáles son los libros obligatorios según el CCC?",opts:["Diario y Mayor","Diario y Inventario y Balances","Mayor y Sumas y Saldos","ESP y Estado de Resultados"],a:1},
+    {q:"¿Qué es la planilla de pre-balance?",opts:["Un estado contable básico","Un libro obligatorio","Un instrumento auxiliar de trabajo","El ESP preliminar"],a:2},
+    {q:"La información complementaria es:",opts:["Optativa si el cuerpo del estado es claro","Obligatoria y parte integrante de los estados","Solo para empresas grandes","Solo en auditorías"],a:1},
+    {q:"Un activo corriente es aquel que se convierte en dinero en:",opts:["Más de 2 años","Hasta 5 años","Hasta 12 meses desde el cierre","Al momento de la compra"],a:2},
+    {q:"¿Cómo se calcula el Resultado Bruto?",opts:["Ventas − Gastos de adm.","Ventas netas − Costo de ventas","Ventas brutas − Impuesto","RO + Gastos financieros"],a:1},
+    {q:"Los resultados extraordinarios son:",opts:["Habituales y repetitivos","Atípicos y de escasa repetición","Financieros e intereses","Operativos y de administración"],a:1},
+    {q:"¿Qué muestra el EEPN además del resultado del ejercicio?",opts:["El detalle de activos","Aportes de capital, dividendos y ajustes de ejercicios anteriores","El flujo de caja","Los gastos de administración"],a:1},
+    {q:"El plazo para clasificar corriente/no corriente se mide desde:",opts:["La fecha de la operación","El inicio del ejercicio","La fecha de cierre del ejercicio","La fecha de aprobación del balance"],a:2},
+    {q:"¿Qué diferencia al ER del EEPN?",opts:["El ER muestra todos los cambios del PN","El ER muestra las causas del resultado; el EEPN todos los cambios del PN","Son el mismo estado","El EEPN solo muestra el resultado del ejercicio"],a:1},
+    {q:"El Estado de Flujo de Efectivo clasifica los movimientos en:",opts:["Dos categorías","Cuatro categorías","Tres: operativas, inversión y financiación","Una sola categoría"],a:2},
+    {q:"¿Dónde aparecen los resultados en el ESP?",opts:["En el Activo","En el Pasivo","En el PN como Resultados No Asignados","No aparecen en el ESP"],a:2},
+    {q:"Las igualdades de la planilla de pre-balance son:",opts:["Debe=Haber únicamente","Debe=Haber y SD=SA","Activo=Pasivo+PN y Debe=Haber","No tiene igualdades obligatorias"],a:1},
+    {q:"¿Cuál es el orden correcto en la cascada del ER?",opts:["Ventas → Gastos adm. → Costo → Impuesto","Ventas netas → Costo de ventas → Gastos oper. → Res. financieros → Impuesto → Extraordinarios","Costo → Ventas → Gastos → Impuesto","Impuesto → Extraordinarios → Gastos → Ventas"],a:1},
+    {q:"Si Activo = $600.000 y Pasivo = $250.000, el PN es:",opts:["$850.000","$350.000","$250.000","$600.000"],a:1},
+    {q:"Un préstamo bancario a devolver en 6 meses desde el cierre es:",opts:["Activo corriente","Pasivo no corriente","Pasivo corriente","Patrimonio Neto"],a:2},
+    {q:"¿Qué registra el Libro Diario?",opts:["El inventario de cierre","Cronológicamente todas las operaciones","Los estados contables aprobados","El detalle del PN"],a:1}
+  ],
+  [ // Exam 2
+    {q:"¿Qué expone el Estado de Situación Patrimonial?",opts:["Las causas del resultado del período","La composición del patrimonio en un momento determinado","Los movimientos de efectivo del período","La evolución del PN durante el ejercicio"],a:1},
+    {q:"El Resultado Operativo se obtiene de:",opts:["Ventas netas − Costo de ventas","Resultado Bruto − Gastos de comercialización − Gastos de administración","Resultado Ordinario − Impuesto","Ventas brutas − Extraordinarios"],a:1},
+    {q:"¿A qué entes aplican los estados contables?",opts:["Solo empresas con fines de lucro","Solo el sector público","Todos: públicos o privados, con o sin fines de lucro","Solo entidades cotizantes en bolsa"],a:2},
+    {q:"El EEPN incluye:",opts:["Solo el resultado del ejercicio","Resultado + aportes de capital + dividendos + ajustes AEA","Solo los aportes de capital","El flujo de efectivo operativo"],a:1},
+    {q:"¿Cuántas igualdades tiene la planilla de pre-balance?",opts:["Una","Tres","Cuatro","Dos"],a:3},
+    {q:"Los activos no corrientes son aquellos que:",opts:["Ya son efectivo","Se convierten en dinero dentro del año","Permanecen más de 12 meses sin convertirse en efectivo","Se venden durante el ciclo de ventas"],a:2},
+    {q:"¿Qué son los resultados ordinarios?",opts:["Atípicos y excepcionales","Habituales y repetitivos de la actividad","Solo los intereses bancarios","Solo las ganancias por ventas"],a:1},
+    {q:"La información complementaria puede presentarse como:",opts:["Solo en notas al pie","Solo en cuadros anexos","Notas, cuadros anexos, planillas complementarias","Solo de forma verbal en la asamblea"],a:2},
+    {q:"¿Dónde se transcribe el inventario de apertura del ejercicio?",opts:["En el Libro Diario","En el Libro Mayor","En el Libro Inventario y Balances","En el Estado de Situación Patrimonial"],a:2},
+    {q:"Si Ventas netas = $900.000 y Costo de ventas = $540.000, el Resultado Bruto es:",opts:["$1.440.000","$360.000","$540.000","$900.000"],a:1},
+    {q:"¿Qué es el Patrimonio Neto?",opts:["El total de activos de la empresa","La diferencia entre Activo y Pasivo","La suma de Activo y Pasivo","El total de deudas con terceros"],a:1},
+    {q:"Los pasivos corrientes vencen:",opts:["En más de 12 meses","En exactamente 12 meses","Dentro de 12 meses desde el cierre del ejercicio","En más de 24 meses"],a:2},
+    {q:"¿El Libro Mayor es obligatorio según el CCC?",opts:["Sí, junto con el Diario","No, el CCC solo exige Diario e Inventario y Balances","Sí, es el más importante","Solo para sociedades anónimas"],a:1},
+    {q:"¿Qué categoría del EFE incluye la compra de maquinaria?",opts:["Operativa","Financiación","Inversión","Extraordinaria"],a:2},
+    {q:"Los gastos de comercialización se descuentan del:",opts:["Resultado del Ejercicio","Resultado Ordinario","Resultado Bruto para obtener el Resultado Operativo","Resultado Extraordinario"],a:2},
+    {q:"¿Qué son los Resultados No Asignados (RNA)?",opts:["Deudas con proveedores","Ganancias acumuladas pendientes de distribución que forman parte del PN","El resultado del ejercicio ya distribuido","Los gastos de administración pendientes"],a:1},
+    {q:"Una multinacional que cierra por desastre natural registra el resultado como:",opts:["Ordinario operativo","Ordinario financiero","Extraordinario","No se registra"],a:2},
+    {q:"Si PN = $200.000 y Activo = $500.000, el Pasivo es:",opts:["$700.000","$200.000","$300.000","$500.000"],a:2},
+    {q:"¿Qué muestra el Estado de Flujo de Efectivo?",opts:["La composición del patrimonio","Los ingresos y egresos de efectivo clasificados en tres actividades","Las causas del resultado","La evolución del PN"],a:1},
+    {q:"La función esencial de los estados contables es:",opts:["Calcular impuestos","Determinar el capital de la empresa","Transmitir información económica sobre la situación y gestión del ente","Registrar las operaciones del ejercicio"],a:2}
+  ]
+];
+
+// ===== STATE =====
+const progress = JSON.parse(localStorage.getItem('c2prog') || '{}');
+let currentPage = 'dash';
+let examNum = 0, examAnswers = {}, examTimerInterval = null, examSeconds = 0;
+
+// ===== NAVIGATION =====
+function showPage(id) {
+  document.querySelectorAll('.topic-page,#dash,#exam-page').forEach(el => {
+    el.style.display = 'none';
+    el.classList.remove('visible');
+  });
+  document.querySelectorAll('#sidebar nav a').forEach(a => a.classList.remove('active'));
+
+  if (id === 'dash') {
+    document.getElementById('dash').style.display = 'block';
+    document.getElementById('nav-dash').classList.add('active');
+    renderDash();
+  } else if (id === 'exams') {
+    document.getElementById('exams').style.display = 'block';
+    document.getElementById('exams').classList.add('visible');
+    document.getElementById('nav-exams').classList.add('active');
+  } else {
+    const el = document.getElementById(id);
+    if (el) { el.style.display = 'block'; el.classList.add('visible'); }
+    const nav = document.getElementById('nav-' + id);
+    if (nav) nav.classList.add('active');
+  }
+  currentPage = id;
+  window.scrollTo(0, 0);
+}
+
+// ===== ACCORDION =====
+function toggleAcc(head) {
+  const body = head.nextElementSibling;
+  const arrow = head.querySelector('.acc-arrow');
+  body.classList.toggle('open');
+  arrow.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+// ===== TABS =====
+function switchTab(topic, tab, btn) {
+  document.querySelectorAll('#' + topic + ' .tab-content').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('#' + topic + ' .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(topic + '-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ===== RENDER PRACTICE =====
+function renderTF(topic) {
+  const container = document.getElementById(topic + '-tf');
+  if (!container || container.innerHTML) return;
+  const items = TF[topic] || [];
+  container.innerHTML = items.map((item, i) => `
+    <div class="q-block" id="${topic}-tf-${i}">
+      <p>${i+1}. ${item.q}</p>
+      <div class="options">
+        <label><input type="radio" name="${topic}-tf-${i}" value="true"> Verdadero</label>
+        <label><input type="radio" name="${topic}-tf-${i}" value="false"> Falso</label>
+      </div>
+      <div class="feedback" id="${topic}-tf-fb-${i}"></div>
+    </div>`).join('');
+}
+
+function renderMC(topic) {
+  const container = document.getElementById(topic + '-mc');
+  if (!container || container.innerHTML) return;
+  const items = MC[topic] || [];
+  container.innerHTML = items.map((item, i) => `
+    <div class="q-block" id="${topic}-mc-${i}">
+      <p>${i+1}. ${item.q}</p>
+      <div class="options">
+        ${item.opts.map((o, j) => `<label><input type="radio" name="${topic}-mc-${i}" value="${j}"> ${o}</label>`).join('')}
+      </div>
+      <div class="feedback" id="${topic}-mc-fb-${i}"></div>
+    </div>`).join('');
+}
+
+// ===== CHECK PRACTICE =====
+function checkTF(topic) {
+  const items = TF[topic] || [];
+  let score = 0;
+  items.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="${topic}-tf-${i}"]:checked`);
+    const fb = document.getElementById(`${topic}-tf-fb-${i}`);
+    if (!sel) return;
+    const ans = sel.value === 'true';
+    fb.style.display = 'block';
+    if (ans === item.a) {
+      fb.className = 'feedback correct';
+      fb.textContent = '✅ Correcto. ' + item.exp;
+      score++;
+    } else {
+      fb.className = 'feedback wrong';
+      fb.textContent = '❌ Incorrecto. ' + item.exp;
+    }
+  });
+  const box = document.getElementById(`${topic}-tf-score`);
+  box.style.display = 'block';
+  box.innerHTML = `<h3>${score}/${items.length}</h3><p>${score >= Math.ceil(items.length * 0.7) ? '¡Muy bien!' : 'Repasá los conceptos.'}</p>`;
+  saveProgress(topic, 'tf', score, items.length);
+}
+
+function checkMC(topic) {
+  const items = MC[topic] || [];
+  let score = 0;
+  items.forEach((item, i) => {
+    const sel = document.querySelector(`input[name="${topic}-mc-${i}"]:checked`);
+    const fb = document.getElementById(`${topic}-mc-fb-${i}`);
+    if (!sel) return;
+    fb.style.display = 'block';
+    if (parseInt(sel.value) === item.a) {
+      fb.className = 'feedback correct';
+      fb.textContent = '✅ Correcto. ' + item.exp;
+      score++;
+    } else {
+      fb.className = 'feedback wrong';
+      fb.textContent = '❌ Incorrecto. La correcta es: "' + item.opts[item.a] + '". ' + item.exp;
+    }
+  });
+  const box = document.getElementById(`${topic}-mc-score`);
+  box.style.display = 'block';
+  box.innerHTML = `<h3>${score}/${items.length}</h3><p>${score >= Math.ceil(items.length * 0.7) ? '¡Muy bien!' : 'Repasá los conceptos.'}</p>`;
+  saveProgress(topic, 'mc', score, items.length);
+}
+
+// ===== ER EXERCISE =====
+function checkERExercise() {
+  const q1 = parseInt(document.getElementById('er-q1').value);
+  const q2 = parseInt(document.getElementById('er-q2').value);
+  const q3 = parseInt(document.getElementById('er-q3').value);
+  // Ventas 800000, Costo 480000, GComercial 60000, GAdm 40000, Intereses cobrados +10000, Imp 80500
+  const rb = 800000 - 480000; // 320000
+  const ro = rb - 60000 - 40000; // 220000
+  const roai = ro + 10000; // 230000
+  const rord = roai - 80500; // 149500
+  const fb = document.getElementById('er-feedback');
+  fb.style.display = 'block';
+  let msg = '';
+  let ok = 0;
+  if (q1 === rb) { msg += '✅ RB = $320.000 ✓<br>'; ok++; } else { msg += `❌ RB: tu respuesta $${q1||0} | Correcto: $320.000 (800.000−480.000)<br>`; }
+  if (q2 === ro) { msg += '✅ RO = $220.000 ✓<br>'; ok++; } else { msg += `❌ RO: tu respuesta $${q2||0} | Correcto: $220.000 (320.000−60.000−40.000)<br>`; }
+  if (q3 === rord) { msg += '✅ Resultado Ordinario = $149.500 ✓'; ok++; } else { msg += `❌ ROrdinario: tu respuesta $${q3||0} | Correcto: $149.500 (220.000+10.000−80.500)`; }
+  fb.className = ok === 3 ? 'feedback correct' : 'feedback wrong';
+  fb.innerHTML = msg;
+}
+
+// ===== PROGRESS =====
+function saveProgress(topic, type, score, total) {
+  if (!progress[topic]) progress[topic] = {};
+  if (!progress[topic][type] || score > (progress[topic][type].score || 0)) {
+    progress[topic][type] = { score, total };
+  }
+  localStorage.setItem('c2prog', JSON.stringify(progress));
+}
+
+function getTopicProgress(topic) {
+  const p = progress[topic];
+  if (!p) return 0;
+  let sum = 0, tot = 0;
+  if (p.tf) { sum += p.tf.score; tot += p.tf.total; }
+  if (p.mc) { sum += p.mc.score; tot += p.mc.total; }
+  return tot > 0 ? Math.round((sum / tot) * 100) : 0;
+}
+
+function renderDash() {
+  const topics = [
+    {id:'t1', name:'Estados Contables'},
+    {id:'t2', name:'4 Estados Básicos'},
+    {id:'t3', name:'Inf. Complementaria'},
+    {id:'t4', name:'Pre-Balance'},
+    {id:'t5', name:'ESP / Balance'},
+    {id:'t6', name:'Corriente/NC'},
+    {id:'t7', name:'Estado de Resultados'},
+    {id:'t8', name:'Registros Obligat.'}
+  ];
+  const grid = document.getElementById('progress-grid');
+  grid.innerHTML = topics.map(t => {
+    const pct = getTopicProgress(t.id);
+    return `<div class="prog-card" onclick="showPage('${t.id}')">
+      <div class="ptitle">${t.name}</div>
+      <div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div>
+      <div class="pct">${pct}% completado</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== EXAMS =====
+function startExam(num) {
+  examNum = num;
+  examAnswers = {};
+  if (examTimerInterval) clearInterval(examTimerInterval);
+  examSeconds = 35 * 60;
+
+  const page = document.getElementById('exam-page');
+  document.querySelectorAll('.topic-page,#dash').forEach(el => el.style.display = 'none');
+  page.style.display = 'block';
+  document.getElementById('exam-result').style.display = 'none';
+  document.getElementById('btn-submit-exam').style.display = 'inline-block';
+  document.getElementById('exam-title').textContent = 'Examen ' + num + ' — Estados Contables';
+
+  const qs = EXAMS[num - 1];
+  document.getElementById('exam-questions').innerHTML = qs.map((q, i) => `
+    <div class="exam-q">
+      <p class="qtext">${i+1}. ${q.q}</p>
+      <div class="options">
+        ${q.opts.map((o, j) => `<label><input type="radio" name="eq-${i}" value="${j}" onchange="examAnswers[${i}]=${j}"> ${o}</label>`).join('')}
+      </div>
+    </div>`).join('');
+
+  examTimerInterval = setInterval(() => {
+    examSeconds--;
+    const m = Math.floor(examSeconds / 60).toString().padStart(2,'0');
+    const s = (examSeconds % 60).toString().padStart(2,'0');
+    document.getElementById('exam-timer').textContent = `${m}:${s}`;
+    if (examSeconds <= 0) submitExam();
+  }, 1000);
+
+  window.scrollTo(0,0);
+}
+
+function submitExam() {
+  clearInterval(examTimerInterval);
+  document.getElementById('btn-submit-exam').style.display = 'none';
+  const qs = EXAMS[examNum - 1];
+  let score = 0;
+  qs.forEach((q, i) => { if (examAnswers[i] === q.a) score++; });
+  const pct = Math.round((score / qs.length) * 100);
+  const pass = pct >= 50;
+
+  // highlight answers
+  qs.forEach((q, i) => {
+    const radios = document.querySelectorAll(`input[name="eq-${i}"]`);
+    radios.forEach(r => {
+      const lbl = r.parentElement;
+      if (parseInt(r.value) === q.a) lbl.style.cssText = 'background:#E8F5E9;color:#1B5E20;font-weight:700;border-radius:6px';
+      else if (r.checked && parseInt(r.value) !== q.a) lbl.style.cssText = 'background:#FFEBEE;color:#B71C1C;border-radius:6px';
+      r.disabled = true;
+    });
+  });
+
+  const res = document.getElementById('exam-result');
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="big-score">${score}/${qs.length}</div>
+    <div class="verdict ${pass ? 'pass' : 'fail'}">${pass ? '🎉 ¡Aprobado!' : '📚 A seguir estudiando'}</div>
+    <p style="margin:8px 0;color:#555">${pct}% de respuestas correctas</p>
+    <p style="font-size:.84rem;color:#777">${pass ? 'Muy buen desempeño. Revisá las preguntas incorrectas arriba.' : 'Repasá los temas donde tuviste dudas y volvé a intentarlo.'}</p>
+    <button class="btn btn-primary" style="margin-top:16px" onclick="showPage('exams')">Volver a Exámenes</button>`;
+
+  progress['exam' + examNum] = { score, total: qs.length, pct };
+  localStorage.setItem('c2prog', JSON.stringify(progress));
+  res.scrollIntoView({ behavior: 'smooth' });
+}
+
+// ===== INIT =====
+document.addEventListener('DOMContentLoaded', () => {
+  Object.keys(TF).forEach(t => { renderTF(t); renderMC(t); });
+  renderDash();
+  showPage('dash');
+});
+</script>
+</body>
+</html>

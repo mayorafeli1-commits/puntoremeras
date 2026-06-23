@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administración I — CAECE</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#4A148C;--green:#6A1B9A;--accent:#FF6F00;--light:#F3E5F5;--bg:#F5F3F8}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:#1a1a2e;min-height:100vh}
+#sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:linear-gradient(180deg,var(--primary),#2E0854);color:#fff;overflow-y:auto;z-index:100;display:flex;flex-direction:column}
+#sidebar .logo{padding:22px 18px 14px;border-bottom:1px solid rgba(255,255,255,.15)}
+#sidebar .logo h2{font-size:1rem;font-weight:800;letter-spacing:.3px}
+#sidebar .logo p{font-size:.72rem;opacity:.7;margin-top:3px}
+#sidebar nav{padding:12px 0;flex:1}
+#sidebar nav a{display:flex;align-items:center;gap:10px;padding:10px 18px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.85rem;transition:.18s;cursor:pointer}
+#sidebar nav a:hover,#sidebar nav a.active{background:rgba(255,255,255,.12);color:#fff}
+#sidebar nav a .ico{font-size:1rem;width:20px;text-align:center}
+#sidebar .back-link{padding:14px 18px;border-top:1px solid rgba(255,255,255,.15)}
+#sidebar .back-link a{color:rgba(255,255,255,.65);font-size:.78rem;text-decoration:none;display:flex;align-items:center;gap:6px}
+#sidebar .back-link a:hover{color:#fff}
+#main{margin-left:240px;min-height:100vh;padding:28px}
+#dash{display:block}
+.dash-header{background:linear-gradient(135deg,var(--primary),var(--accent));color:#fff;border-radius:16px;padding:30px;margin-bottom:24px}
+.dash-header h1{font-size:1.8rem;font-weight:800}
+.dash-header p{opacity:.9;margin-top:6px}
+.progress-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;margin-bottom:24px}
+.prog-card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.07);cursor:pointer;transition:.2s}
+.prog-card:hover{transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.12)}
+.prog-card .ptitle{font-size:.8rem;font-weight:700;color:var(--primary);margin-bottom:8px}
+.prog-bar{background:#e0e0e0;border-radius:99px;height:7px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--green),#AB47BC);border-radius:99px;transition:.5s}
+.prog-card .pct{font-size:.72rem;color:#666;margin-top:5px}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.qa-btn{background:#fff;border-radius:12px;padding:18px;text-align:center;cursor:pointer;border:2px solid transparent;transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.qa-btn:hover{border-color:var(--green);background:var(--light)}
+.qa-btn .qico{font-size:2rem;display:block;margin-bottom:8px}
+.qa-btn h3{font-size:.9rem;font-weight:700;color:var(--primary)}
+.qa-btn p{font-size:.76rem;color:#666;margin-top:4px}
+.topic-page{display:none}
+.topic-page.visible{display:block}
+.topic-header{background:linear-gradient(135deg,var(--primary),var(--green));color:#fff;border-radius:14px;padding:22px 26px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.topic-header .th-ico{font-size:2.2rem}
+.topic-header h2{font-size:1.3rem;font-weight:800}
+.topic-header p{font-size:.84rem;opacity:.85;margin-top:3px}
+.tabs{display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap}
+.tab-btn{padding:8px 18px;border:none;border-radius:8px;font-size:.83rem;font-weight:600;cursor:pointer;background:#e5dced;color:var(--primary);transition:.18s}
+.tab-btn.active{background:var(--primary);color:#fff}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.accordion{margin-bottom:10px;border-radius:12px;overflow:hidden;box-shadow:0 2px 6px rgba(0,0,0,.07)}
+.acc-head{background:#fff;padding:16px 20px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:700;color:var(--primary);font-size:.92rem;transition:.18s}
+.acc-head:hover{background:var(--light)}
+.acc-arrow{transition:.25s;font-size:.8rem}
+.acc-body{background:#fff;padding:0 20px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s}
+.acc-body.open{max-height:2000px;padding:6px 20px 18px}
+.acc-body p,.acc-body li{font-size:.88rem;line-height:1.7;color:#2c2c3e;margin-bottom:8px}
+.acc-body ul,.acc-body ol{padding-left:18px}
+.acc-body .nota{background:#FFF3E0;border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:.84rem}
+.acc-body .nota strong{color:var(--accent)}
+.acc-body .formula{background:#F3E5F5;border-left:4px solid var(--primary);border-radius:0 8px 8px 0;padding:10px 14px;margin:10px 0;font-size:.88rem}
+.example-card{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-top:4px solid var(--green)}
+.example-card h4{color:var(--primary);font-size:.92rem;margin-bottom:10px}
+.example-card p,.example-card li{font-size:.86rem;line-height:1.6;color:#2c2c3e;margin-bottom:6px}
+.example-card ul{padding-left:16px}
+.ex-highlight{background:var(--light);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:.84rem}
+.practice-section{background:#fff;border-radius:12px;padding:22px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.practice-section h3{color:var(--primary);font-size:1rem;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--light)}
+.q-block{margin-bottom:18px;padding-bottom:18px;border-bottom:1px solid #eee}
+.q-block:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.q-block p{font-size:.88rem;font-weight:600;color:#1a1a2e;margin-bottom:10px}
+.options label{display:flex;align-items:flex-start;gap:8px;margin-bottom:7px;font-size:.84rem;cursor:pointer;padding:6px 10px;border-radius:8px;transition:.15s}
+.options label:hover{background:var(--light)}
+.options input{margin-top:2px;flex-shrink:0;accent-color:var(--green)}
+.btn{display:inline-block;padding:9px 22px;border-radius:8px;border:none;font-weight:700;font-size:.85rem;cursor:pointer;transition:.2s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--green)}
+.btn-success{background:#6A1B9A;color:#fff}
+.btn-success:hover{background:#4A148C}
+.feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-size:.84rem;display:none}
+.feedback.correct{background:#E8F5E9;color:#1B5E20;border:1px solid #A5D6A7}
+.feedback.wrong{background:#FFEBEE;color:#B71C1C;border:1px solid #FFCDD2}
+.score-box{background:linear-gradient(135deg,var(--primary),var(--green));color:#fff;border-radius:12px;padding:20px;text-align:center;margin-top:16px;display:none}
+.score-box h3{font-size:1.4rem;font-weight:800}
+.score-box p{opacity:.9;margin-top:4px;font-size:.88rem}
+.dev-card{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.dev-card p.q{font-size:.88rem;font-weight:600;margin-bottom:10px}
+textarea.dev-ans{width:100%;min-height:80px;border:1px solid #ccc;border-radius:8px;padding:10px;font-size:.84rem;resize:vertical;font-family:inherit}
+.dev-model{margin-top:10px;background:var(--light);border-radius:8px;padding:12px 14px;font-size:.84rem;line-height:1.6;display:none}
+.info-table{width:100%;border-collapse:collapse;margin:10px 0;font-size:.84rem}
+.info-table th{background:var(--primary);color:#fff;padding:8px 12px;text-align:left}
+.info-table td{padding:7px 12px;border-bottom:1px solid #eee}
+.info-table tr:hover td{background:var(--light)}
+.exam-header{background:linear-gradient(135deg,#4A148C,#FF6F00);color:#fff;border-radius:14px;padding:22px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.exam-header h2{font-size:1.2rem;font-weight:800}
+#exam-timer{font-size:1.3rem;font-weight:800;background:rgba(255,255,255,.2);padding:6px 16px;border-radius:8px}
+.exam-q{background:#fff;border-radius:12px;padding:20px;margin-bottom:14px;box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.exam-q p.qtext{font-size:.9rem;font-weight:600;margin-bottom:12px;color:#1a1a2e}
+#exam-page{display:none}
+.exam-result{background:#fff;border-radius:14px;padding:30px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.1)}
+.exam-result .big-score{font-size:3rem;font-weight:800;color:var(--primary)}
+.exam-result .verdict{font-size:1.1rem;font-weight:700;margin:8px 0}
+.exam-result .verdict.pass{color:#2E7D32}
+.exam-result .verdict.fail{color:#B71C1C}
+@media(max-width:700px){#sidebar{width:100%;height:auto;position:relative;flex-direction:row;flex-wrap:wrap}#main{margin-left:0}}
+</style>
+</head>
+<body>
+
+<div id="sidebar">
+  <div class="logo">
+    <h2>🏛️ Administración I</h2>
+    <p>1er Parcial · CAECE</p>
+  </div>
+  <nav>
+    <a onclick="showPage('dash')" id="nav-dash" class="active"><span class="ico">🏠</span>Inicio</a>
+    <a onclick="showPage('t1')" id="nav-t1"><span class="ico">🧩</span>Conceptos Clave</a>
+    <a onclick="showPage('t2')" id="nav-t2"><span class="ico">💬</span>Comunicación</a>
+    <a onclick="showPage('t3')" id="nav-t3"><span class="ico">🎯</span>Decisión</a>
+    <a onclick="showPage('t4')" id="nav-t4"><span class="ico">⚡</span>Motivación e Influencia</a>
+    <a onclick="showPage('t5')" id="nav-t5"><span class="ico">👑</span>Liderazgo</a>
+    <a onclick="showPage('exams')" id="nav-exams"><span class="ico">📝</span>Exámenes</a>
+  </nav>
+  <div class="back-link"><a href="estudiar.html">← Volver al inicio</a></div>
+</div>
+
+<div id="main">
+
+<!-- DASHBOARD -->
+<div id="dash">
+  <div class="dash-header">
+    <h1>🏛️ Administración I — Primer Parcial</h1>
+    <p>Universidad CAECE · Mar del Plata · Organizaciones, procesos y liderazgo</p>
+  </div>
+  <div class="progress-grid" id="progress-grid"></div>
+  <div class="quick-actions">
+    <div class="qa-btn" onclick="showPage('t1')">
+      <span class="qico">🧩</span>
+      <h3>Empezar a Estudiar</h3>
+      <p>Teoría completa con ejemplos y notas clave</p>
+    </div>
+    <div class="qa-btn" onclick="showPage('exams')">
+      <span class="qico">📝</span>
+      <h3>Ir a los Exámenes</h3>
+      <p>Simulacros cronometrados con corrección</p>
+    </div>
+  </div>
+</div>
+
+<!-- T1: CONCEPTOS CLAVE -->
+<div id="t1" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">🧩</span>
+    <div><h2>Conceptos Clave</h2><p>Administración, organización, enfoques, funciones, fines y tipología</p></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t1','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t1','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t1','practica',this)">Práctica</button>
+  </div>
+  <div id="t1-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es la Administración? <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>La <strong>Administración</strong> es el campo del conocimiento humano que estudia las organizaciones y su conducción racional (con o sin fines de lucro). Es una <strong>ciencia y técnica</strong> que aplica herramientas en la intervención organizacional (creatividad), basándose en resultados de investigaciones científicas (como la psicología).</p>
+        <p><strong>Como técnica científica</strong> estudia las actividades y relaciones administrativas dentro y entre sistemas sociales. Utiliza el método científico y conocimientos de la psicología y ciencias sociales. Busca optimizar:</p>
+        <ul><li><strong>Productividad</strong></li><li><strong>Eficacia</strong></li><li><strong>Beneficio social o lucro</strong></li></ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">La Organización y sus niveles <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Una <strong>Organización</strong> es una organización social intencionalmente construida o reconstruida para lograr fines específicos. Características:</p>
+        <ul>
+          <li>División del trabajo</li>
+          <li>Centros de poder de decisión</li>
+          <li>Responsabilidad en las comunicaciones</li>
+          <li>Sustitución de personas en roles</li>
+          <li>Interacción constante con el entorno</li>
+        </ul>
+        <p><strong>Niveles de la organización</strong> (toma recursos → procesa → devuelve bienes y servicios):</p>
+        <ul>
+          <li><strong>Estratégico (Alto):</strong> RRHH, decisiones de largo plazo</li>
+          <li><strong>Gerencial (Medio):</strong> insumos o materiales</li>
+          <li><strong>Operacional (Bajo):</strong> financiación o capital, ejecución</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Enfoques contemporáneos <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Hoy se considera a la organización como un <strong>sistema</strong>.</p>
+        <p><strong>Teoría de sistemas:</strong> La organización es un sistema abierto que toma recursos del entorno, los transforma y genera productos o servicios.</p>
+        <p><strong>Teoría de contingencias:</strong> La organización es un sistema con relación con el entorno. No hay una única forma de organizar; cada organización enfrenta situaciones distintas y requiere diferentes formas de dirección.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Funciones administrativas (Fayol) <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Inicialmente las propone <strong>Henry Fayol</strong>:</p>
+        <ul>
+          <li><strong>Planeación:</strong> definir objetivos y cómo alcanzarlos</li>
+          <li><strong>Organización:</strong> asignar tareas y recursos</li>
+          <li><strong>Dirección:</strong> motivar, comunicar y liderar</li>
+          <li><strong>Control:</strong> verificar que los resultados coincidan con lo planificado</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Habilidades del administrador <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Se encuentran en los <strong>3 niveles</strong> de la organización (en distinta proporción):</p>
+        <ul>
+          <li><strong>Conceptual:</strong> comprender la organización en su conjunto (predomina en el nivel alto)</li>
+          <li><strong>Humana:</strong> trabajar con personas, entender motivaciones y liderar (clave en todos los niveles)</li>
+          <li><strong>Técnica:</strong> aplicar conocimientos y herramientas específicas (predomina en el nivel operativo)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Fines de las organizaciones y distorsión <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Fin estatuido:</strong> propósito original por el que se creó la organización (puede cambiar)</li>
+          <li><strong>Fin real:</strong> objetivo actual que se persigue (puede NO ser igual al estatuido)</li>
+          <li><strong>Distorsión de fines:</strong> cuando no coinciden</li>
+        </ul>
+        <p><strong>Tipos de distorsión:</strong></p>
+        <ul>
+          <li><strong>Sucesión:</strong> el fin original ya no es viable (reconversión o disolución)</li>
+          <li><strong>Expansión:</strong> se agregan fines relacionados</li>
+          <li><strong>Multiplicación:</strong> se agregan fines no relacionados (diversificación)</li>
+          <li><strong>Desplazamiento:</strong> los medios pasan a ser más importantes que el fin</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Tipología de organizaciones <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Clasificación según funcionamiento:</p>
+        <p><strong>De coexistencia:</strong> basadas en la convivencia de sus miembros, voluntarias, democráticas (eligen pertenecer), poco burocráticas (ej.: asociaciones deportivas).</p>
+        <p><strong>De actuación:</strong> un grupo influye sobre otro. Pueden ser voluntarias (ej.: universidades) o forzosas (ej.: cárcel). Más estructuradas.</p>
+        <p><strong>De resultados:</strong> acción orientada hacia el exterior:</p>
+        <ul>
+          <li><strong>De valores:</strong> sin fines personales (ej.: benéficas)</li>
+          <li><strong>De interés personal:</strong> beneficio compartido (ej.: cooperativas, sindicatos)</li>
+          <li><strong>De lucro:</strong> beneficio económico (ej.: empresas, administración pública)</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="t1-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>🏭 Niveles en SAO Medialunas (caso del parcial)</h4>
+      <p>SAO es una empresa familiar de gastronomía. Ubicar sus decisiones en los niveles:</p>
+      <ul>
+        <li><strong>Estratégico:</strong> la decisión de la tercera generación de franquiciar la marca (2021-2022)</li>
+        <li><strong>Gerencial:</strong> Gaspar Farina, jefe de operaciones, organizando la producción y capacitación</li>
+        <li><strong>Operacional:</strong> los empleados que hornean y rellenan las medialunas en cada local</li>
+      </ul>
+    </div>
+    <div class="example-card">
+      <h4>🔄 Distorsión de fines: Desplazamiento</h4>
+      <p>Una ONG creada para ayudar a personas (fin) que termina dedicando todo su tiempo a recaudar fondos y mantener la estructura (medios), olvidando la ayuda. Los medios pasaron a ser más importantes que el fin.</p>
+    </div>
+    <div class="example-card">
+      <h4>📊 Tipología</h4>
+      <p>Un <strong>club de barrio</strong> es de coexistencia (voluntario, democrático). Una <strong>cooperativa</strong> es de resultados de interés personal. Una <strong>empresa</strong> como SAO es de resultados de lucro.</p>
+    </div>
+  </div>
+  <div id="t1-practica" class="tab-content">
+    <div class="practice-section"><h3>✅ Verdadero o Falso</h3><div id="t1-tf"></div><button class="btn btn-primary" onclick="checkTF('t1')">Ver resultados</button><div id="t1-tf-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>🔘 Múltiple opción</h3><div id="t1-mc"></div><button class="btn btn-primary" onclick="checkMC('t1')">Ver resultados</button><div id="t1-mc-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>✍️ Desarrollo</h3><div id="t1-dev"></div></div>
+  </div>
+</div>
+
+<!-- T2: COMUNICACIÓN -->
+<div id="t2" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">💬</span>
+    <div><h2>Comunicación</h2><p>Proceso, funciones, barreras, tipos, redes y flujos</p></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t2','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t2','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t2','practica',this)">Práctica</button>
+  </div>
+  <div id="t2-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es la Comunicación? <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>La <strong>Comunicación</strong> es uno de los procesos de las organizaciones y es fundamental en las relaciones humanas. Es un proceso de <strong>transferencia y comprensión de significado</strong>.</p>
+        <p>Es eficiente cuando el receptor entiende exactamente lo que el emisor quiere transmitir. Si no se entiende lo que quiero transmitir, no logré comunicarme y no fui efectivo.</p>
+        <div class="nota"><strong>Modelos mentales:</strong> nos comunicamos desde nuestros modelos mentales, formas de pensar que definen cómo entendemos el mundo y actuamos. La comunicación puede ser un <strong>puente</strong> (claridad) o un <strong>muro</strong> (confusión).</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Funciones de la comunicación <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Comunicación organizacional:</strong> refiere a redes dentro de la organización (como el mail).</p>
+        <p><strong>Interpersonal</strong>, cumple cuatro funciones:</p>
+        <ul>
+          <li><strong>Información:</strong> se necesita para trabajar y tomar decisiones</li>
+          <li><strong>Motivación:</strong> comunicar metas, cómo se trabaja, cómo mejorar, felicitar por el trabajo</li>
+          <li><strong>Expresión emocional:</strong> expresar emociones y compartir sentimientos</li>
+          <li><strong>Control:</strong> monitorear el comportamiento o desempeño de las personas</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Elementos del proceso <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Hay un <strong>emisor</strong> que transmite el mensaje y un <strong>receptor</strong> que lo interpreta, le da significación y le genera una emoción según su edad, lenguaje, etc.</p>
+        <ul>
+          <li><strong>Codificación:</strong> verbal (palabras habladas o escritas) o no verbal (expresiones faciales, lenguaje corporal)</li>
+          <li><strong>Medio:</strong> se determina por 3 factores → 1) Riqueza de la info (cuánta info transmite y cuánto se entiende), 2) Tiempo (recurso escaso), 3) Constancia o registro (si necesito que quede constancia)</li>
+          <li><strong>Mensaje:</strong> lo que quiero transmitir, el propósito</li>
+          <li><strong>Ruido:</strong> interfiere en la comunicación; tiene que ver con las barreras</li>
+          <li><strong>Rapport:</strong> cuando dos o más personas están en sintonía psicológica y emocional, simpatía, porque se sienten similares o se relacionan bien</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Barreras / disfunciones <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Filtrado:</strong> manipulación consciente de la info por parte del emisor para que el receptor la vea mejor</li>
+          <li><strong>Sobrecarga de info:</strong> cuando la info excede la capacidad de procesamiento del receptor; se ignora, se pasa por alto, se olvida y se pierde info</li>
+          <li><strong>Lenguaje y cultura:</strong> la educación y origen influyen en el lenguaje utilizado</li>
+          <li><strong>Actitud defensiva y emociones:</strong> si las personas se sienten amenazadas adoptan una postura defensiva, atacan verbalmente, disminuye el entendimiento y desaparece la empatía</li>
+        </ul>
+        <div class="nota"><strong>Cómo se superan:</strong> retroalimentación (preguntar si se entendió), simplificar el mensaje, control de emociones (inteligencia emocional), coherencia (evitar el doble discurso) y escucha activa (búsqueda activa del significado: no interrumpir, tener empatía, hacer preguntas).</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Tipos, redes y flujos <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Tipos:</strong> Formal (según esquemas laborales prescritos por la org) e Informal (no definida por la jerarquía).</p>
+        <p><strong>Redes de comunicación:</strong></p>
+        <ul>
+          <li><strong>Rueda:</strong> una persona central se comunica con otros; la info fluye desde y hacia el centro</li>
+          <li><strong>Cadena:</strong> mucha interdependencia entre tareas, el trabajo se realiza en etapas (procesos productivos)</li>
+          <li><strong>Circular:</strong> los miembros se comunican con los cercanos a ellos (por ubicación de oficinas)</li>
+          <li><strong>Multicanal:</strong> todos se comunican con todos, altos niveles de comunicación, info en todas las direcciones</li>
+        </ul>
+        <p><strong>Flujos:</strong> Descendente (de gerente a empleados), Ascendente (de empleados a gerentes), Lateral (entre empleados del mismo nivel) y Transversal (entre diversas áreas y distintos niveles).</p>
+      </div>
+    </div>
+  </div>
+  <div id="t2-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>📉 Sobrecarga en SAO (caso del parcial)</h4>
+      <p>Gaspar capacitaba a los nuevos colaboradores "con tanto grado de detalle que algunos pasan por alto determinada información". Eso es una disfunción de tipo <strong>SOBRECARGA</strong>: la info excede la capacidad de procesamiento del receptor y se pierde.</p>
+    </div>
+    <div class="example-card">
+      <h4>🔗 Red de cadena en producción</h4>
+      <p>En la fábrica de Alfar, donde se hornea y se distribuye en etapas, predomina la red de <strong>cadena</strong>: cada etapa depende de la anterior y debe comunicarse con ella para continuar.</p>
+    </div>
+    <div class="example-card">
+      <h4>🌉 Puente vs muro</h4>
+      <p>Un jefe que da feedback claro y escucha activamente construye un <strong>puente</strong>. Uno que filtra info o reacciona a la defensiva levanta un <strong>muro</strong>.</p>
+    </div>
+  </div>
+  <div id="t2-practica" class="tab-content">
+    <div class="practice-section"><h3>✅ Verdadero o Falso</h3><div id="t2-tf"></div><button class="btn btn-primary" onclick="checkTF('t2')">Ver resultados</button><div id="t2-tf-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>🔘 Múltiple opción</h3><div id="t2-mc"></div><button class="btn btn-primary" onclick="checkMC('t2')">Ver resultados</button><div id="t2-mc-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>✍️ Desarrollo</h3><div id="t2-dev"></div></div>
+  </div>
+</div>
+
+<!-- T3: DECISIÓN -->
+<div id="t3" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">🎯</span>
+    <div><h2>Decisión</h2><p>Supuestos, elementos, fases, condiciones y clasificación</p></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t3','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t3','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t3','practica',this)">Práctica</button>
+  </div>
+  <div id="t3-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es la toma de decisiones? <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>La <strong>toma de decisiones</strong> es un proceso que hacen una o más personas donde seleccionan una alternativa entre varias para resolver un problema o encontrar una oportunidad de mejora. Es elegir la alternativa entre varias posibles para lograr un objetivo.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Supuestos y elementos <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Supuestos:</strong></p>
+        <ul>
+          <li><strong>Racionalidad:</strong> quien decide actúa con lógica y consistencia. La <strong>racionalidad es limitada</strong> por la capacidad de procesar información: no tenemos toda la info ni todo el tiempo. Se decide con conocimiento y sentido común</li>
+          <li><strong>Finalidad:</strong> se decide para lograr un objetivo o alcanzar una meta</li>
+        </ul>
+        <p><strong>Elementos:</strong></p>
+        <ul>
+          <li><strong>Hechos:</strong> dimensión objetiva, medible, que se puede poner a prueba (verdadero/falso). Con una fórmula se llega siempre a la misma decisión</li>
+          <li><strong>Valor:</strong> parte subjetiva, ligada a los valores de cada uno. Es el sentido ético, relativo a cada individuo</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Fases o etapas (4 pasos) <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <ol>
+          <li><strong>Inteligencia:</strong> investigar el ambiente y todo lo que rodea al objetivo. Se busca la oportunidad para decidir y se definen los objetivos a alcanzar → intención planteada en un objetivo</li>
+          <li><strong>Diseño o análisis:</strong> buscar alternativas y ver si son viables → alternativas</li>
+          <li><strong>Elección:</strong> se elige un curso de acción entre los diseñados. Acá interfieren los criterios de selección → elección de esas alternativas</li>
+          <li><strong>Revisión:</strong> se evalúa si la alternativa dio los resultados esperados. Puede ser mediata (transcurre tiempo) o inmediata (en el momento) → revisión de todo el proceso</li>
+        </ol>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Condiciones para decidir <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Certidumbre:</strong> se conocen todos los datos y resultados de cada alternativa. Situación ideal pero muy difícil</li>
+          <li><strong>Riesgo:</strong> es lo más común. Se puede estimar la probabilidad de ciertos resultados. Se necesita más info y experiencia</li>
+          <li><strong>Incertidumbre:</strong> no se está seguro de los resultados ni se pueden estimar probabilidades. Hay poca info; se aplica intuición, creatividad y los pensamientos</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Clasificación de decisiones <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Programadas:</strong> frecuentes, de rutina, estructuradas y repetitivas. Ya se sabe cómo se hace, es automático. Hay procedimientos, reglas y políticas</li>
+          <li><strong>No programadas:</strong> no hay estructura, son nuevas, inusuales, sin experiencia. Problemas nuevos con poca información</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="t3-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>🥐 Proceso de decisión en SAO (pandemia 2020)</h4>
+      <ol>
+        <li><strong>Inteligencia:</strong> detectan que la gastronomía pudo seguir abierta → oportunidad: "había que aprovechar el momento"</li>
+        <li><strong>Diseño:</strong> analizan modelos de franquicias norteamericanos como alternativa de expansión</li>
+        <li><strong>Elección:</strong> deciden franquiciar y pasan de 2021 a 2022 con 11 locales</li>
+        <li><strong>Revisión:</strong> evalúan si la expansión funcionó (revisión mediata)</li>
+      </ol>
+      <div class="ex-highlight">Es una decisión <strong>no programada</strong> (nueva e inusual) tomada en condiciones de <strong>riesgo/incertidumbre</strong> por el contexto de pandemia.</div>
+    </div>
+    <div class="example-card">
+      <h4>🔁 Programada vs no programada</h4>
+      <p>Reponer harina cuando baja del stock mínimo = <strong>programada</strong>. Decidir abrir una nueva fábrica = <strong>no programada</strong>.</p>
+    </div>
+  </div>
+  <div id="t3-practica" class="tab-content">
+    <div class="practice-section"><h3>✅ Verdadero o Falso</h3><div id="t3-tf"></div><button class="btn btn-primary" onclick="checkTF('t3')">Ver resultados</button><div id="t3-tf-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>🔘 Múltiple opción</h3><div id="t3-mc"></div><button class="btn btn-primary" onclick="checkMC('t3')">Ver resultados</button><div id="t3-mc-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>✍️ Desarrollo</h3><div id="t3-dev"></div></div>
+  </div>
+</div>
+
+<!-- T4: MOTIVACIÓN E INFLUENCIA -->
+<div id="t4" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">⚡</span>
+    <div><h2>Motivación e Influencia</h2><p>Teorías clásicas y contemporáneas, rediseño del puesto e influencia</p></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t4','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t4','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t4','practica',this)">Práctica</button>
+  </div>
+  <div id="t4-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es la Motivación? <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>La <strong>motivación</strong> es lo que hace que una persona tenga ganas de hacer algo, lo haga hacia un objetivo y no abandone hasta lograrlo. Tiene 3 partes clave:</p>
+        <ul>
+          <li><strong>Energía:</strong> cuántas ganas o esfuerzo se le pone (entusiasmo vs hacerlo sin ganas)</li>
+          <li><strong>Dirección:</strong> hacia dónde va ese esfuerzo; tiene que ser en algo útil (ej.: estudiar lo que entra en el examen)</li>
+          <li><strong>Persistencia:</strong> cuánto tiempo seguís intentando (no rendirse aunque sea difícil)</li>
+        </ul>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Teorías clásicas <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Maslow (jerarquía de necesidades):</strong> necesidades ordenadas por niveles; se sube de a poco y no se puede atender lo de arriba si lo de abajo no está cubierto. Niveles: 1) Fisiológicas (comer, dormir), 2) Seguridad (protegido y estable), 3) Sociales (querido y parte de un grupo), 4) Reconocimiento (valorado), 5) Autorrealización (ser tu mejor versión).</p>
+        <p><strong>Teorías X e Y de McGregor:</strong> dos formas de ver a los empleados. La <strong>X (visión negativa)</strong> supone que no quieren trabajar, evitan responsabilidades y necesitan control → gerente usa supervisión estricta y presión. La <strong>Y (visión positiva)</strong> supone que disfrutan su trabajo, buscan responsabilidades y se autodirigen → gerente fomenta participación, confianza y desarrollo.</p>
+        <p><strong>Dos factores de Herzberg:</strong> <strong>Higiene (extrínsecos:</strong> sueldo, condiciones, jefes, políticas): si están mal generan insatisfacción, si están bien solo evitan el descontento (no motivan). <strong>Motivadores (intrínsecos:</strong> logro, reconocimiento, responsabilidad, crecimiento): sí generan satisfacción y motivación.</p>
+        <p><strong>Tres necesidades:</strong> <strong>Logro (nLog):</strong> superarse y tener éxito (no siempre buenos jefes). <strong>Poder (nPod):</strong> influir o controlar a otros (los buenos líderes suelen tener alta nPod). <strong>Afiliación (nAfi):</strong> relaciones cercanas y amistosas.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Teorías contemporáneas <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Establecimiento de metas:</strong> las metas específicas y difíciles generan mejor rendimiento que las vagas ("hacer el mejor esfuerzo"), siempre que sean aceptadas. La retroalimentación es clave. Depende también del compromiso, la autoeficacia (creer que se puede) y factores culturales.</p>
+        <p><strong>Refuerzo:</strong> la conducta depende de sus consecuencias. Lo recompensado tiende a repetirse; lo no reforzado o castigado tiende a desaparecer. Reforzamiento positivo (recompensa → se repite), el refuerzo es más efectivo si es inmediato, y es mejor reforzar lo bueno que castigar lo malo.</p>
+        <p><strong>Equidad:</strong> las personas comparan lo que dan (aportaciones: esfuerzo, tiempo, experiencia) y lo que reciben (resultados: salario, reconocimiento) con lo de otros. Si perciben justicia → satisfacción; si perciben inequidad → se desmotivan (bajan esfuerzo, faltan, renuncian). Justicia distributiva (recompensas justas) y procedimental (proceso justo).</p>
+        <p><strong>Expectativas:</strong> la motivación depende de la expectativa de obtener un resultado y su valor. Tres relaciones: <strong>Expectativa</strong> (esfuerzo→desempeño), <strong>Instrumentalidad</strong> (desempeño→recompensa) y <strong>Valencia</strong> (valor de la recompensa). Alta motivación cuando la persona cree que puede lograrlo, piensa que será recompensada y valora esa recompensa.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Rediseño del puesto de trabajo <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>Cuando un trabajo es monótono se tiende a la desmotivación; con el rediseño se inculcan otras tareas.</p>
+        <ul>
+          <li><strong>Ampliación (horizontal):</strong> aumenta la cantidad de tareas → mejora variedad pero no siempre motiva</li>
+          <li><strong>Enriquecimiento (vertical):</strong> aumenta responsabilidad, autonomía y control → mejora motivación y satisfacción</li>
+        </ul>
+        <p><strong>Modelo de las características del puesto (MCP):</strong> un trabajo es más motivador con 5 características: variedad de habilidades, identidad de la tarea (hacer algo completo), importancia de la tarea, autonomía y retroalimentación. Genera trabajo significativo, sentido de responsabilidad y conocimiento de resultados.</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Influencia <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Influencia:</strong> proceso social mediante el cual una persona o grupo logra que otros actúen según sus expectativas, incluso cambiando su comportamiento habitual. Se usa como forma de ejercer poder (autoridad, control, carisma).</p>
+        <p><strong>Elementos:</strong> Agente influyente (quien ejerce) → Método (la forma) → Agente sometido (quien recibe).</p>
+        <p><strong>Tipos (Simon):</strong> Autoridad (posición formal, se da una orden, se espera obediencia), Persuasión (argumentos lógicos y emocionales), Sugerencia (induce a la acción sin coacción directa, hay más discernimiento).</p>
+        <p><strong>Tipos (Scott y Mitchell):</strong> Amenazas/poder físico (coerción), Sanciones positivas o negativas (recompensas o castigos), Pericia/idoneidad (conocimientos especializados), Magnetismo personal (atractivo y carisma).</p>
+        <p><strong>Legitimación de la autoridad (Simon):</strong> Legal (leyes y regulaciones), Conocimiento experto (experiencia y habilidades), Carisma (personalidad del líder), Tradición (costumbres y normas establecidas).</p>
+      </div>
+    </div>
+  </div>
+  <div id="t4-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>🥐 Motivación en SAO (caso del parcial)</h4>
+      <p>Gaspar "buscaba herramientas para mantenerlos motivados, los hacía participar, escuchaba sus opiniones, fomentaba el trabajo en equipo y les permitía tomar decisiones operativas". Esto se relaciona con factores <strong>motivadores de Herzberg</strong> (reconocimiento, responsabilidad), la <strong>teoría Y de McGregor</strong> y el <strong>enriquecimiento del puesto</strong> (más autonomía y control).</p>
+    </div>
+    <div class="example-card">
+      <h4>📊 Herzberg en la práctica</h4>
+      <p>Subir el sueldo (higiene) evita que la gente se queje, pero no la motiva a largo plazo. Darle un proyecto desafiante con reconocimiento (motivador) sí genera satisfacción.</p>
+    </div>
+    <div class="example-card">
+      <h4>⚖️ Equidad</h4>
+      <p>Si dos empleados hacen lo mismo pero uno cobra más, el otro percibe inequidad y puede bajar su esfuerzo, faltar más o renunciar.</p>
+    </div>
+  </div>
+  <div id="t4-practica" class="tab-content">
+    <div class="practice-section"><h3>✅ Verdadero o Falso</h3><div id="t4-tf"></div><button class="btn btn-primary" onclick="checkTF('t4')">Ver resultados</button><div id="t4-tf-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>🔘 Múltiple opción</h3><div id="t4-mc"></div><button class="btn btn-primary" onclick="checkMC('t4')">Ver resultados</button><div id="t4-mc-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>✍️ Desarrollo</h3><div id="t4-dev"></div></div>
+  </div>
+</div>
+
+<!-- T5: LIDERAZGO -->
+<div id="t5" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">👑</span>
+    <div><h2>Liderazgo</h2><p>Rasgos, contingencia, Fiedler, estilos, Likert y transformacional</p></div>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t5','teoria',this)">Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t5','ejemplos',this)">Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t5','practica',this)">Práctica</button>
+  </div>
+  <div id="t5-teoria" class="tab-content active">
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es el Liderazgo? <span class="acc-arrow">▼</span></div>
+      <div class="acc-body open">
+        <p>El <strong>liderazgo</strong> es la capacidad de influir en las personas para que trabajen con disposición y entusiasmo en el logro de objetivos. El líder no solo dirige, sino que inspira, guía y facilita que el grupo alcance sus metas. Liderar es influir para que otros quieran alcanzar objetivos comunes.</p>
+        <p><strong>Características:</strong> orientado al logro de objetivos, implica influencia sobre otros, busca generar motivación/confianza/compromiso, el líder guía e inspira (no solo ordena).</p>
+        <p><strong>Componentes:</strong> uso del poder (eficaz y responsable), comprensión de las personas (conocer motivaciones y necesidades), capacidad de inspirar y creación de un buen clima.</p>
+        <div class="nota"><strong>Principio del liderazgo:</strong> las personas siguen a quienes les ofrecen los medios para satisfacer sus metas. Diferencia: jefe (subordinados) → líder (seguidores).</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Teoría de los rasgos y enfoque situacional <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Teoría de los rasgos:</strong> los líderes nacen con ciertas características (energía, inteligencia, personalidad, orientación al logro, habilidades sociales). Es válida pero incompleta porque no tiene en cuenta el contexto ni a las personas.</p>
+        <p><strong>Enfoque situacional o de contingencia:</strong> el liderazgo depende de la situación. No existe un único estilo válido para todos los casos. El líder eficaz adapta su forma de dirigir según el contexto, el grupo y las necesidades de los seguidores.</p>
+        <p><strong>Liderazgo carismático:</strong> el líder se destaca por su personalidad y capacidad de inspirar (confianza en sí mismo, visión clara, capacidad de influir, entusiasmo, apoyo a los seguidores).</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Enfoque de contingencia de Fiedler <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p>El liderazgo eficaz depende de la interacción entre el estilo del líder y la situación. <strong>Dimensiones clave:</strong> 1) Posición de poder (autoridad del líder), 2) Estructura de la tarea (qué tan claras son), 3) Relación líder-seguidor (confianza y respeto → la más importante).</p>
+        <p><strong>Dos estilos:</strong> Orientado a la tarea (cumplir objetivos, resultados, eficiencia) y Orientado a las personas (buenas relaciones y clima). Se mide con la escala del <strong>compañero menos preferido (CTMP)</strong>: si lo describe positivamente → orientado a relaciones; si negativamente → orientado a tareas.</p>
+        <div class="nota"><strong>Resultados de Fiedler:</strong> en situaciones muy favorables o muy desfavorables, mejor líder orientado a la tarea. En situaciones intermedias, mejor orientado a las relaciones.</div>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Estilos según uso de autoridad <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Autocrático:</strong> toma decisiones solo, usa autoridad y control (útil en emergencias)</li>
+          <li><strong>Democrático (participativo):</strong> consulta a los empleados, fomenta participación, genera compromiso</li>
+          <li><strong>Rienda suelta (liberal):</strong> actúa como facilitador, da libertad total, poca intervención</li>
+        </ul>
+        <p>También se mide con la <strong>rejilla / grid gerencial</strong> (orientación a personas vs orientación a la tarea): pasivo (1,1), autocrático (9,1), democrático (1,9), equilibrado (5,5) y participativo (9,9).</p>
+      </div>
+    </div>
+    <div class="accordion">
+      <div class="acc-head" onclick="toggleAcc(this)">Likert y liderazgo transformacional <span class="acc-arrow">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Likert:</strong> explica cómo el estilo del líder influye en la efectividad organizacional → cuanta más participación y confianza, mejor el desempeño. Sistemas: 1) Explotador-autoritario (miedo y castigos, decisiones centralizadas), 2) Benevolente-autoritario (recompensas y castigos, poca participación), 3) Consultivo (confía, escucha, participación parcial), 4) <strong>Grupo participativo (el más efectivo:</strong> máxima confianza, alta participación, decisiones compartidas, comunicación fluida).</p>
+        <p><strong>Transaccional:</strong> busca eficiencia y cumplimiento. Se basa en el intercambio (trabajo ↔ recompensa), define tareas, controla el desempeño y usa recompensas y sanciones.</p>
+        <p><strong>Transformacional:</strong> busca transformar y desarrollar a las personas (más efectivo en contextos de cambio). Inspira con una visión, motiva y genera compromiso, promueve el cambio e innovación e influye en la cultura organizacional.</p>
+      </div>
+    </div>
+  </div>
+  <div id="t5-ejemplos" class="tab-content">
+    <div class="example-card">
+      <h4>🥐 Gaspar Farina según Likert (pregunta del parcial)</h4>
+      <p>Gaspar confía en sus colaboradores, escucha sus opiniones, los hace participar, fomenta el trabajo en equipo y les permite tomar decisiones operativas. Según Likert es un líder del <strong>Sistema 4: Grupo participativo</strong> — el más efectivo, con máxima confianza, alta participación y decisiones compartidas.</p>
+    </div>
+    <div class="example-card">
+      <h4>🚨 Autocrático en emergencia</h4>
+      <p>Ante un incendio en la fábrica, un líder autocrático que toma decisiones rápidas y da órdenes claras es el más efectivo en ese momento.</p>
+    </div>
+    <div class="example-card">
+      <h4>🔄 Transformacional</h4>
+      <p>El nieto que en 2016 "decide reflotar la marca con un espíritu innovador" e implementa el sistema Take Away actúa como líder <strong>transformacional</strong>: inspira una visión y promueve el cambio.</p>
+    </div>
+  </div>
+  <div id="t5-practica" class="tab-content">
+    <div class="practice-section"><h3>✅ Verdadero o Falso</h3><div id="t5-tf"></div><button class="btn btn-primary" onclick="checkTF('t5')">Ver resultados</button><div id="t5-tf-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>🔘 Múltiple opción</h3><div id="t5-mc"></div><button class="btn btn-primary" onclick="checkMC('t5')">Ver resultados</button><div id="t5-mc-score" class="score-box"></div></div>
+    <div class="practice-section"><h3>✍️ Desarrollo</h3><div id="t5-dev"></div></div>
+  </div>
+</div>
+
+<!-- EXAMS -->
+<div id="exams" class="topic-page">
+  <div class="topic-header">
+    <span class="th-ico">📝</span>
+    <div><h2>Exámenes Simulacro</h2><p>Estilo primer parcial teórico-práctico CAECE</p></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+    <div class="qa-btn" onclick="startExam(1)"><span class="qico">📝</span><h3>Examen 1</h3><p>20 preguntas · 40 minutos · Todos los temas</p></div>
+    <div class="qa-btn" onclick="startExam(2)"><span class="qico">🏆</span><h3>Examen 2</h3><p>20 preguntas · 40 minutos · Motivación y liderazgo</p></div>
+  </div>
+</div>
+
+<!-- EXAM PAGE -->
+<div id="exam-page">
+  <div class="exam-header"><h2 id="exam-title">Examen</h2><div id="exam-timer">40:00</div></div>
+  <div id="exam-questions"></div>
+  <div id="exam-result" class="exam-result" style="display:none"></div>
+  <div style="margin-top:16px;display:flex;gap:12px">
+    <button class="btn btn-success" id="btn-submit-exam" onclick="submitExam()">Entregar examen</button>
+    <button class="btn btn-primary" onclick="showPage('exams')">Cancelar</button>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+const TF = {
+  t1:[
+    {q:"La administración es una ciencia y técnica que estudia las organizaciones y su conducción racional, con o sin fines de lucro.",a:true,exp:"Correcto. Esa es la definición de administración."},
+    {q:"La división del trabajo y los centros de poder de decisión son características de una organización.",a:true,exp:"Correcto. También: responsabilidad en las comunicaciones, sustitución de personas en roles e interacción con el entorno."},
+    {q:"Según la teoría de sistemas, la organización es un sistema cerrado que no se relaciona con el entorno.",a:false,exp:"FALSO. Es un sistema ABIERTO: toma recursos del entorno, los transforma y genera productos o servicios."},
+    {q:"La distorsión de fines por desplazamiento ocurre cuando los medios pasan a ser más importantes que el fin.",a:true,exp:"Correcto. Esa es la distorsión por desplazamiento."},
+    {q:"Las funciones administrativas de Fayol son: planeación, organización, dirección y control.",a:true,exp:"Correcto. Son las cuatro funciones administrativas clásicas."}
+  ],
+  t2:[
+    {q:"La comunicación es un proceso de transferencia y comprensión de significado.",a:true,exp:"Correcto. Es eficiente cuando el receptor entiende lo que el emisor quiere transmitir."},
+    {q:"La sobrecarga de información ocurre cuando la info excede la capacidad de procesamiento del receptor.",a:true,exp:"Correcto. Como consecuencia se ignora, se pasa por alto y se pierde info."},
+    {q:"El filtrado es una manipulación inconsciente y accidental del mensaje.",a:false,exp:"FALSO. El filtrado es una manipulación CONSCIENTE de la info por parte del emisor."},
+    {q:"En la red de cadena todos se comunican con todos en todas las direcciones.",a:false,exp:"FALSO. Eso es la red MULTICANAL. La cadena se da en etapas con interdependencia (procesos productivos)."},
+    {q:"El flujo descendente va del gerente hacia los empleados.",a:true,exp:"Correcto. El ascendente va de empleados a gerentes."}
+  ],
+  t3:[
+    {q:"La racionalidad en la toma de decisiones es limitada por la capacidad de procesar información.",a:true,exp:"Correcto. No tenemos toda la info ni todo el tiempo del mundo."},
+    {q:"Las cuatro fases del proceso de decisión son: inteligencia, diseño, elección y revisión.",a:true,exp:"Correcto. Ese es el orden de las fases."},
+    {q:"En condiciones de certidumbre no se conocen los resultados de las alternativas.",a:false,exp:"FALSO. En CERTIDUMBRE se conocen todos los datos y resultados. Es la incertidumbre la que no permite conocerlos."},
+    {q:"Las decisiones programadas son nuevas, inusuales y sin experiencia previa.",a:false,exp:"FALSO. Esas son las NO programadas. Las programadas son rutinarias, estructuradas y repetitivas."},
+    {q:"El elemento 'valor' en la decisión es la parte subjetiva ligada al sentido ético de cada individuo.",a:true,exp:"Correcto. Los hechos son objetivos y medibles; el valor es subjetivo."}
+  ],
+  t4:[
+    {q:"Según Maslow no se puede atender una necesidad superior si la inferior no está cubierta.",a:true,exp:"Correcto. Las necesidades se ordenan por niveles y se sube de a poco."},
+    {q:"Según Herzberg, el sueldo es un factor motivador que genera satisfacción a largo plazo.",a:false,exp:"FALSO. El sueldo es un factor de HIGIENE (extrínseco): evita el descontento pero no motiva."},
+    {q:"La teoría Y de McGregor supone que los empleados disfrutan su trabajo y buscan responsabilidades.",a:true,exp:"Correcto. La X es la visión negativa; la Y es la positiva."},
+    {q:"Según la teoría de la equidad, si una persona percibe injusticia puede bajar su esfuerzo o renunciar.",a:true,exp:"Correcto. La inequidad desmotiva."},
+    {q:"El enriquecimiento del puesto (vertical) aumenta la responsabilidad, autonomía y control.",a:true,exp:"Correcto. La ampliación (horizontal) solo aumenta la cantidad de tareas."}
+  ],
+  t5:[
+    {q:"Liderar es influir para que otros quieran alcanzar objetivos comunes.",a:true,exp:"Correcto. El líder inspira y guía, no solo ordena."},
+    {q:"La teoría de los rasgos es completa porque tiene en cuenta el contexto y a los seguidores.",a:false,exp:"FALSO. Es válida pero INCOMPLETA: no considera el contexto ni a las personas."},
+    {q:"Según Fiedler, la relación líder-seguidor es la dimensión más importante de la situación.",a:true,exp:"Correcto. Junto a la posición de poder y la estructura de la tarea."},
+    {q:"El sistema 4 de Likert (grupo participativo) es el más efectivo.",a:true,exp:"Correcto. Tiene máxima confianza, alta participación y decisiones compartidas."},
+    {q:"El líder transaccional inspira con una visión y promueve la innovación.",a:false,exp:"FALSO. Eso es el TRANSFORMACIONAL. El transaccional se basa en el intercambio trabajo-recompensa."}
+  ]
+};
+
+const MC = {
+  t1:[
+    {q:"¿Qué busca optimizar la administración como técnica científica?",opts:["Solo el lucro","Productividad, eficacia y beneficio social o lucro","Únicamente la productividad","La reducción de personal"],a:1,exp:"Busca optimizar productividad, eficacia y beneficio social o lucro."},
+    {q:"¿Cuál NO es una característica de la organización?",opts:["División del trabajo","Centros de poder de decisión","Aislamiento total del entorno","Sustitución de personas en roles"],a:2,exp:"La organización tiene interacción CONSTANTE con el entorno, no aislamiento."},
+    {q:"La habilidad que predomina en el nivel estratégico (alto) es la:",opts:["Técnica","Conceptual","Manual","Operativa"],a:1,exp:"La habilidad conceptual (comprender la organización en su conjunto) predomina en el nivel alto."},
+    {q:"Agregar fines no relacionados (diversificación) es una distorsión por:",opts:["Sucesión","Expansión","Multiplicación","Desplazamiento"],a:2,exp:"Multiplicación = se agregan fines NO relacionados. Expansión = relacionados."}
+  ],
+  t2:[
+    {q:"¿Cuáles son las funciones interpersonales de la comunicación?",opts:["Información, motivación, expresión emocional y control","Solo información y control","Codificación y decodificación","Rueda, cadena y circular"],a:0,exp:"Las cuatro funciones son información, motivación, expresión emocional y control."},
+    {q:"Los 3 factores para determinar el medio son:",opts:["Emisor, receptor y mensaje","Riqueza de la info, tiempo y constancia/registro","Verbal, no verbal y ruido","Formal, informal y lateral"],a:1,exp:"Riqueza de la info, tiempo (recurso escaso) y constancia o registro."},
+    {q:"Cuando el emisor manipula conscientemente la info para que se vea mejor, la barrera es:",opts:["Sobrecarga","Filtrado","Lenguaje y cultura","Actitud defensiva"],a:1,exp:"El filtrado es la manipulación consciente del emisor."},
+    {q:"La red donde una persona central conecta a las demás se llama:",opts:["Cadena","Circular","Rueda","Multicanal"],a:2,exp:"En la rueda hay una persona central y la info fluye desde y hacia el centro."}
+  ],
+  t3:[
+    {q:"La primera fase del proceso de decisión, donde se investiga el ambiente y se define el objetivo, es:",opts:["Diseño","Elección","Inteligencia","Revisión"],a:2,exp:"La inteligencia busca la oportunidad y define los objetivos."},
+    {q:"La condición más común para tomar decisiones es:",opts:["Certidumbre","Riesgo","Incertidumbre total","Ninguna"],a:1,exp:"El riesgo es lo más común: se pueden estimar probabilidades."},
+    {q:"Una decisión rutinaria, estructurada y repetitiva es:",opts:["No programada","Programada","De incertidumbre","Extraordinaria"],a:1,exp:"Las programadas son de rutina, con procedimientos, reglas y políticas."},
+    {q:"El elemento objetivo y medible de una decisión es:",opts:["El valor","El hecho","La intuición","La emoción"],a:1,exp:"Los hechos son la dimensión objetiva; el valor es subjetivo."}
+  ],
+  t4:[
+    {q:"Las 3 partes clave de la motivación son:",opts:["Energía, dirección y persistencia","Logro, poder y afiliación","Higiene, motivadores y equidad","Expectativa, instrumentalidad y valencia"],a:0,exp:"Energía (esfuerzo), dirección (hacia dónde) y persistencia (cuánto tiempo)."},
+    {q:"Según Herzberg, los factores motivadores (intrínsecos) son:",opts:["Sueldo y condiciones laborales","Jefes y políticas de la empresa","Logro, reconocimiento, responsabilidad y crecimiento","Seguridad física y estabilidad"],a:2,exp:"Los motivadores son intrínsecos al trabajo y sí generan satisfacción."},
+    {q:"En la teoría de las expectativas, la 'valencia' es:",opts:["Creer que el esfuerzo lleva a buen desempeño","Creer que el desempeño trae recompensa","El valor que la persona le da a la recompensa","La cantidad de esfuerzo"],a:2,exp:"Valencia = importancia o valor de la recompensa para la persona."},
+    {q:"Aumentar responsabilidad, autonomía y control en un puesto es:",opts:["Ampliación horizontal","Enriquecimiento vertical","Rotación de tareas","Sobrecarga"],a:1,exp:"El enriquecimiento (vertical) mejora motivación y satisfacción."}
+  ],
+  t5:[
+    {q:"Según Fiedler, ¿cuál es la dimensión MÁS importante de la situación?",opts:["Posición de poder","Estructura de la tarea","Relación líder-seguidor","El carisma del líder"],a:2,exp:"La relación líder-seguidor (confianza y respeto) es la más importante."},
+    {q:"El estilo de liderazgo útil en emergencias, donde el líder decide solo, es:",opts:["Democrático","Autocrático","Rienda suelta","Participativo"],a:1,exp:"El autocrático toma decisiones solo y usa autoridad; útil en emergencias."},
+    {q:"El sistema de Likert más efectivo es:",opts:["Explotador-autoritario","Benevolente-autoritario","Consultivo","Grupo participativo"],a:3,exp:"El sistema 4 (grupo participativo) tiene máxima confianza y participación."},
+    {q:"El líder que inspira con una visión y promueve el cambio e innovación es:",opts:["Transaccional","Transformacional","Autocrático","De rasgos"],a:1,exp:"El transformacional inspira, motiva y promueve el cambio; el transaccional se basa en el intercambio."}
+  ]
+};
+
+const DEV = {
+  t1:[
+    {q:"Explicá las habilidades necesarias de los administradores y relacionalas con los niveles jerárquicos.",model:"Las habilidades son: CONCEPTUAL (comprender la organización en su conjunto, predomina en el nivel ESTRATÉGICO/alto), HUMANA (trabajar con personas, entender motivaciones y liderar, necesaria en TODOS los niveles), y TÉCNICA (aplicar conocimientos y herramientas específicas, predomina en el nivel OPERATIVO/bajo). A medida que se sube de nivel, aumenta la necesidad de habilidad conceptual y disminuye la técnica."},
+    {q:"¿Qué es la distorsión de fines y cuáles son sus tipos?",model:"La distorsión de fines ocurre cuando el fin real (objetivo actual) no coincide con el fin estatuido (propósito original). Tipos: SUCESIÓN (el fin original ya no es viable → reconversión o disolución), EXPANSIÓN (se agregan fines relacionados), MULTIPLICACIÓN (se agregan fines no relacionados, diversificación) y DESPLAZAMIENTO (los medios pasan a ser más importantes que el fin)."}
+  ],
+  t2:[
+    {q:"¿A qué se denomina comunicación organizacional y cuáles son las funciones de la comunicación?",model:"La comunicación organizacional refiere a las redes de comunicación dentro de la organización (como el mail). Las funciones de la comunicación interpersonal son: INFORMACIÓN (para trabajar y decidir), MOTIVACIÓN (comunicar metas y felicitar), EXPRESIÓN EMOCIONAL (compartir sentimientos) y CONTROL (monitorear el comportamiento y desempeño)."},
+    {q:"Explicá la disfunción de tipo SOBRECARGA y cómo se supera.",model:"La sobrecarga ocurre cuando la información que da el emisor excede la capacidad de procesamiento del receptor; como consecuencia se ignora, se pasa por alto, se olvida y se pierde información. Se supera simplificando el mensaje, eliminando info irrelevante, dosificando la información y usando retroalimentación para confirmar que se entendió."}
+  ],
+  t3:[
+    {q:"Desarrollá las 4 fases del proceso de decisión.",model:"1) INTELIGENCIA: investigar el ambiente, buscar la oportunidad y definir los objetivos. 2) DISEÑO/ANÁLISIS: buscar alternativas y ver si son viables. 3) ELECCIÓN: elegir un curso de acción aplicando los criterios de selección. 4) REVISIÓN: evaluar si la alternativa dio los resultados esperados (puede ser mediata o inmediata)."},
+    {q:"Diferenciá las condiciones de certidumbre, riesgo e incertidumbre.",model:"CERTIDUMBRE: se conocen todos los datos y resultados de cada alternativa (situación ideal pero difícil). RIESGO: lo más común, se puede estimar la probabilidad de los resultados con info y experiencia. INCERTIDUMBRE: no se conocen los resultados ni se pueden estimar probabilidades; se aplica intuición y creatividad."}
+  ],
+  t4:[
+    {q:"¿Cuál es el pensamiento sobre la motivación según la teoría de los dos factores de Herzberg?",model:"Herzberg distingue dos tipos de factores. Los de HIGIENE (extrínsecos: sueldo, condiciones laborales, jefes, políticas): si están mal generan insatisfacción, si están bien solo evitan el descontento pero NO motivan. Los MOTIVADORES (intrínsecos: logro, reconocimiento, responsabilidad, crecimiento): estos sí generan satisfacción y motivación. No es lo mismo la no-insatisfacción que la satisfacción total."},
+    {q:"Explicá la teoría de las expectativas.",model:"La motivación depende de la expectativa de obtener un resultado y del valor de ese resultado. Incluye 3 relaciones: EXPECTATIVA (esfuerzo→desempeño: creer que el esfuerzo dará buen desempeño), INSTRUMENTALIDAD (desempeño→recompensa: creer que el desempeño traerá recompensa) y VALENCIA (valor que se le da a la recompensa). La motivación es alta cuando la persona cree que puede lograrlo, piensa que será recompensada y valora esa recompensa."}
+  ],
+  t5:[
+    {q:"¿Cómo considerarías a un líder participativo según Rensis Likert? Fundamentá.",model:"Según Likert, un líder participativo corresponde al SISTEMA 4 (grupo participativo), el más efectivo. Se caracteriza por máxima confianza en los empleados, alta participación, decisiones compartidas y comunicación fluida en todos los sentidos. Likert sostiene que cuanta más participación y confianza hay, mejor es el desempeño organizacional."},
+    {q:"Explicá el enfoque de contingencia de Fiedler.",model:"Para Fiedler el liderazgo eficaz depende de la interacción entre el estilo del líder y la situación. Las dimensiones de la situación son: posición de poder, estructura de la tarea y relación líder-seguidor (la más importante). Hay dos estilos (orientado a la tarea y orientado a las personas), medidos con la escala del compañero menos preferido (CTMP). En situaciones muy favorables o muy desfavorables conviene el líder orientado a la tarea; en situaciones intermedias, el orientado a las relaciones."}
+  ]
+};
+
+const EXAMS = [
+  [
+    {q:"La administración es:",opts:["Solo una técnica sin base científica","Una ciencia y técnica que estudia las organizaciones y su conducción racional","Únicamente la gestión de empresas con fines de lucro","La contabilidad de una empresa"],a:1},
+    {q:"Según la teoría de sistemas, la organización es:",opts:["Un sistema cerrado","Un sistema abierto que toma recursos, los transforma y genera productos","Una estructura sin relación con el entorno","Un fin en sí mismo"],a:1},
+    {q:"Las funciones administrativas de Fayol son:",opts:["Planeación, organización, dirección y control","Información, motivación, expresión y control","Inteligencia, diseño, elección y revisión","Energía, dirección y persistencia"],a:0},
+    {q:"La habilidad conceptual predomina en el nivel:",opts:["Operativo","Gerencial","Estratégico","Técnico"],a:2},
+    {q:"La distorsión donde los medios pasan a ser más importantes que el fin es:",opts:["Sucesión","Expansión","Multiplicación","Desplazamiento"],a:3},
+    {q:"La comunicación es eficiente cuando:",opts:["El emisor habla mucho","El receptor entiende exactamente lo que el emisor quiere transmitir","Se usa solo lenguaje formal","Hay mucho ruido"],a:1},
+    {q:"La sobrecarga de información se da cuando:",opts:["El emisor manipula la info","La info excede la capacidad de procesamiento del receptor","No hay rapport","El mensaje es muy corto"],a:1},
+    {q:"La red de comunicación que se da en etapas con interdependencia (procesos productivos) es:",opts:["Rueda","Cadena","Circular","Multicanal"],a:1},
+    {q:"El flujo de comunicación que va de los empleados a los gerentes es:",opts:["Descendente","Ascendente","Lateral","Transversal"],a:1},
+    {q:"Las 4 fases del proceso de decisión son:",opts:["Inteligencia, diseño, elección y revisión","Planeación, organización, dirección y control","Energía, dirección, persistencia y logro","Certidumbre, riesgo, incertidumbre y revisión"],a:0},
+    {q:"La condición de decisión más común es:",opts:["Certidumbre","Riesgo","Incertidumbre","Certeza absoluta"],a:1},
+    {q:"Una decisión nueva, inusual y sin experiencia previa es:",opts:["Programada","No programada","De rutina","Estructurada"],a:1},
+    {q:"La racionalidad en la toma de decisiones es:",opts:["Ilimitada","Limitada por la capacidad de procesar información","Inexistente","Siempre perfecta"],a:1},
+    {q:"Según Maslow, la necesidad de pertenecer a un grupo es:",opts:["Fisiológica","De seguridad","Social","De autorrealización"],a:2},
+    {q:"Según Herzberg, el sueldo es un factor:",opts:["Motivador","De higiene","De logro","De autorrealización"],a:1},
+    {q:"La teoría Y de McGregor supone que los empleados:",opts:["No quieren trabajar y evitan responsabilidades","Disfrutan su trabajo y buscan responsabilidades","Solo trabajan por dinero","Necesitan control estricto"],a:1},
+    {q:"La influencia basada en argumentos lógicos y emocionales (Simon) es:",opts:["Autoridad","Persuasión","Sugerencia","Coerción"],a:1},
+    {q:"Según Fiedler, la dimensión más importante de la situación es:",opts:["Posición de poder","Estructura de la tarea","Relación líder-seguidor","El carisma"],a:2},
+    {q:"El sistema de Likert más efectivo es:",opts:["Explotador-autoritario","Benevolente-autoritario","Consultivo","Grupo participativo"],a:3},
+    {q:"El líder que se basa en el intercambio trabajo-recompensa es:",opts:["Transformacional","Transaccional","Carismático","De rasgos"],a:1}
+  ],
+  [
+    {q:"Las 3 partes clave de la motivación son:",opts:["Energía, dirección y persistencia","Logro, poder y afiliación","Higiene, motivadores y equidad","Hechos, valores y finalidad"],a:0},
+    {q:"Según Maslow, no se puede atender una necesidad superior si:",opts:["La persona no quiere","La inferior no está cubierta","No hay dinero","El jefe no lo permite"],a:1},
+    {q:"Los factores motivadores de Herzberg (intrínsecos) incluyen:",opts:["Sueldo y condiciones","Logro, reconocimiento, responsabilidad y crecimiento","Jefes y políticas","Seguridad y estabilidad"],a:1},
+    {q:"La teoría de las tres necesidades de McClelland incluye:",opts:["Logro, poder y afiliación","Energía, dirección y persistencia","X, Y y Z","Higiene, motivación y equidad"],a:0},
+    {q:"Según la teoría de la equidad, cuando hay inequidad la persona puede:",opts:["Aumentar su compromiso siempre","Disminuir su esfuerzo, faltar más o renunciar","Pedir un ascenso","Nada cambia"],a:1},
+    {q:"En la teoría de las expectativas, la instrumentalidad es:",opts:["Esfuerzo→desempeño","Desempeño→recompensa","El valor de la recompensa","La cantidad de esfuerzo"],a:1},
+    {q:"El enriquecimiento del puesto (vertical) implica:",opts:["Aumentar la cantidad de tareas","Aumentar responsabilidad, autonomía y control","Reducir las tareas","Rotar de puesto"],a:1},
+    {q:"El Modelo de Características del Puesto (MCP) incluye:",opts:["Variedad, identidad, importancia de la tarea, autonomía y retroalimentación","Solo el sueldo","Energía, dirección y persistencia","Higiene y motivadores"],a:0},
+    {q:"La influencia donde se da una orden y se espera obediencia (Simon) es:",opts:["Persuasión","Sugerencia","Autoridad","Carisma"],a:2},
+    {q:"La legitimación de la autoridad basada en costumbres y normas establecidas es:",opts:["Legal","Conocimiento experto","Carisma","Tradición"],a:3},
+    {q:"Liderar es:",opts:["Solo dar órdenes","Influir para que otros quieran alcanzar objetivos comunes","Controlar a los subordinados","Administrar recursos"],a:1},
+    {q:"La teoría de los rasgos es incompleta porque:",opts:["Es muy compleja","No tiene en cuenta el contexto ni a las personas","Es muy antigua","Solo aplica a empresas"],a:1},
+    {q:"El enfoque situacional del liderazgo sostiene que:",opts:["Hay un único estilo válido","El liderazgo depende de la situación","Los líderes nacen, no se hacen","El carisma es lo único importante"],a:1},
+    {q:"Los dos estilos de liderazgo de Fiedler son:",opts:["Autocrático y democrático","Orientado a la tarea y orientado a las personas","Transaccional y transformacional","X e Y"],a:1},
+    {q:"La escala del compañero menos preferido (CTMP) sirve para:",opts:["Medir la motivación","Determinar el estilo del líder (tarea o relaciones)","Calcular el sueldo","Evaluar la comunicación"],a:1},
+    {q:"El estilo de liderazgo que da libertad total y poca intervención es:",opts:["Autocrático","Democrático","Rienda suelta (liberal)","Transaccional"],a:2},
+    {q:"En la grilla gerencial, el punto (9,9) representa el líder:",opts:["Pasivo","Autocrático","Participativo","Democrático"],a:2},
+    {q:"El líder transformacional se caracteriza por:",opts:["Basarse en el intercambio trabajo-recompensa","Inspirar con una visión y promover el cambio","Controlar el desempeño con sanciones","Tomar todas las decisiones solo"],a:1},
+    {q:"La toma de decisiones tiene como finalidad:",opts:["Generar conflictos","Lograr un objetivo o alcanzar una meta","Aumentar la burocracia","Reducir personal"],a:1},
+    {q:"El reforzamiento positivo según la teoría del refuerzo:",opts:["Castiga la mala conducta","Recompensa una conducta para que se repita","Ignora las conductas","Reduce la motivación"],a:1}
+  ]
+];
+
+const progress = JSON.parse(localStorage.getItem('adm1prog') || '{}');
+let examNum=0, examAnswers={}, examTimerInterval=null, examSeconds=0;
+
+function showPage(id){
+  document.querySelectorAll('.topic-page,#dash,#exam-page').forEach(el=>{el.style.display='none';el.classList.remove('visible');});
+  document.querySelectorAll('#sidebar nav a').forEach(a=>a.classList.remove('active'));
+  if(id==='dash'){document.getElementById('dash').style.display='block';document.getElementById('nav-dash').classList.add('active');renderDash();}
+  else if(id==='exams'){document.getElementById('exams').style.display='block';document.getElementById('exams').classList.add('visible');document.getElementById('nav-exams').classList.add('active');}
+  else{const el=document.getElementById(id);if(el){el.style.display='block';el.classList.add('visible');}const nav=document.getElementById('nav-'+id);if(nav)nav.classList.add('active');}
+  window.scrollTo(0,0);
+}
+function toggleAcc(head){const body=head.nextElementSibling;const arrow=head.querySelector('.acc-arrow');body.classList.toggle('open');arrow.style.transform=body.classList.contains('open')?'rotate(180deg)':'';}
+function switchTab(topic,tab,btn){document.querySelectorAll('#'+topic+' .tab-content').forEach(c=>c.classList.remove('active'));document.querySelectorAll('#'+topic+' .tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById(topic+'-'+tab).classList.add('active');btn.classList.add('active');}
+
+function renderTF(topic){const c=document.getElementById(topic+'-tf');if(!c||c.innerHTML)return;c.innerHTML=(TF[topic]||[]).map((item,i)=>`<div class="q-block"><p>${i+1}. ${item.q}</p><div class="options"><label><input type="radio" name="${topic}-tf-${i}" value="true"> Verdadero</label><label><input type="radio" name="${topic}-tf-${i}" value="false"> Falso</label></div><div class="feedback" id="${topic}-tf-fb-${i}"></div></div>`).join('');}
+function renderMC(topic){const c=document.getElementById(topic+'-mc');if(!c||c.innerHTML)return;c.innerHTML=(MC[topic]||[]).map((item,i)=>`<div class="q-block"><p>${i+1}. ${item.q}</p><div class="options">${item.opts.map((o,j)=>`<label><input type="radio" name="${topic}-mc-${i}" value="${j}"> ${o}</label>`).join('')}</div><div class="feedback" id="${topic}-mc-fb-${i}"></div></div>`).join('');}
+function renderDEV(topic){const c=document.getElementById(topic+'-dev');if(!c||c.innerHTML)return;c.innerHTML=(DEV[topic]||[]).map((item,i)=>`<div class="dev-card"><p class="q">${i+1}. ${item.q}</p><textarea class="dev-ans" placeholder="Escribí tu respuesta..."></textarea><button class="btn btn-primary" style="margin-top:10px" onclick="this.nextElementSibling.style.display='block'">Ver respuesta modelo</button><div class="dev-model"><strong>Respuesta modelo:</strong> ${item.model}</div></div>`).join('');}
+
+function checkTF(topic){const items=TF[topic]||[];let score=0;items.forEach((item,i)=>{const sel=document.querySelector(`input[name="${topic}-tf-${i}"]:checked`);const fb=document.getElementById(`${topic}-tf-fb-${i}`);if(!sel)return;const ans=sel.value==='true';fb.style.display='block';if(ans===item.a){fb.className='feedback correct';fb.textContent='✅ Correcto. '+item.exp;score++;}else{fb.className='feedback wrong';fb.textContent='❌ Incorrecto. '+item.exp;}});const box=document.getElementById(`${topic}-tf-score`);box.style.display='block';box.innerHTML=`<h3>${score}/${items.length}</h3><p>${score>=Math.ceil(items.length*0.7)?'¡Muy bien!':'Repasá los conceptos.'}</p>`;saveProgress(topic,'tf',score,items.length);}
+function checkMC(topic){const items=MC[topic]||[];let score=0;items.forEach((item,i)=>{const sel=document.querySelector(`input[name="${topic}-mc-${i}"]:checked`);const fb=document.getElementById(`${topic}-mc-fb-${i}`);if(!sel)return;fb.style.display='block';if(parseInt(sel.value)===item.a){fb.className='feedback correct';fb.textContent='✅ Correcto. '+item.exp;score++;}else{fb.className='feedback wrong';fb.textContent='❌ Incorrecto. La correcta es: "'+item.opts[item.a]+'". '+item.exp;}});const box=document.getElementById(`${topic}-mc-score`);box.style.display='block';box.innerHTML=`<h3>${score}/${items.length}</h3><p>${score>=Math.ceil(items.length*0.7)?'¡Muy bien!':'Repasá los conceptos.'}</p>`;saveProgress(topic,'mc',score,items.length);}
+
+function saveProgress(topic,type,score,total){if(!progress[topic])progress[topic]={};if(!progress[topic][type]||score>(progress[topic][type].score||0)){progress[topic][type]={score,total};}localStorage.setItem('adm1prog',JSON.stringify(progress));}
+function getTopicProgress(topic){const p=progress[topic];if(!p)return 0;let sum=0,tot=0;if(p.tf){sum+=p.tf.score;tot+=p.tf.total;}if(p.mc){sum+=p.mc.score;tot+=p.mc.total;}return tot>0?Math.round((sum/tot)*100):0;}
+function renderDash(){const topics=[{id:'t1',name:'Conceptos Clave'},{id:'t2',name:'Comunicación'},{id:'t3',name:'Decisión'},{id:'t4',name:'Motivación e Influencia'},{id:'t5',name:'Liderazgo'}];const grid=document.getElementById('progress-grid');grid.innerHTML=topics.map(t=>{const pct=getTopicProgress(t.id);return `<div class="prog-card" onclick="showPage('${t.id}')"><div class="ptitle">${t.name}</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div><div class="pct">${pct}% completado</div></div>`;}).join('');}
+
+function startExam(num){examNum=num;examAnswers={};if(examTimerInterval)clearInterval(examTimerInterval);examSeconds=40*60;const page=document.getElementById('exam-page');document.querySelectorAll('.topic-page,#dash').forEach(el=>el.style.display='none');page.style.display='block';document.getElementById('exam-result').style.display='none';document.getElementById('btn-submit-exam').style.display='inline-block';document.getElementById('exam-title').textContent='Examen '+num+' — Administración I';const qs=EXAMS[num-1];document.getElementById('exam-questions').innerHTML=qs.map((q,i)=>`<div class="exam-q"><p class="qtext">${i+1}. ${q.q}</p><div class="options">${q.opts.map((o,j)=>`<label><input type="radio" name="eq-${i}" value="${j}" onchange="examAnswers[${i}]=${j}"> ${o}</label>`).join('')}</div></div>`).join('');examTimerInterval=setInterval(()=>{examSeconds--;const m=Math.floor(examSeconds/60).toString().padStart(2,'0');const s=(examSeconds%60).toString().padStart(2,'0');document.getElementById('exam-timer').textContent=`${m}:${s}`;if(examSeconds<=0)submitExam();},1000);window.scrollTo(0,0);}
+function submitExam(){clearInterval(examTimerInterval);document.getElementById('btn-submit-exam').style.display='none';const qs=EXAMS[examNum-1];let score=0;qs.forEach((q,i)=>{if(examAnswers[i]===q.a)score++;});const pct=Math.round((score/qs.length)*100);const pass=pct>=60;qs.forEach((q,i)=>{document.querySelectorAll(`input[name="eq-${i}"]`).forEach(r=>{const lbl=r.parentElement;if(parseInt(r.value)===q.a)lbl.style.cssText='background:#E8F5E9;color:#1B5E20;font-weight:700;border-radius:6px';else if(r.checked&&parseInt(r.value)!==q.a)lbl.style.cssText='background:#FFEBEE;color:#B71C1C;border-radius:6px';r.disabled=true;});});const res=document.getElementById('exam-result');res.style.display='block';res.innerHTML=`<div class="big-score">${score}/${qs.length}</div><div class="verdict ${pass?'pass':'fail'}">${pass?'🎉 ¡Aprobado!':'📚 A seguir estudiando'}</div><p style="margin:8px 0;color:#555">${pct}% de respuestas correctas (se aprueba con 60%)</p><p style="font-size:.84rem;color:#777">${pass?'Muy buen desempeño. Revisá las preguntas incorrectas arriba.':'Repasá los temas donde tuviste dudas y volvé a intentarlo.'}</p><button class="btn btn-primary" style="margin-top:16px" onclick="showPage('exams')">Volver a Exámenes</button>`;progress['exam'+examNum]={score,total:qs.length,pct};localStorage.setItem('adm1prog',JSON.stringify(progress));res.scrollIntoView({behavior:'smooth'});}
+
+document.addEventListener('DOMContentLoaded',()=>{['t1','t2','t3','t4','t5'].forEach(t=>{renderTF(t);renderMC(t);renderDEV(t);});renderDash();showPage('dash');});
+</script>
+</body>
+</html>

@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tecnología y Materiales — CAECE</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--p:#BF360C;--p2:#E64A19;--acc:#FF8F00;--dark:#1a1a1a;--bg:#fafafa;--card:#fff;--border:#e0e0e0;--txt:#212121;--muted:#757575}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--txt);display:flex;min-height:100vh}
+/* SIDEBAR */
+.sidebar{width:260px;background:linear-gradient(180deg,var(--p),#7B1F05);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;overflow-y:auto;z-index:100;transition:.3s}
+.sidebar-head{padding:22px 18px 16px;border-bottom:1px solid rgba(255,255,255,.15)}
+.sidebar-head h2{font-size:1rem;font-weight:800;line-height:1.3}
+.sidebar-head p{font-size:.73rem;opacity:.75;margin-top:4px}
+.sidebar nav{padding:10px 0;flex:1}
+.nav-item{display:block;padding:11px 20px;font-size:.88rem;color:rgba(255,255,255,.85);cursor:pointer;border-left:3px solid transparent;transition:.18s;text-decoration:none}
+.nav-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.nav-item.active{background:rgba(255,255,255,.14);color:#fff;border-left-color:var(--acc);font-weight:600}
+.nav-item.exam-link{color:var(--acc);font-weight:700}
+.sidebar-foot{padding:14px 18px;border-top:1px solid rgba(255,255,255,.15);font-size:.73rem;opacity:.65}
+.back-link{display:flex;align-items:center;gap:6px;padding:10px 20px;color:rgba(255,255,255,.7);font-size:.82rem;cursor:pointer;text-decoration:none;transition:.18s}
+.back-link:hover{color:#fff}
+/* MAIN */
+.main{margin-left:260px;flex:1;padding:30px 36px;max-width:900px}
+.page{display:none}.page.active{display:block}
+/* DASHBOARD */
+.dash-hero{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-radius:18px;padding:32px 30px;margin-bottom:28px}
+.dash-hero h1{font-size:1.9rem;font-weight:800}
+.dash-hero p{opacity:.88;margin-top:6px;font-size:.97rem}
+.progress-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px}
+.prog-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;text-align:center;cursor:pointer;transition:.2s}
+.prog-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.1)}
+.prog-card .emoji{font-size:2rem;display:block;margin-bottom:8px}
+.prog-card h3{font-size:.9rem;font-weight:700;margin-bottom:6px}
+.prog-bar{background:#eee;border-radius:99px;height:6px;overflow:hidden;margin-bottom:4px}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--p2),var(--acc));border-radius:99px;transition:.4s}
+.prog-pct{font-size:.75rem;color:var(--muted)}
+.tip-box{background:#FFF3E0;border-left:4px solid var(--acc);border-radius:8px;padding:14px 18px;font-size:.88rem;color:#4e342e}
+/* TOPIC PAGE */
+.topic-header{background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border-radius:14px;padding:24px 26px;margin-bottom:24px}
+.topic-header h1{font-size:1.5rem;font-weight:800}
+.topic-header p{opacity:.88;margin-top:5px;font-size:.9rem}
+.tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:2px solid var(--border);padding-bottom:0}
+.tab-btn{padding:9px 18px;font-size:.87rem;font-weight:600;cursor:pointer;border:none;background:none;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;transition:.18s}
+.tab-btn.active{color:var(--p2);border-bottom-color:var(--p2)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+/* ACCORDION */
+.acc{border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.acc-head{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:.93rem;background:var(--card);transition:.18s}
+.acc-head:hover{background:#FBE9E7}
+.acc-head .arr{transition:.3s;font-size:.8rem;color:var(--muted)}
+.acc.open .acc-head .arr{transform:rotate(180deg)}
+.acc-body{display:none;padding:16px 18px;border-top:1px solid var(--border);font-size:.9rem;line-height:1.7;color:#333;background:#FAFAFA}
+.acc.open .acc-body{display:block}
+.acc-body ul{padding-left:20px;margin:8px 0}
+.acc-body ul li{margin-bottom:6px}
+.acc-body table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.85rem}
+.acc-body table th{background:var(--p);color:#fff;padding:8px 12px;text-align:left}
+.acc-body table td{padding:8px 12px;border:1px solid #ddd;vertical-align:top}
+.acc-body table tr:nth-child(even) td{background:#FFF3E0}
+.highlight{background:#FFF3E0;border-left:3px solid var(--acc);padding:10px 14px;border-radius:6px;margin:10px 0;font-size:.88rem}
+.highlight strong{color:var(--p)}
+/* PRACTICE */
+.practice-section{margin-bottom:28px}
+.practice-section h3{font-size:1rem;font-weight:700;margin-bottom:14px;color:var(--p)}
+.tf-item,.mc-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.tf-item p,.mc-item p{font-size:.9rem;margin-bottom:12px;font-weight:500}
+.tf-btns{display:flex;gap:10px}
+.tf-btns button,.mc-opts button{padding:8px 20px;border:1px solid var(--border);border-radius:8px;cursor:pointer;font-size:.85rem;background:#fff;transition:.18s}
+.tf-btns button:hover,.mc-opts button:hover{border-color:var(--p2);color:var(--p2)}
+.mc-opts{display:flex;flex-direction:column;gap:8px}
+.mc-opts button{text-align:left;padding:9px 14px}
+.feedback{margin-top:10px;padding:8px 12px;border-radius:8px;font-size:.85rem;display:none}
+.feedback.correct{background:#E8F5E9;color:#2E7D32;border-left:3px solid #43A047}
+.feedback.wrong{background:#FFEBEE;color:#C62828;border-left:3px solid #E53935}
+.feedback.show{display:block}
+.check-btn{margin-top:16px;padding:10px 24px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.88rem;font-weight:600}
+.check-btn:hover{opacity:.9}
+.score-box{background:var(--card);border:2px solid var(--acc);border-radius:12px;padding:16px 20px;text-align:center;margin-top:16px;display:none}
+.score-box.show{display:block}
+.score-box .score-num{font-size:2rem;font-weight:800;color:var(--p)}
+.dev-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.dev-item p{font-weight:600;font-size:.9rem;margin-bottom:10px}
+.dev-item textarea{width:100%;border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.87rem;font-family:inherit;resize:vertical;min-height:90px}
+.model-ans{background:#FFF3E0;border-left:3px solid var(--acc);padding:10px 14px;border-radius:6px;font-size:.86rem;display:none;margin-top:8px}
+.model-ans.show{display:block}
+.show-ans-btn{margin-top:8px;padding:7px 16px;background:transparent;border:1px solid var(--p2);color:var(--p2);border-radius:7px;cursor:pointer;font-size:.83rem}
+/* EXAM */
+.exam-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:16px}
+.exam-card h3{font-size:1rem;font-weight:700;margin-bottom:6px}
+.exam-card p{font-size:.88rem;color:var(--muted);margin-bottom:16px}
+.exam-card button{padding:11px 26px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;border-radius:9px;font-size:.9rem;font-weight:700;cursor:pointer}
+#examContainer{display:none}
+.exam-header{display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;padding:16px 22px;border-radius:12px;margin-bottom:20px}
+.exam-header h2{font-size:1.1rem;font-weight:700}
+#examTimer{font-size:1.2rem;font-weight:800;background:rgba(255,255,255,.2);padding:6px 16px;border-radius:8px}
+.exam-q{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+.exam-q p{font-weight:600;font-size:.9rem;margin-bottom:12px}
+.exam-q label{display:flex;align-items:flex-start;gap:10px;padding:8px 12px;border-radius:7px;cursor:pointer;font-size:.87rem;border:1px solid var(--border);margin-bottom:6px;transition:.15s}
+.exam-q label:hover{background:#FBE9E7;border-color:var(--p2)}
+.exam-q input[type=radio]{margin-top:2px;accent-color:var(--p)}
+.submit-exam-btn{display:block;margin:20px auto;padding:12px 36px;background:linear-gradient(135deg,var(--p),var(--p2));color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
+.result-box{background:var(--card);border-radius:14px;padding:30px;text-align:center;margin-top:20px;display:none;border:2px solid var(--acc)}
+.result-box.show{display:block}
+.result-num{font-size:3rem;font-weight:800;color:var(--p)}
+.result-msg{font-size:1rem;margin-top:8px}
+.result-pass{color:#2E7D32;font-weight:700}
+.result-fail{color:#C62828;font-weight:700}
+.restart-btn{margin-top:16px;padding:10px 28px;background:var(--p);color:#fff;border:none;border-radius:9px;cursor:pointer;font-size:.9rem;font-weight:600}
+/* RESPONSIVE */
+@media(max-width:820px){
+  .sidebar{width:200px}
+  .main{margin-left:200px;padding:20px 18px}
+  .progress-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .sidebar{transform:translateX(-100%);width:240px}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:16px}
+  .progress-grid{grid-template-columns:1fr}
+  .menu-toggle{display:flex}
+}
+.menu-toggle{display:none;position:fixed;top:14px;left:14px;z-index:200;background:var(--p);color:#fff;border:none;border-radius:8px;width:38px;height:38px;align-items:center;justify-content:center;font-size:1.2rem;cursor:pointer}
+</style>
+</head>
+<body>
+<button class="menu-toggle" onclick="document.querySelector('.sidebar').classList.toggle('open')">☰</button>
+
+<aside class="sidebar">
+  <div class="sidebar-head">
+    <h2>🏗️ Tecnología y Materiales</h2>
+    <p>Universidad CAECE · MdP</p>
+  </div>
+  <nav>
+    <a class="nav-item active" onclick="showPage('dash')">🏠 Inicio</a>
+    <a class="nav-item" onclick="showPage('t1')">⚡ Fuerzas y Esfuerzos</a>
+    <a class="nav-item" onclick="showPage('t2')">🏛️ Estructuras</a>
+    <a class="nav-item" onclick="showPage('t3')">🧱 Mampostería</a>
+    <a class="nav-item" onclick="showPage('t4')">🪣 Mezclas y Aglomerantes</a>
+    <a class="nav-item" onclick="showPage('t5')">🪟 Revoques y Contrapisos</a>
+    <a class="nav-item" onclick="showPage('t6')">🎨 Pinturas</a>
+    <a class="nav-item exam-link" onclick="showPage('exams')">📝 Exámenes Simulacro</a>
+  </nav>
+  <a class="back-link" href="estudiar.html">← Volver al menú</a>
+  <div class="sidebar-foot">Progreso guardado localmente</div>
+</aside>
+
+<main class="main">
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dash">
+  <div class="dash-hero">
+    <h1>🏗️ Tecnología y Materiales</h1>
+    <p>Fuerzas, estructuras, mampostería, mezclas, revoques y pinturas — todo para el parcial.</p>
+  </div>
+  <div class="progress-grid">
+    <div class="prog-card" onclick="showPage('t1')">
+      <span class="emoji">⚡</span>
+      <h3>Fuerzas y Esfuerzos</h3>
+      <div class="prog-bar"><div class="prog-fill" id="pf-t1" style="width:0%"></div></div>
+      <p class="prog-pct" id="pp-t1">0% completado</p>
+    </div>
+    <div class="prog-card" onclick="showPage('t2')">
+      <span class="emoji">🏛️</span>
+      <h3>Estructuras</h3>
+      <div class="prog-bar"><div class="prog-fill" id="pf-t2" style="width:0%"></div></div>
+      <p class="prog-pct" id="pp-t2">0% completado</p>
+    </div>
+    <div class="prog-card" onclick="showPage('t3')">
+      <span class="emoji">🧱</span>
+      <h3>Mampostería</h3>
+      <div class="prog-bar"><div class="prog-fill" id="pf-t3" style="width:0%"></div></div>
+      <p class="prog-pct" id="pp-t3">0% completado</p>
+    </div>
+    <div class="prog-card" onclick="showPage('t4')">
+      <span class="emoji">🪣</span>
+      <h3>Mezclas y Aglomerantes</h3>
+      <div class="prog-bar"><div class="prog-fill" id="pf-t4" style="width:0%"></div></div>
+      <p class="prog-pct" id="pp-t4">0% completado</p>
+    </div>
+    <div class="prog-card" onclick="showPage('t5')">
+      <span class="emoji">🪟</span>
+      <h3>Revoques y Contrapisos</h3>
+      <div class="prog-bar"><div class="prog-fill" id="pf-t5" style="width:0%"></div></div>
+      <p class="prog-pct" id="pp-t5">0% completado</p>
+    </div>
+    <div class="prog-card" onclick="showPage('t6')">
+      <span class="emoji">🎨</span>
+      <h3>Pinturas</h3>
+      <div class="prog-bar"><div class="prog-fill" id="pf-t6" style="width:0%"></div></div>
+      <p class="prog-pct" id="pp-t6">0% completado</p>
+    </div>
+  </div>
+  <div class="tip-box">💡 <strong>Consejo:</strong> Empezá por Fuerzas y Esfuerzos porque es la base para entender las estructuras. Luego seguí en orden: mampostería → mezclas → revoques → pinturas.</div>
+</div>
+
+<!-- T1: FUERZAS Y ESFUERZOS -->
+<div class="page" id="page-t1">
+  <div class="topic-header">
+    <h1>⚡ Fuerzas y Esfuerzos</h1>
+    <p>Propiedades de la fuerza, esfuerzos simples y compuestos</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t1','teoria',this)">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t1','ejemplos',this)">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t1','practica',this)">✏️ Práctica</button>
+  </div>
+
+  <div class="tab-pane active" id="t1-teoria">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es una fuerza? <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Una <strong>fuerza</strong> modifica el estado de reposo de un cuerpo. Tiene tres propiedades:</p>
+        <ul>
+          <li><strong>Dirección:</strong> la línea sobre la cual actúa (horizontal, vertical, inclinada)</li>
+          <li><strong>Sentido:</strong> hacia dónde va sobre esa línea (arriba/abajo, izquierda/derecha)</li>
+          <li><strong>Magnitud o intensidad:</strong> cuánta fuerza se aplica (medida en Newton o Kgf)</li>
+        </ul>
+        <div class="highlight">Ejemplo: El peso de una viga es una fuerza con dirección vertical, sentido hacia abajo y magnitud igual al peso de la viga.</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Esfuerzos simples <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Son tres:</p>
+        <ul>
+          <li><strong>Compresión:</strong> las fuerzas aplicadas tienden a aplicar, acortar o comprimir el objeto (ej: columnas, arcos). Los materiales pétreos (piedra, ladrillo, hormigón) aguantan mucha fuerza de compresión.</li>
+          <li><strong>Tracción:</strong> las fuerzas tienden a estirar el objeto hacia afuera, alargándolo. Los metales aguantan elevadas fuerzas de tracción.</li>
+          <li><strong>Corte:</strong> fuerzas que actúan en sentidos opuestos sobre planos paralelos del material, "cortándolo".</li>
+        </ul>
+        <table>
+          <tr><th>Esfuerzo</th><th>Qué hace</th><th>Materiales que lo resisten mejor</th></tr>
+          <tr><td>Compresión</td><td>Aplasta, acorta</td><td>Pétreos (hormigón, ladrillo, piedra)</td></tr>
+          <tr><td>Tracción</td><td>Estira, alarga</td><td>Metales (acero)</td></tr>
+          <tr><td>Corte</td><td>Corta transversalmente</td><td>Acero, madera</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Esfuerzos compuestos <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Flexión:</strong> es un esfuerzo compuesto. El cuerpo tiende a doblarse. Combina tracción (fibras inferiores) + compresión (fibras superiores). Las vigas trabajan en flexión.</li>
+          <li><strong>Torsión:</strong> el cuerpo tiende a torcerse sobre su propio eje. Combina varios esfuerzos simultáneos.</li>
+        </ul>
+        <div class="highlight"><strong>Clave de examen:</strong> La flexión es un esfuerzo COMPUESTO. Cuando una viga se dobla, sus fibras inferiores sufren tracción y las superiores compresión.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t1-ejemplos">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">Ejemplos en la construcción <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th>Elemento</th><th>Esfuerzo principal</th><th>Por qué</th></tr>
+          <tr><td>Columna de hormigón</td><td>Compresión</td><td>Soporta cargas verticales que la aplastan</td></tr>
+          <tr><td>Cable de un puente colgante</td><td>Tracción</td><td>El peso del puente tira del cable estirándolo</td></tr>
+          <tr><td>Viga de techo</td><td>Flexión (compuesto)</td><td>El peso la dobla: abajo tracción, arriba compresión</td></tr>
+          <tr><td>Arco de ladrillo</td><td>Compresión</td><td>Las cargas se distribuyen como compresión por el arco</td></tr>
+          <tr><td>Tornillo de una bisagra</td><td>Corte</td><td>La puerta tira del tornillo en sentido perpendicular</td></tr>
+        </table>
+        <div class="highlight">El hormigón armado es tan usado porque <strong>combina</strong> la resistencia a compresión del hormigón con la resistencia a tracción del acero (varillas).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t1-practica">
+    <div class="practice-section">
+      <h3>Verdadero / Falso</h3>
+      <div id="tf-t1"></div>
+      <button class="check-btn" onclick="checkTF('t1')">Verificar respuestas</button>
+      <div class="score-box" id="score-tf-t1"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Opción Múltiple</h3>
+      <div id="mc-t1"></div>
+      <button class="check-btn" onclick="checkMC('t1')">Verificar respuestas</button>
+      <div class="score-box" id="score-mc-t1"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Preguntas de Desarrollo</h3>
+      <div id="dev-t1"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T2: ESTRUCTURAS -->
+<div class="page" id="page-t2">
+  <div class="topic-header">
+    <h1>🏛️ Estructuras y Sistemas Estructurales</h1>
+    <p>Muros portantes, estructura independiente, sistemas mixtos, dintel y encofrado</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t2','teoria',this)">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t2','ejemplos',this)">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t2','practica',this)">✏️ Práctica</button>
+  </div>
+
+  <div class="tab-pane active" id="t2-teoria">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es una estructura? <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Es el <strong>conjunto de elementos que permiten que una construcción se mantenga de pie</strong>. Se encarga de transmitir las cargas al piso. Recibe cargas y soporta esfuerzos.</p>
+        <div class="highlight">La estructura tiene dos funciones clave: recibir cargas (peso propio, personas, viento, etc.) y transmitirlas de forma segura hasta el suelo.</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Sistemas estructurales — tabla comparativa <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th></th><th>Muros Portantes</th><th>Estructura Independiente</th><th>Estructuras Mixtas</th></tr>
+          <tr><td><strong>Época</strong></td><td>Construcciones más antiguas (siguen existiendo)</td><td>Construcciones más recientes</td><td>Viejas y actuales, tienen modificaciones</td></tr>
+          <tr><td><strong>Cap. máx. de pisos</strong></td><td>Planta baja, planta alta y azotea</td><td>Muchas (ej: edificios altos)</td><td>Variable</td></tr>
+          <tr><td><strong>Elementos</strong></td><td>Muros, viga de encadenado, losas, cimientos</td><td>Bases, columnas, vigas y losas</td><td>Paredes portantes + columnas y vigas</td></tr>
+          <tr><td><strong>Características</strong></td><td>Depende de los muros, para construcciones bajas, fácil de ejecutar</td><td>No depende de muros, permite construcciones altas</td><td>Ej: frente con losa liviana, fondo con muros portantes</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Viga de encadenado <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>La <strong>viga de encadenado</strong> distribuye las cargas, evita las fisuras en las uniones de muros y conforma una caja homogénea al vincular todos los muros portantes.</p>
+        <p>Está construida con hormigón, armadura (hierro) y encofrado (de madera).</p>
+        <div class="highlight">En muros portantes es esencial: une todos los muros y distribuye las cargas uniformemente.</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Losas, vigas y columnas (estructura independiente) <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <ul>
+          <li><strong>Losas:</strong> elementos estructurales planos, con menos espesor que largo y ancho. Actúan en sentido perpendicular al plano y transmiten las cargas a las vigas por medio de las columnas hasta la base. Pueden ser llanas/macizas (hormigón armado en encofrado) o preparadas con tergopol (más livianas).</li>
+          <li><strong>Vigas:</strong> estructuras lineales, su altura es mucho mayor que su espesor. Trabajan en <strong>flexión</strong> (tracción en fibras inferiores y compresión en superiores).</li>
+          <li><strong>Columnas:</strong> elementos lineales verticales que transfieren las cargas de las vigas hacia las bases. Hechas de hormigón armado.</li>
+          <li><strong>Bases:</strong> zona de contacto directo con el piso. Recibe las mayores cargas.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Dintel y Encofrado <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Dintel:</strong> permite abrir un vano en una pared, actuando como soporte en una mampostería. Compuesto por varillas de acero más concreto (cemento y arena). No se necesita dintel en paños grandes y completos hasta la viga de encadenado ni en pequeños vanos hasta 60x60.</p>
+        <p>Si se quiere derribar una pared de muro portante, se debe agregar un refuerzo estructural que absorba la flexión. El material que reemplaza la estructura suele ser un perfil doble T.</p>
+        <p><strong>Encofrado:</strong> molde en donde se vierte el hormigón para darle forma mientras fragua y endurece. Puede aprovecharse como recurso estético.</p>
+        <div class="highlight"><strong>Diseño de interiores:</strong> Las vigas y columnas que no se pueden demoler deben tratarse con integración (que se integren visualmente), articulación (organizar funciones a través de su presencia) o destaque (volverlos protagónicos). NUNCA ignorarlos.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t2-ejemplos">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">Ejemplo: Casa de barrio vs. edificio de departamentos <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Casa de barrio típica (muros portantes):</strong></p>
+        <ul>
+          <li>Los muros de ladrillo soportan el techo — si tirás un muro portante, el techo cae.</li>
+          <li>Máximo: planta baja + planta alta + azotea.</li>
+          <li>Fácil de construir, no necesita mano de obra muy especializada.</li>
+        </ul>
+        <p style="margin-top:12px"><strong>Edificio de 10 pisos (estructura independiente):</strong></p>
+        <ul>
+          <li>Las columnas y vigas soportan todo — los muros son solo divisorios.</li>
+          <li>Podés derribar una pared sin que el edificio se caiga.</li>
+          <li>Permite muchos pisos.</li>
+        </ul>
+        <div class="highlight"><strong>Pregunta trampa:</strong> "Si es un edificio de estructura independiente, ¿puedo derribar cualquier pared?" → Sí, si son paredes divisorias. No si son paredes portantes en una zona mixta.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t2-practica">
+    <div class="practice-section">
+      <h3>Verdadero / Falso</h3>
+      <div id="tf-t2"></div>
+      <button class="check-btn" onclick="checkTF('t2')">Verificar respuestas</button>
+      <div class="score-box" id="score-tf-t2"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Opción Múltiple</h3>
+      <div id="mc-t2"></div>
+      <button class="check-btn" onclick="checkMC('t2')">Verificar respuestas</button>
+      <div class="score-box" id="score-mc-t2"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Preguntas de Desarrollo</h3>
+      <div id="dev-t2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T3: MAMPOSTERÍA -->
+<div class="page" id="page-t3">
+  <div class="topic-header">
+    <h1>🧱 Mampostería de Ladrillos</h1>
+    <p>Reglas del arte, estabilidad del muro, tipos de ladrillos</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t3','teoria',this)">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t3','ejemplos',this)">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t3','practica',this)">✏️ Práctica</button>
+  </div>
+
+  <div class="tab-pane active" id="t3-teoria">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es la mampostería? <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Sistema constructivo de muros y tabiques compuestos por <strong>mampuestos</strong> (ladrillos) unidos por <strong>mortero</strong> (mezcla). La mezcla está compuesta por: aglomerante (cemento, cal o ambos) + agregado inerte (arena) + agua.</p>
+        <div class="highlight">El agua logra distribuir la mezcla sobre los mampuestos; el agregado sirve de relleno.</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Reglas del Arte — 6 pasos de ejecución <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <ol style="padding-left:20px;line-height:2">
+          <li><strong>Mojado previo del ladrillo:</strong> si no se hace bien, los ladrillos pueden despegarse entre sí.</li>
+          <li><strong>Verticalidad:</strong> se verifica con plomada (o nivel de burbuja). Tres opciones: a plomo, vuela o duerme.</li>
+          <li><strong>Horizontalidad:</strong> se verifica con nivel láser.</li>
+          <li><strong>Espesor constante en las juntas:</strong> colabora en mantener la horizontalidad. Evita el exceso de dimensión y el debilitamiento de la resistencia del muro.</li>
+          <li><strong>Traba o trabazón:</strong> los ladrillos se ponen mínimo 1/4, lo recomendable es 1/2. El muro es más resistente mientras menor sea el espesor de mezcla entre mampuestos. 1 cm en ladrillo común y 2 cm en ladrillos huecos.</li>
+          <li><strong>Traba horizontal de los encuentros:</strong> si se ejecuta mal se producen grietas verticales. Los muros deben quedar entrelazados para que los ladrillos de un muro se unan con el otro.</li>
+        </ol>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Estabilidad del muro <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Un muro es estable si:</p>
+        <ul>
+          <li>Recibe cargas verticales uniformemente repartidas.</li>
+          <li>Su altura no es excesiva.</li>
+          <li>Ante la aparición de una mínima carga horizontal deberá engrosar o reforzarse para poder absorberla.</li>
+          <li>Deberá cumplir las reglas del arte.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Tipos de ladrillos <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Ladrillos comunes:</strong></p>
+        <ul>
+          <li>Permiten distintos tipos de terminaciones.</li>
+          <li>Sirven tanto para muros portantes como para estructuras independientes.</li>
+          <li>Se pueden clavar y cortar de cualquier medida.</li>
+          <li>El espesor resultante depende de su forma de colocación.</li>
+        </ul>
+        <p style="margin-top:10px"><strong>Ladrillos huecos:</strong></p>
+        <ul>
+          <li>Distintos tamaños: 8 cm, 12 cm y 30 cm.</li>
+          <li>Menor tiempo de ejecución.</li>
+          <li>Consumen menos mezcla cuanto más grandes.</li>
+          <li>Más prolijos para emparejar con retoque.</li>
+          <li>Más frágiles para el traslado.</li>
+          <li>Facilitan la ejecución de canaletas para instalaciones.</li>
+          <li>Dificultad para clavar.</li>
+          <li>Solo se coloca mortero en las juntas horizontales (no verticales).</li>
+        </ul>
+        <p style="margin-top:10px"><strong>Ladrillo hueco portante o bloque cerámico:</strong></p>
+        <ul>
+          <li>Tiene huecos verticales pensados para recibir armadura y trabajar como elemento portante.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Cómo saber si son muros portantes? <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Sí o sí portantes:</strong></p>
+        <ul>
+          <li>Muro de 30 cm de ladrillo común.</li>
+          <li>Muro de 20 cm de ladrillos huecos.</li>
+          <li>45 cm de ladrillo común (ya en desuso).</li>
+        </ul>
+        <p style="margin-top:8px"><strong>Posiblemente portantes:</strong></p>
+        <ul>
+          <li>Muro de 15 cm con refuerzos de hierro cada 6 hiladas aprox.</li>
+          <li>Muro de 15 cm de ladrillo hueco portante.</li>
+        </ul>
+        <div class="highlight">Para saber si un muro es portante en obras existentes: buscá refuerzos de hierro, el espesor del muro y el tipo de ladrillo.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t3-ejemplos">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">Consecuencias de no cumplir las reglas del arte <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th>Regla no cumplida</th><th>Consecuencia</th></tr>
+          <tr><td>No mojar el ladrillo</td><td>El mortero no adhiere, los ladrillos se despegan</td></tr>
+          <tr><td>No verificar verticalidad</td><td>El muro queda inclinado ("vuela" o "duerme")</td></tr>
+          <tr><td>Juntas de distintos espesores</td><td>Muro débil, poco resistente</td></tr>
+          <tr><td>Traba menor a 1/4</td><td>Muro poco resistente, puede fallar</td></tr>
+          <tr><td>Mala traba en encuentros</td><td>Grietas verticales en las esquinas</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t3-practica">
+    <div class="practice-section">
+      <h3>Verdadero / Falso</h3>
+      <div id="tf-t3"></div>
+      <button class="check-btn" onclick="checkTF('t3')">Verificar respuestas</button>
+      <div class="score-box" id="score-tf-t3"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Opción Múltiple</h3>
+      <div id="mc-t3"></div>
+      <button class="check-btn" onclick="checkMC('t3')">Verificar respuestas</button>
+      <div class="score-box" id="score-mc-t3"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Preguntas de Desarrollo</h3>
+      <div id="dev-t3"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T4: MEZCLAS -->
+<div class="page" id="page-t4">
+  <div class="topic-header">
+    <h1>🪣 Mezclas y Aglomerantes</h1>
+    <p>Morteros, hormigones, cemento vs cal, aditivos</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t4','teoria',this)">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t4','ejemplos',this)">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t4','practica',this)">✏️ Práctica</button>
+  </div>
+
+  <div class="tab-pane active" id="t4-teoria">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">Tipos de mezclas <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Elementos de composición: <strong>Agregados + Aglomerantes + Agua</strong></p>
+        <p>Clasificación primaria en DOS tipos:</p>
+        <table>
+          <tr><th>Tipo</th><th>Agregados</th><th>Características</th></tr>
+          <tr><td><strong>Morteros</strong></td><td>Finos (arena)</td><td>Menos volumen, solo resisten como parte de la mampostería</td></tr>
+          <tr><td><strong>Hormigones</strong></td><td>Finos + Gruesos (piedra)</td><td>Más volumen, más resistencia</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Diferencia entre aglomerantes: Cemento vs Cal <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th>Característica</th><th>Cemento</th><th>Cal</th></tr>
+          <tr><td>Dureza</td><td>El más duro</td><td>Menos resistente</td></tr>
+          <tr><td>Elasticidad</td><td>Rígido, nada elástico</td><td>Mezclas más elásticas</td></tr>
+          <tr><td>Fisuras</td><td>Micro fisuras por contracción en el fraguado</td><td>Menos fisuras</td></tr>
+          <tr><td>Impermeabilidad</td><td>Puede formar mezclas impermeables</td><td>NO puede formar mezclas hidráulicas</td></tr>
+          <tr><td>Tiempo de fraguado</td><td>1 a 2 hs desde contacto con agua</td><td>6 hs</td></tr>
+          <tr><td>Endurecimiento</td><td>Rápido</td><td>Entre 3 y 5 días</td></tr>
+          <tr><td>Metales</td><td>Compatible</td><td>Agresiva con los metales</td></tr>
+        </table>
+        <div class="highlight"><strong>Clave:</strong> El cemento puede ser impermeable, la cal NO. La cal es más elástica pero menos resistente.</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Mezclas más comunes <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>MORTEROS:</strong></p>
+        <ul>
+          <li><strong>Concreto</strong> (mortero de cemento): Cemento + arena. Uso en revoques impermeables y mampostería.</li>
+          <li><strong>Cal reforzada</strong> (mortero de cal y cemento): Cal + poco cemento + arena. Uso: mortero de asiento para mampostería y revoque grueso (no impermeable).</li>
+        </ul>
+        <p style="margin-top:10px"><strong>HORMIGONES:</strong></p>
+        <ul>
+          <li><strong>Hormigón de piedra</strong> (más común): Cemento + arena + piedra + agua.</li>
+          <li><strong>Hormigón pobre:</strong> Cemento + arena + escombro + agua.</li>
+          <li><strong>Hormigón armado (estructural):</strong> Hormigón de piedra + armadura (varillas de hierro). Uso: resistir esfuerzos de flexión. El hormigón resiste la tracción y las varillas la compresión.</li>
+        </ul>
+        <div class="highlight"><strong>Mnemotécnica:</strong> Morteros = sin piedra. Hormigones = con piedra. Hormigón armado = con varillas de acero para resistir flexión.</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Aditivos <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Son productos químicos líquidos que se agregan a los aglomerantes + agregados + agua para obtener propiedades especiales que las mezclas comunes no cumplen.</p>
+        <table>
+          <tr><th>Aditivo</th><th>Función</th></tr>
+          <tr><td>Aditivos hidrófugos</td><td>Impermeabilidad (ej: Sika-1, Ceresita)</td></tr>
+          <tr><td>Puentes de adherencia</td><td>Mejorar adherencia de mezclas nuevas a superficies existentes</td></tr>
+          <tr><td>Acelerante/retardante de frague</td><td>Modificar tiempos de fraguado</td></tr>
+          <tr><td>Concreto alveolar</td><td>Agregar aire al agua de la mezcla</td></tr>
+          <tr><td>Plastificantes</td><td>Mejorar la fluidez</td></tr>
+        </table>
+        <div class="highlight">El <strong>mortero hidrófugo</strong> = mortero cementicio + aditivo hidrófugo = MORTERO HIDRÓFUGO. Se usa en revoques impermeables y cajas aisladora.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t4-ejemplos">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué mezcla uso en cada situación? <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th>Situación</th><th>Mezcla recomendada</th></tr>
+          <tr><td>Pegar ladrillos de muro portante</td><td>Cal reforzada (mortero de asiento)</td></tr>
+          <tr><td>Revoque grueso interior</td><td>Cal reforzada</td></tr>
+          <tr><td>Revoque impermeable exterior</td><td>Concreto (cemento + arena)</td></tr>
+          <tr><td>Contrapiso sobre tierra</td><td>Hormigón pobre (si hay escombros) o de piedra</td></tr>
+          <tr><td>Columna estructural</td><td>Hormigón armado</td></tr>
+          <tr><td>Contrapiso con cargas (garage)</td><td>Hormigón de piedra + armadura</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t4-practica">
+    <div class="practice-section">
+      <h3>Verdadero / Falso</h3>
+      <div id="tf-t4"></div>
+      <button class="check-btn" onclick="checkTF('t4')">Verificar respuestas</button>
+      <div class="score-box" id="score-tf-t4"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Opción Múltiple</h3>
+      <div id="mc-t4"></div>
+      <button class="check-btn" onclick="checkMC('t4')">Verificar respuestas</button>
+      <div class="score-box" id="score-mc-t4"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Preguntas de Desarrollo</h3>
+      <div id="dev-t4"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T5: REVOQUES Y CONTRAPISOS -->
+<div class="page" id="page-t5">
+  <div class="topic-header">
+    <h1>🪟 Revoques, Contrapisos y Carpeta</h1>
+    <p>Tipos de revoques, contrapiso sobre tierra y losa, carpeta, capa aisladora, patologías</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t5','teoria',this)">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t5','ejemplos',this)">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t5','practica',this)">✏️ Práctica</button>
+  </div>
+
+  <div class="tab-pane active" id="t5-teoria">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">Los 3 revoques <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th>Revoque</th><th>Función</th><th>Mezcla</th><th>Espesor</th></tr>
+          <tr><td><strong>1. Impermeable</strong> (enduido/azotado)</td><td>Impermeabiliza la superficie del ladrillo de la intemperie. Va por debajo del revoque grueso, en el exterior.</td><td>Concreto + aditivo hidrófugo</td><td>Fino</td></tr>
+          <tr><td><strong>2. Grueso</strong></td><td>Cubre el impermeable, empareja el muro dando verticalidad, prepara la superficie para revestir. También se aplica en la cara interior.</td><td>Cal reforzada (cal + poco cemento + arena)</td><td>20 a 25 mm</td></tr>
+          <tr><td><strong>3. Fino</strong></td><td>Solo función estética/terminación.</td><td>Cal reforzada, yeso o premezclado</td><td>Muy fino</td></tr>
+        </table>
+        <div class="highlight"><strong>Orden:</strong> Impermeable (exterior, bajo) → Grueso (exterior e interior, medio) → Fino (terminación, encima del grueso)</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Contrapisos <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Funciones del contrapiso:</strong></p>
+        <ul>
+          <li>Base resistente para el piso.</li>
+          <li>Aislación térmica.</li>
+          <li>Dar el nivel necesario.</li>
+          <li>Dar la pendiente (balcones, baños, cocinas).</li>
+          <li>Ocultar y proteger cañerías.</li>
+        </ul>
+        <p style="margin-top:10px"><strong>Contrapiso sobre tierra</strong> (terreno firme):</p>
+        <ul>
+          <li>Para cargas normales: 10 a 15 cm de espesor.</li>
+          <li>Se hace de hormigón pobre (si hay escombros) o de hormigón de piedra (menos económico).</li>
+          <li>Para cargas importantes (vehículos): hormigón de piedra + armadura de hierro.</li>
+          <li><strong>Construcción:</strong> 1. Terreno natural → 2. Film de polietileno → 3. Contrapiso → 4. Carpeta (≈2 cm) → 5. Adhesivo impermeable → 6. Piso cerámico → 7. Juntas rellenas con material flexible.</li>
+        </ul>
+        <p style="margin-top:10px"><strong>Contrapiso sobre losa:</strong></p>
+        <ul>
+          <li>Da pendiente en baños, cocinas, patios.</li>
+          <li>Oculta y protege cañerías.</li>
+          <li>Espesor típico: 6 a 8 cm (20 cm donde pasan cañerías, 5 cm con cañería de desagüe).</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Carpeta <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Se podría definir como un <strong>revoque horizontal</strong>. Sus funciones:</p>
+        <ul>
+          <li>Alisar la superficie del contrapiso.</li>
+          <li>Aislación hidrófuga.</li>
+          <li>Prepara la superficie para adherir el solado.</li>
+          <li>Corrige el nivel para el piso final.</li>
+        </ul>
+        <div class="highlight">Mortero: CONCRETO IMPERMEABLE (cemento + arena + aditivo hidrófugo)</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Capa aisladora horizontal o Cajón <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Función principal:</strong> impedir el ascenso de la humedad proveniente de los cimientos y del suelo al muro de cerramiento.</p>
+        <p><strong>Construcción:</strong></p>
+        <ol style="padding-left:20px;line-height:2">
+          <li>Viga de encadenado.</li>
+          <li>Contrapiso.</li>
+          <li>Carpeta de nivelación.</li>
+          <li>Cajón hidrófugo.</li>
+          <li>Continúa el muro con ladrillos.</li>
+        </ol>
+        <p style="margin-top:10px">Pasos del cajón hidrófugo:</p>
+        <ol style="padding-left:20px;line-height:1.8">
+          <li>3-4 filas de ladrillo común.</li>
+          <li>Mezcla impermeable (mortero de cemento y arena gruesa o fina + aditivo hidrófugo + agua).</li>
+          <li>Se alisa.</li>
+          <li>Protección asfáltica (colocación de aislante plástico de 200 micrones en todo el cimiento). Se construye sin cortes.</li>
+        </ol>
+        <div class="highlight"><strong>Patologías si falla:</strong> Si no se realiza correctamente se manifiesta la humedad y es muy complicado de arreglar. Tratamiento: revocar con mortero impermeable, reconstruir capas horizontales por tramos de 60/80 cm.</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Patologías del sistema constructivo húmedo <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th>Patología</th><th>Causas</th></tr>
+          <tr><td>Desgranamiento</td><td>Mortero quemado por exceso de agua, filtraciones, intemperie sin protección, evaporación rápida</td></tr>
+          <tr><td>Fisuras superficiales</td><td>Contracción del cemento, evaporación rápida del agua de la mezcla</td></tr>
+          <tr><td>Eflorescencia</td><td>El agua lleva sales a la superficie, ingreso de humedad, fallas en la capa aisladora</td></tr>
+          <tr><td>Adherencia deficiente</td><td>Falta de mojado previo, superficie muy lisa</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t5-ejemplos">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">Caso: Humedad en las paredes de una casa antigua <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Una casa de 50 años tiene humedad en la base de las paredes. Las manchas aparecen hasta 60 cm de altura.</p>
+        <p><strong>Diagnóstico:</strong> La capa aisladora horizontal (cajón) está fallando o no existe. La humedad del suelo asciende por capilaridad por los muros.</p>
+        <p><strong>Tratamiento:</strong></p>
+        <ul>
+          <li>Opción 1: Revocar la pared de mortero impermeable hasta la altura de riesgo o toda la pared. No quita la humedad del muro, pero la contiene.</li>
+          <li>Opción 2: Reconstruir las capas horizontales por tramos de 60/80 cm.</li>
+          <li>Opción 3: Inyectantes o tratamientos eléctricos especiales (Sika).</li>
+        </ul>
+        <div class="highlight">La eflorescencia (salitre blanco en la pared) es una señal clara de que hay humedad que está transportando sales hacia la superficie.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t5-practica">
+    <div class="practice-section">
+      <h3>Verdadero / Falso</h3>
+      <div id="tf-t5"></div>
+      <button class="check-btn" onclick="checkTF('t5')">Verificar respuestas</button>
+      <div class="score-box" id="score-tf-t5"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Opción Múltiple</h3>
+      <div id="mc-t5"></div>
+      <button class="check-btn" onclick="checkMC('t5')">Verificar respuestas</button>
+      <div class="score-box" id="score-mc-t5"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Preguntas de Desarrollo</h3>
+      <div id="dev-t5"></div>
+    </div>
+  </div>
+</div>
+
+<!-- T6: PINTURAS -->
+<div class="page" id="page-t6">
+  <div class="topic-header">
+    <h1>🎨 Pinturas</h1>
+    <p>Componentes, características, tipos de pinturas, aplicación sobre distintas superficies</p>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('t6','teoria',this)">📖 Teoría</button>
+    <button class="tab-btn" onclick="switchTab('t6','ejemplos',this)">💡 Ejemplos</button>
+    <button class="tab-btn" onclick="switchTab('t6','practica',this)">✏️ Práctica</button>
+  </div>
+
+  <div class="tab-pane active" id="t6-teoria">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué es una pintura? Componentes <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p>Producto fluido que, aplicado en capas delgadas, se transforma en una película sólida que recubre, protege y decora. Funciones: <strong>Protección, Decoración, Funcional</strong>.</p>
+        <p style="margin-top:10px"><strong>Componentes:</strong></p>
+        <ul>
+          <li><strong>Pigmento:</strong> polvos muy finos diluidos en el vehículo. Aportan color, opacidad, poder cubritivo y resistencia mecánica. No se eligen solo por el color.</li>
+          <li><strong>Vehículo:</strong> el líquido que lleva el pigmento a la superficie. Al secar forma una película que pega las partículas del pigmento.</li>
+          <li><strong>Aditivos:</strong> para mejorar propiedades de las pinturas.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Características de las pinturas <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th>Característica</th><th>Definición</th></tr>
+          <tr><td>Pintabilidad</td><td>Debe extenderse con facilidad sin resistir el pincel o rodillo</td></tr>
+          <tr><td>Nivelación</td><td>Debe desaparecer la marca del pincel/rodillo después de aplicarla</td></tr>
+          <tr><td>Secado</td><td>Debe secar en tiempo razonable</td></tr>
+          <tr><td>Poder cubriente</td><td>Propiedad de lograr que desaparezca el color de la pared</td></tr>
+          <tr><td>Rendimiento</td><td>Relación entre superficie pintada y cantidad de pintura usada</td></tr>
+          <tr><td>Estabilidad</td><td>Estabilidad en el envase; sedimento debe ser fácil de incorporar</td></tr>
+          <tr><td>Viscosidad</td><td>Debe ser justa para su aplicación y nivelación, evitando chorreos</td></tr>
+        </table>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Tipos de pinturas (clasificaciones) <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Según acabado de la superficie:</strong> Brillantes / Satinadas / Mate</p>
+        <p style="margin-top:8px"><strong>Según tipo de secado:</strong></p>
+        <ul>
+          <li>Por evaporación del solvente.</li>
+          <li>Secado al aire por oxidación (esmaltes sintéticos, barnices).</li>
+          <li>Secado al aire por reacción química.</li>
+          <li>Secado al horno.</li>
+        </ul>
+        <p style="margin-top:8px"><strong>Según tipo de vehículo:</strong> Pinturas de látex / Esmaltes sintéticos / Barnices</p>
+        <p style="margin-top:8px"><strong>Según su aplicación:</strong></p>
+        <ul>
+          <li><strong>Fondos o imprimación</strong> (primera mano, no se percibe en la parte final): Fijador-sellador, Fondo para madera, Antioxido-convertidor, Barniceta.</li>
+          <li><strong>De terminación</strong> (define el aspecto final): Latex-latex acrílico, Esmalte sintético, Barnices, Lacas, Poliuretánicas.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Pinturas sobre mampostería <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Tipo de material base:</strong> Revoque fino, Estuco, Fino de yeso, Masillas para construcción en seco.</p>
+        <p><strong>Tiempos de curado antes de pintar:</strong></p>
+        <table>
+          <tr><th>Ubicación</th><th>Esmaltes</th><th>Látex</th></tr>
+          <tr><td>Exterior</td><td>6 meses</td><td>1 mes</td></tr>
+          <tr><td>Interior</td><td>12 meses</td><td>3 meses</td></tr>
+        </table>
+        <p style="margin-top:10px"><strong>Cómo se aplica:</strong></p>
+        <ol style="padding-left:20px;line-height:1.8">
+          <li>1 mano de fijador-sellador.</li>
+          <li>2 manos de pintura de terminación.</li>
+        </ol>
+        <div class="highlight">Las pinturas de látex son las más usadas en mampostería: secan por evaporación del agua, permiten que el material "respire", dan acabado mate o satinado.</div>
+      </div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" onclick="toggleAcc(this)">Pinturas sobre madera y metales <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <p><strong>Sobre madera — Cómo se aplica:</strong></p>
+        <ol style="padding-left:20px;line-height:1.8">
+          <li>Fondo para madera / barniceta.</li>
+          <li>2 manos de pintura de terminación.</li>
+        </ol>
+        <p>Opciones de terminación para madera: Impregnantes/Stain (Cetol), Barnices, Esmaltes sintéticos.</p>
+        <p style="margin-top:10px"><strong>Sobre metales — Cómo se aplica:</strong></p>
+        <ol style="padding-left:20px;line-height:1.8">
+          <li>2 manos de antióxido/convertidor.</li>
+          <li>2 manos de pintura de terminación.</li>
+        </ol>
+        <p>Para metales: Antióxido (capa áspera, 2 manos la primera diluida) o Convertidor de óxido (puede aplicarse sobre óxido firmemente adherido, 2 manos la primera diluida).</p>
+        <div class="highlight">Los esmaltes sintéticos son los más versátiles: sirven para madera, metales y también mampostería y hormigón. Forman película dura, impermeable y compacta.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t6-ejemplos">
+    <div class="acc open">
+      <div class="acc-head" onclick="toggleAcc(this)">¿Qué pintura uso en cada situación? <span class="arr">▼</span></div>
+      <div class="acc-body">
+        <table>
+          <tr><th>Situación</th><th>Pintura recomendada</th><th>Por qué</th></tr>
+          <tr><td>Pintar pared interior recién revocada (3 meses)</td><td>Látex acrílico</td><td>Tiempo de curado cumplido para látex interior, permite respirar</td></tr>
+          <tr><td>Pintar reja de hierro</td><td>Antióxido + esmalte sintético</td><td>El antióxido protege contra corrosión, el esmalte da terminación</td></tr>
+          <tr><td>Pintar deck de madera exterior</td><td>Stain/impregnante (Cetol)</td><td>Penetra en la madera, película muy fina, no cuartea, exterior-interior</td></tr>
+          <tr><td>Baño con humedad y hongos</td><td>Látex antihongos (Perma-White)</td><td>Aditivos fungicidas, resistente humedad, lavable</td></tr>
+          <tr><td>Proteger ladrillo a la vista</td><td>Protector para ladrillos (Duralba Natural)</td><td>Barrera hidrófuga permeable al vapor, evita algas y hongos, no forma película</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane" id="t6-practica">
+    <div class="practice-section">
+      <h3>Verdadero / Falso</h3>
+      <div id="tf-t6"></div>
+      <button class="check-btn" onclick="checkTF('t6')">Verificar respuestas</button>
+      <div class="score-box" id="score-tf-t6"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Opción Múltiple</h3>
+      <div id="mc-t6"></div>
+      <button class="check-btn" onclick="checkMC('t6')">Verificar respuestas</button>
+      <div class="score-box" id="score-mc-t6"></div>
+    </div>
+    <div class="practice-section">
+      <h3>Preguntas de Desarrollo</h3>
+      <div id="dev-t6"></div>
+    </div>
+  </div>
+</div>
+
+<!-- EXÁMENES -->
+<div class="page" id="page-exams">
+  <div class="topic-header">
+    <h1>📝 Exámenes Simulacro</h1>
+    <p>Dos exámenes completos cronometrados — aprobás con 60%</p>
+  </div>
+  <div id="examMenu">
+    <div class="exam-card">
+      <h3>Examen Simulacro N° 1</h3>
+      <p>15 preguntas · 40 minutos · Todos los temas</p>
+      <button onclick="startExam(0)">Comenzar Examen 1</button>
+    </div>
+    <div class="exam-card">
+      <h3>Examen Simulacro N° 2</h3>
+      <p>15 preguntas · 40 minutos · Todos los temas</p>
+      <button onclick="startExam(1)">Comenzar Examen 2</button>
+    </div>
+  </div>
+  <div id="examContainer">
+    <div class="exam-header">
+      <h2 id="examTitle">Examen Simulacro</h2>
+      <span id="examTimer">40:00</span>
+    </div>
+    <div id="examQuestions"></div>
+    <button class="submit-exam-btn" onclick="submitExam()">Entregar Examen</button>
+    <div class="result-box" id="resultBox"></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+const TF = {
+  t1:[
+    {q:"La fuerza tiene tres propiedades: dirección, sentido y magnitud.",a:true,exp:"Correcto. Esas son exactamente las tres propiedades de una fuerza."},
+    {q:"Los materiales pétreos (ladrillo, hormigón) son los que mejor resisten la tracción.",a:false,exp:"Falso. Los materiales pétreos resisten mejor la COMPRESIÓN. Los metales resisten mejor la tracción."},
+    {q:"La flexión es un esfuerzo compuesto que combina tracción y compresión.",a:true,exp:"Correcto. En flexión, las fibras inferiores sufren tracción y las superiores compresión."},
+    {q:"El corte es un esfuerzo simple.",a:true,exp:"Correcto. Los esfuerzos simples son: compresión, tracción y corte."},
+    {q:"La torsión es un esfuerzo simple.",a:false,exp:"Falso. La torsión es un esfuerzo COMPUESTO, al igual que la flexión."}
+  ],
+  t2:[
+    {q:"La estructura independiente permite construir edificios de muchos pisos.",a:true,exp:"Correcto. Al no depender de los muros portantes, puede construir en altura."},
+    {q:"En un sistema de muros portantes, se pueden demoler los muros sin consecuencias.",a:false,exp:"Falso. Los muros portantes son la estructura. Demolerlos puede colapsar el edificio."},
+    {q:"La viga de encadenado se construye con hormigón, armadura de hierro y encofrado de madera.",a:true,exp:"Correcto. Esos son exactamente los materiales de la viga de encadenado."},
+    {q:"Las vigas trabajan principalmente en compresión.",a:false,exp:"Falso. Las vigas trabajan en FLEXIÓN (combinación de tracción y compresión)."},
+    {q:"El encofrado es el molde donde se vierte el hormigón para que tome forma mientras fragua.",a:true,exp:"Correcto. El encofrado puede ser de madera u otros materiales y también puede usarse como recurso estético."}
+  ],
+  t3:[
+    {q:"El mojado previo del ladrillo es la primera regla del arte en mampostería.",a:true,exp:"Correcto. Si no se moja el ladrillo, puede despegarse del mortero."},
+    {q:"Un muro de 20 cm de ladrillos huecos es siempre portante.",a:true,exp:"Correcto. Muro de 20 cm de ladrillos huecos es sí o sí portante."},
+    {q:"En ladrillos huecos se coloca mortero en las juntas verticales y horizontales.",a:false,exp:"Falso. En ladrillos huecos solo se coloca mortero en las JUNTAS HORIZONTALES."},
+    {q:"La traba recomendada entre ladrillos es de al menos 1/2 del largo del ladrillo.",a:true,exp:"Correcto. El mínimo es 1/4 pero lo recomendado es 1/2 para mayor resistencia."},
+    {q:"Si la traba horizontal de encuentros se ejecuta mal, se producen grietas verticales.",a:true,exp:"Correcto. Los muros deben entrelazarse para evitar grietas verticales en las esquinas."}
+  ],
+  t4:[
+    {q:"Los morteros contienen agregados finos y gruesos (piedra).",a:false,exp:"Falso. Los MORTEROS solo tienen agregados finos (arena). Los hormigones tienen finos + gruesos (piedra)."},
+    {q:"El cemento puede formar mezclas impermeables (hidráulicas).",a:true,exp:"Correcto. Una característica importante del cemento es que puede formar mezclas impermeables."},
+    {q:"La cal tarda entre 3 y 5 días en endurecer.",a:true,exp:"Correcto. La fase de endurecimiento de la cal es entre 3 y 5 días."},
+    {q:"El hormigón armado usa varillas de hierro para resistir la tracción.",a:false,exp:"Falso. En el hormigón armado, el hormigón resiste la tracción y las varillas resisten la COMPRESIÓN. Espera — esto es al revés según el PDF: el hormigón resiste y las varillas la compresión. Repasá esto porque puede confundirse con la flexión donde el acero resiste tracción."},
+    {q:"Los aditivos hidrófugos se usan para hacer mezclas impermeables.",a:true,exp:"Correcto. Los aditivos hidrófugos aportan impermeabilidad a las mezclas."}
+  ],
+  t5:[
+    {q:"El revoque grueso es el de mayor espesor (20 a 25 mm).",a:true,exp:"Correcto. El revoque grueso tiene 20 a 25 mm de espesor."},
+    {q:"El revoque fino tiene función estructural.",a:false,exp:"Falso. El revoque fino tiene función únicamente ESTÉTICA de terminación/acabado."},
+    {q:"El contrapiso sobre tierra firme tiene entre 10 y 15 cm de espesor para cargas normales.",a:true,exp:"Correcto. Para cargas normales, 10 a 15 cm es suficiente."},
+    {q:"La carpeta es un revoque horizontal que alisa la superficie del contrapiso.",a:true,exp:"Correcto. La carpeta se define como un 'revoque horizontal'."},
+    {q:"La capa aisladora horizontal tiene como función impedir el ascenso de la humedad del suelo.",a:true,exp:"Correcto. Esa es su función principal. Si falla, la humedad asciende por los muros."}
+  ],
+  t6:[
+    {q:"El vehículo de la pintura es el que aporta el color y la opacidad.",a:false,exp:"Falso. El PIGMENTO aporta el color, la opacidad y el poder cubritivo. El vehículo es el líquido que lleva el pigmento."},
+    {q:"Sobre metales, la primera mano de antióxido debe aplicarse diluida.",a:true,exp:"Correcto. El antióxido y el convertidor de óxido se aplican en 2 manos, la primera diluida."},
+    {q:"Para pintar una pared exterior recién revocada, el tiempo de curado para esmalte es 12 meses.",a:false,exp:"Falso. Para exterior, el esmalte requiere 6 meses de curado. Interior requiere 12 meses."},
+    {q:"El látex antihongos es recomendado para baños con problemas de humedad.",a:true,exp:"Correcto. Tiene aditivos fungicidas y es resistente a la humedad."},
+    {q:"Los esmaltes sintéticos solo se pueden usar sobre metales.",a:false,exp:"Falso. Los esmaltes sintéticos son versátiles: sirven para madera, metales y también mampostería y hormigón."}
+  ]
+};
+
+const MC = {
+  t1:[
+    {q:"¿Cuáles son los esfuerzos SIMPLES?",opts:["Compresión, tracción y corte","Compresión, flexión y torsión","Tracción, flexión y corte","Compresión, tracción y torsión"],a:0,exp:"Los esfuerzos simples son: compresión, tracción y corte. La flexión y torsión son compuestos."},
+    {q:"Una columna de hormigón trabaja principalmente bajo esfuerzo de...",opts:["Tracción","Flexión","Compresión","Corte"],a:2,exp:"Las columnas soportan cargas verticales que las aplanan: compresión. Los pétreos resisten bien la compresión."},
+    {q:"¿Qué esfuerzo combina tracción en fibras inferiores y compresión en fibras superiores?",opts:["Corte","Torsión","Compresión","Flexión"],a:3,exp:"La flexión es el esfuerzo compuesto que produce tracción abajo y compresión arriba. Las vigas trabajan en flexión."},
+    {q:"¿Qué materiales resisten mejor la tracción?",opts:["Materiales pétreos (ladrillo, piedra)","Madera blanda","Metales (acero)","Hormigón simple"],a:2,exp:"Los metales, en especial el acero, resisten elevadas fuerzas de tracción."}
+  ],
+  t2:[
+    {q:"¿Qué sistema estructural permite construir edificios de muchos pisos?",opts:["Muros portantes","Estructura independiente","Sistema mixto solo","Ninguno"],a:1,exp:"La estructura independiente no depende de los muros, permite construcciones de gran altura."},
+    {q:"¿Cuál es la función de la viga de encadenado?",opts:["Solo decorativa","Distribuir cargas y vincular todos los muros portantes","Soportar losas únicamente","Reemplazar las columnas"],a:1,exp:"La viga de encadenado distribuye las cargas, evita fisuras y conforma una caja homogénea."},
+    {q:"¿Qué elementos componen la estructura independiente?",opts:["Solo muros y losas","Muros, viga de encadenado y cimientos","Bases, columnas, vigas y losas","Columnas, vigas y muros portantes"],a:2,exp:"La estructura independiente se compone de bases, columnas, vigas y losas."},
+    {q:"Un dintel permite...",opts:["Cerrar un vano sin soporte","Abrir un vano en una pared actuando como soporte","Reemplazar las vigas de encadenado","Solo decorar fachadas"],a:1,exp:"El dintel permite abrir un vano en una pared, actuando como soporte en la mampostería."}
+  ],
+  t3:[
+    {q:"¿Cuánto es la traba mínima recomendada entre ladrillos?",opts:["1/8 del ladrillo","1/4 del ladrillo","1/2 del ladrillo (recomendado)","Todo el ladrillo"],a:2,exp:"El mínimo es 1/4 pero lo recomendado para mayor resistencia es 1/2."},
+    {q:"¿Qué herramienta se usa para verificar la verticalidad en mampostería?",opts:["Nivel láser","Regla metálica","Plomada o nivel de burbuja","Cinta métrica"],a:2,exp:"La verticalidad se verifica con plomada (o nivel de burbuja). La horizontalidad se verifica con nivel láser."},
+    {q:"Un muro de 30 cm de ladrillo común es...",opts:["Siempre no portante","Posiblemente portante","Sí o sí portante","Depende de la altura"],a:2,exp:"Un muro de 30 cm de ladrillo común es sí o sí portante."},
+    {q:"Si la traba horizontal de encuentros se ejecuta mal, se producen...",opts:["Grietas horizontales","Grietas verticales","Desgranamiento","Eflorescencia"],a:1,exp:"La mala ejecución de la traba horizontal produce grietas verticales en los encuentros."}
+  ],
+  t4:[
+    {q:"¿Qué diferencia a un mortero de un hormigón?",opts:["El tipo de aglomerante","La cantidad de agua","La presencia o no de agregado grueso (piedra)","El tiempo de fraguado"],a:2,exp:"Los morteros solo tienen agregados finos (arena). Los hormigones tienen finos + gruesos (piedra)."},
+    {q:"¿Qué aglomerante NO puede formar mezclas hidráulicas (impermeables)?",opts:["Cemento","Cal","Cemento Portland","Ninguno de los anteriores"],a:1,exp:"La cal NO PUEDE FORMAR MEZCLAS HIDRÁULICAS. El cemento sí puede."},
+    {q:"¿Cuál es la composición del hormigón armado?",opts:["Cemento + arena","Cemento + arena + piedra","Hormigón de piedra + armadura (varillas de hierro)","Cal + arena + piedra"],a:2,exp:"El hormigón armado es hormigón de piedra + armadura (varillas de hierro). Resiste esfuerzos de flexión."},
+    {q:"¿Para qué se usan los aditivos hidrófugos?",opts:["Mejorar la fluidez","Impermeabilizar mezclas","Acelerar el fraguado","Agregar color"],a:1,exp:"Los aditivos hidrófugos aportan impermeabilidad. Ejemplos: Sika-1, Ceresita."}
+  ],
+  t5:[
+    {q:"¿Qué tipo de mezcla se usa en el revoque impermeable?",opts:["Cal reforzada","Concreto (cemento + arena) + aditivo hidrófugo","Yeso + agua","Hormigón de piedra"],a:1,exp:"El revoque impermeable usa concreto (cemento + arena) más aditivo hidrófugo para impermeabilizar."},
+    {q:"¿Cuál es el revoque de mayor espesor?",opts:["Revoque fino","Revoque impermeable","Revoque grueso","Todos tienen el mismo espesor"],a:2,exp:"El revoque grueso es el de mayor espesor: 20 a 25 mm."},
+    {q:"La carpeta está hecha de...",opts:["Cal reforzada","Concreto impermeable","Yeso premezclado","Hormigón pobre"],a:1,exp:"La carpeta se hace con concreto impermeable (cemento + arena + aditivo hidrófugo)."},
+    {q:"¿Qué patología se produce cuando el agua lleva sales hasta la superficie de la pared?",opts:["Desgranamiento","Fisuras superficiales","Eflorescencia","Adherencia deficiente"],a:2,exp:"La eflorescencia (salitre blanco en la pared) se produce cuando el agua transporta sales hasta la superficie."}
+  ],
+  t6:[
+    {q:"¿Cuáles son los tres componentes de una pintura?",opts:["Pigmento, vehículo y aditivos","Color, solvente y resina","Látex, barniz y esmalte","Pigmento, agua y cemento"],a:0,exp:"Los tres componentes son: pigmento (color), vehículo (líquido que lleva el pigmento) y aditivos (mejoran propiedades)."},
+    {q:"¿Cuánto tiempo de curado necesita una pared interior para pintarse con esmalte?",opts:["1 mes","3 meses","6 meses","12 meses"],a:3,exp:"Una pared interior necesita 12 meses de curado para pintarse con esmalte."},
+    {q:"¿Cómo se aplica pintura sobre metales?",opts:["Directo con látex","Fondo de madera + 2 manos de terminación","2 antióxido/convertidor + 2 manos terminación","1 mano de sellador + látex"],a:2,exp:"Sobre metales: 2 manos de antióxido o convertidor (la primera diluida) + 2 manos de pintura de terminación."},
+    {q:"¿Qué característica de la pintura mide su capacidad de cubrir el color de la pared?",opts:["Pintabilidad","Nivelación","Poder cubriente","Rendimiento"],a:2,exp:"El poder cubriente es la propiedad de lograr que desaparezca el color de la pared."}
+  ]
+};
+
+const DEV = {
+  t1:[
+    {q:"Explicá la diferencia entre esfuerzos simples y compuestos. Dá un ejemplo de cada uno.",model:"Los esfuerzos simples son: compresión (aplasta, las columnas lo sufren), tracción (estira, cables de acero) y corte (corta transversalmente). Los esfuerzos compuestos combinan dos o más simples: la flexión combina tracción (fibras inferiores) + compresión (fibras superiores), y la torsión combina varios esfuerzos. Las vigas son el ejemplo clásico de flexión."},
+    {q:"¿Por qué el hormigón armado es tan resistente a la flexión?",model:"El hormigón armado combina dos materiales con propiedades complementarias: el hormigón resiste muy bien la compresión (esfuerzo que sufren las fibras superiores en flexión) y las varillas de hierro resisten la tracción (esfuerzo en las fibras inferiores). Ninguno solo sería suficiente: el hormigón sin armar se rompe por tracción y el hierro sin hormigón flecta mucho."}
+  ],
+  t2:[
+    {q:"Compará el sistema de muros portantes con la estructura independiente en cuanto a: época, capacidad de pisos, elementos y características.",model:"Muros portantes: construcciones más antiguas (siguen existiendo), máximo PB+PA+azotea, elementos: muros, viga de encadenado, losas y cimientos, fácil de ejecutar, depende de los muros. Estructura independiente: más reciente, permite muchos pisos (edificios altos), elementos: bases, columnas, vigas y losas, no depende de muros, permite demoler paredes divisorias. Mixta: combina ambas (ej: muros portantes arriba + estructura independiente abajo)."},
+    {q:"¿Cómo se deben tratar las vigas y columnas visibles en un proyecto de diseño de interiores?",model:"Las vigas y columnas que no se pueden demoler deben tratarse con alguna de estas estrategias: Integración (que se integren visualmente con el resto del espacio), Articulación (organizar funciones a través de su presencia, como definir zonas) o Destaque (convertirlos en elementos protagónicos del diseño). NUNCA deben ignorarse porque se vuelven elementos molestos y visualmente conflictivos."}
+  ],
+  t3:[
+    {q:"Enumerá y explicá brevemente las 6 reglas del arte en mampostería de ladrillos.",model:"1. Mojado previo del ladrillo: sin esto el mortero no adhiere y los ladrillos se despegan. 2. Verticalidad: se verifica con plomada o nivel de burbuja (plomo, vuela o duerme). 3. Horizontalidad: se verifica con nivel láser. 4. Espesor constante en juntas: evita debilitamiento del muro. 5. Traba o trabazón: mínimo 1/4, recomendable 1/2; menor espesor de mezcla = muro más resistente. 6. Traba horizontal de encuentros: los ladrillos de muros perpendiculares deben entrelazarse; si falla se producen grietas verticales."},
+    {q:"¿Cómo podés saber si un muro existente es portante?",model:"Sí o sí portantes: muros de 30 cm de ladrillo común, de 20 cm de ladrillos huecos, o de 45 cm de ladrillo común (en desuso). Posiblemente portantes: muros de 15 cm con refuerzos de hierro cada 6 hiladas aproximadamente, o muros de 15 cm de ladrillo hueco portante (bloque cerámico con huecos verticales para armadura)."}
+  ],
+  t4:[
+    {q:"Explicá las diferencias entre cemento y cal como aglomerantes.",model:"Cemento: más duro, rígido y nada elástico, produce microfisuras por contracción al fraguar, PUEDE formar mezclas impermeables (hidráulicas), fragua en 1-2 hs. Cal: menos resistente, mezclas más elásticas, fragua en 6 hs y endurece en 3-5 días, NO puede formar mezclas hidráulicas, es agresiva con los metales. Resumen: cemento = dureza e impermeabilidad; cal = elasticidad y trabajabilidad."},
+    {q:"¿Qué son los aditivos y cuáles son los más utilizados?",model:"Son productos químicos líquidos que se agregan a las mezclas para obtener propiedades especiales que las mezclas comunes no logran. Los más utilizados: 1. Aditivos hidrófugos: impermeabilidad (Sika-1, Ceresita). 2. Puentes de adherencia: mejorar adherencia de mezclas nuevas a superficies existentes. 3. Acelerante o retardante de frague: modificar tiempos de fraguado. 4. Concreto alveolar: agregar aire a la mezcla. 5. Plastificantes: mejorar la fluidez."}
+  ],
+  t5:[
+    {q:"Describí los tres tipos de revoques indicando su función, mezcla y orden de aplicación.",model:"1. Revoque impermeable (azotado/enduido): va primero en el exterior del muro, debajo del grueso. Impermeabiliza el ladrillo de la intemperie. Mezcla: concreto + aditivo hidrófugo. 2. Revoque grueso: va sobre el impermeable en el exterior y en la cara interior del muro. Espesor: 20-25 mm. Función: empareja y da verticalidad. Mezcla: cal reforzada. 3. Revoque fino: va último, solo función estética. Mezcla: cal reforzada, yeso o premezclado."},
+    {q:"¿Qué es la capa aisladora horizontal (cajón) y cómo se construye?",model:"Es una técnica que actúa como barrera impermeable para evitar que la humedad del suelo ascienda por las paredes. Se construye a nivel de los cimientos. Pasos: 1. Viga de encadenado → 2. Contrapiso → 3. Carpeta de nivelación → 4. Cajón hidrófugo (3-4 filas de ladrillo + mezcla impermeable alisada + protección asfáltica de 200 micrones sin cortes) → 5. Continúa el muro. Si falla, el tratamiento es muy complicado: revocar con mortero impermeable, reconstruir por tramos de 60/80 cm."}
+  ],
+  t6:[
+    {q:"Describí los tres componentes de una pintura y la función de cada uno.",model:"1. Pigmento: polvos muy finos diluidos en el vehículo. Aportan color, opacidad, poder cubritivo y resistencia mecánica. No se eligen solo por el color. 2. Vehículo: el líquido que transporta el pigmento a la superficie. Al secar forma una película que adhiere el pigmento. 3. Aditivos: productos que mejoran propiedades específicas de la pintura (secado, fluidez, resistencia a hongos, etc.)."},
+    {q:"¿Cómo se pinta sobre mampostería, madera y metales? Describí el proceso para cada superficie.",model:"Mampostería: (1) 1 mano de fijador-sellador, (2) 2 manos de pintura de terminación (látex acrílico generalmente). Tiempos de curado: exterior 1 mes (látex) o 6 meses (esmalte); interior 3 meses (látex) o 12 meses (esmalte). Madera: (1) Fondo para madera/barniceta, (2) 2 manos de terminación (stain, barniz o esmalte). Metales: (1) 2 manos de antióxido o convertidor de óxido (la primera diluida), (2) 2 manos de esmalte sintético de terminación."}
+  ]
+};
+
+const EXAMS = [
+  [
+    {q:"Una fuerza tiene tres propiedades. ¿Cuáles son?",opts:["Peso, presión y temperatura","Dirección, sentido y magnitud","Color, forma y tamaño","Compresión, tracción y corte"],a:1},
+    {q:"¿Cuál de los siguientes es un esfuerzo COMPUESTO?",opts:["Compresión","Tracción","Flexión","Corte"],a:2},
+    {q:"¿Qué material resiste mejor la tracción?",opts:["Ladrillo","Piedra","Hormigón simple","Acero (metales)"],a:3},
+    {q:"¿Qué sistema estructural NO depende de los muros para sostenerse?",opts:["Muros portantes","Estructura independiente","Sistema de adobe","Muros de carga"],a:1},
+    {q:"La viga de encadenado está construida con...",opts:["Solo ladrillo y cal","Hormigón, armadura de hierro y encofrado de madera","Solo cemento y arena","Madera y clavos"],a:1},
+    {q:"¿Cuál es la primera regla del arte en mampostería?",opts:["Verificar la horizontalidad","Hacer la traba correcta","Mojar previamente el ladrillo","Verificar la verticalidad"],a:2},
+    {q:"Un muro de 20 cm de ladrillos huecos es...",opts:["No portante","Posiblemente portante","Sí o sí portante","No apto para construcción"],a:2},
+    {q:"¿Qué diferencia a un mortero de un hormigón?",opts:["El tipo de aglomerante","El color","La presencia o no de agregado grueso (piedra)","El tiempo de fraguado"],a:2},
+    {q:"¿Qué aglomerante NO puede formar mezclas hidráulicas (impermeables)?",opts:["Cemento","Cal","Cemento Portland blanco","Cemento de alta resistencia"],a:1},
+    {q:"¿Qué es el revoque grueso?",opts:["El revoque estético final","El revoque impermeable exterior","La capa de 20-25 mm que empareja el muro","Un tipo de carpeta"],a:2},
+    {q:"La carpeta se puede definir como...",opts:["Un tipo de hormigón estructural","Un revoque horizontal que alisa el contrapiso","El primer revoque del muro","Un tipo de aditivo"],a:1},
+    {q:"¿Cuál es la función principal de la capa aisladora horizontal (cajón)?",opts:["Mejorar la estética del muro","Impedir el ascenso de la humedad del suelo","Distribuir cargas del techo","Dar terminación al piso"],a:1},
+    {q:"¿Cuáles son los tres componentes de una pintura?",opts:["Color, agua y solvente","Pigmento, vehículo y aditivos","Látex, cemento y arena","Esmalte, barniz y cal"],a:1},
+    {q:"¿Cuánto tiempo de curado necesita una pared exterior para pintarse con látex?",opts:["1 semana","15 días","1 mes","6 meses"],a:2},
+    {q:"¿Cómo se aplica pintura sobre metales?",opts:["Directo con látex","Solo sellador + terminación","2 antióxido/convertidor + 2 manos de terminación","1 barniceta + 1 esmalte"],a:2}
+  ],
+  [
+    {q:"Las vigas trabajan bajo esfuerzo de...",opts:["Compresión pura","Tracción pura","Flexión (esfuerzo compuesto)","Corte"],a:2},
+    {q:"¿Cuáles son los esfuerzos simples?",opts:["Flexión, torsión y corte","Compresión, tracción y flexión","Compresión, tracción y corte","Tracción, corte y torsión"],a:2},
+    {q:"¿Con qué herramienta se verifica la HORIZONTALIDAD en mampostería?",opts:["Plomada","Nivel de burbuja","Nivel láser","Regla y escuadra"],a:2},
+    {q:"Los ladrillos huecos se usan en...",opts:["Solo muros portantes","Solo tabiques no portantes","Muros portantes y tabiques no portantes","Solo pasillos"],a:2},
+    {q:"¿Qué hace el ladrillo hueco portante (bloque cerámico) diferente de los demás?",opts:["Es más liviano","Tiene huecos verticales para recibir armadura","Se coloca sin mortero","Es de mayor resistencia térmica únicamente"],a:1},
+    {q:"¿Qué composición tiene el hormigón armado?",opts:["Solo cemento y agua","Cal + arena + piedra","Hormigón de piedra + varillas de hierro","Cemento + arena + escombros"],a:2},
+    {q:"El tiempo de fraguado del cemento desde el contacto con el agua es...",opts:["1 a 2 horas","6 horas","3 a 5 días","24 horas"],a:0},
+    {q:"¿Qué aditivo mejora la adherencia de mezclas nuevas a superficies existentes?",opts:["Aditivo hidrófugo","Puente de adherencia","Plastificante","Concreto alveolar"],a:1},
+    {q:"¿Qué revoque va primero en el exterior de un muro?",opts:["Revoque grueso","Revoque fino","Revoque impermeable","Ninguno, se pinta directamente"],a:2},
+    {q:"¿Qué patología ocurre cuando el mortero se quema por exceso de agua?",opts:["Eflorescencia","Adherencia deficiente","Fisuras superficiales","Desgranamiento"],a:3},
+    {q:"¿Qué es el encofrado?",opts:["El aislante del techo","El molde donde se vierte el hormigón mientras fragua","El tipo de ladrillo portante","Un tipo de revoque"],a:1},
+    {q:"En la estructura independiente, ¿qué elemento tiene contacto directo con el suelo?",opts:["Las columnas","Las vigas","Las bases","Las losas"],a:2},
+    {q:"¿Cuál es la función del PIGMENTO en la pintura?",opts:["Hacer que la pintura fluya bien","Secar la pintura","Aportar color, opacidad y poder cubritivo","Mejorar la adherencia"],a:2},
+    {q:"¿Qué característica de la pintura mide qué tan fácil se aplica con pincel o rodillo?",opts:["Poder cubriente","Pintabilidad","Rendimiento","Viscosidad"],a:1},
+    {q:"¿Cómo se pinta sobre madera?",opts:["Directo con esmalte","Antióxido + esmalte","Fondo para madera/barniceta + 2 manos terminación","Sellador + látex"],a:2}
+  ]
+];
+
+const progress = JSON.parse(localStorage.getItem('tecprog') || '{}');
+let examTimer = null, examSeconds = 0, currentExam = 0;
+
+function showPage(id) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(n => { if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active'); });
+  if(['t1','t2','t3','t4','t5','t6'].includes(id)) renderPractice(id);
+  updateDashboard();
+  window.scrollTo(0,0);
+}
+
+function toggleAcc(head) {
+  const acc = head.parentElement;
+  acc.classList.toggle('open');
+}
+
+function switchTab(topic, tab, btn) {
+  document.querySelectorAll('#page-' + topic + ' .tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('#page-' + topic + ' .tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(topic + '-' + tab).classList.add('active');
+  btn.classList.add('active');
+}
+
+function renderPractice(t) {
+  renderTF(t); renderMC(t); renderDEV(t);
+}
+
+function renderTF(t) {
+  const c = document.getElementById('tf-' + t);
+  if(!c || c.innerHTML) return;
+  c.innerHTML = TF[t].map((item, i) => `
+    <div class="tf-item" id="tf-${t}-${i}">
+      <p>${i+1}. ${item.q}</p>
+      <div class="tf-btns">
+        <button onclick="selectTF('${t}',${i},true,this)">✓ Verdadero</button>
+        <button onclick="selectTF('${t}',${i},false,this)">✗ Falso</button>
+      </div>
+      <div class="feedback" id="fb-tf-${t}-${i}"></div>
+    </div>`).join('');
+}
+
+function selectTF(t, i, val, btn) {
+  const item = document.getElementById('tf-' + t + '-' + i);
+  item.querySelectorAll('button').forEach(b => { b.style.background=''; b.style.color=''; b.style.borderColor=''; });
+  btn.style.background = '#E64A19'; btn.style.color = '#fff'; btn.style.borderColor = '#E64A19';
+  item.dataset.ans = val;
+}
+
+function checkTF(t) {
+  let correct = 0;
+  TF[t].forEach((item, i) => {
+    const el = document.getElementById('tf-' + t + '-' + i);
+    const fb = document.getElementById('fb-tf-' + t + '-' + i);
+    const ans = el.dataset.ans;
+    if(ans === undefined) { fb.textContent = 'No respondiste esta pregunta.'; fb.className = 'feedback wrong show'; return; }
+    const userAns = ans === 'true';
+    if(userAns === item.a) { correct++; fb.className = 'feedback correct show'; fb.textContent = '✓ Correcto. ' + item.exp; }
+    else { fb.className = 'feedback wrong show'; fb.textContent = '✗ Incorrecto. ' + item.exp; }
+  });
+  const sc = document.getElementById('score-tf-' + t);
+  sc.innerHTML = `<div class="score-num">${correct}/${TF[t].length}</div><p>${Math.round(correct/TF[t].length*100)}% de aciertos en V/F</p>`;
+  sc.classList.add('show');
+  saveProgress(t, 'tf', correct, TF[t].length);
+}
+
+function renderMC(t) {
+  const c = document.getElementById('mc-' + t);
+  if(!c || c.innerHTML) return;
+  c.innerHTML = MC[t].map((item, i) => `
+    <div class="mc-item" id="mc-${t}-${i}">
+      <p>${i+1}. ${item.q}</p>
+      <div class="mc-opts">
+        ${item.opts.map((o,j) => `<button onclick="selectMC('${t}',${i},${j},this)">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}
+      </div>
+      <div class="feedback" id="fb-mc-${t}-${i}"></div>
+    </div>`).join('');
+}
+
+function selectMC(t, i, j, btn) {
+  const item = document.getElementById('mc-' + t + '-' + i);
+  item.querySelectorAll('button').forEach(b => { b.style.background=''; b.style.color=''; b.style.borderColor=''; });
+  btn.style.background = '#E64A19'; btn.style.color = '#fff'; btn.style.borderColor = '#E64A19';
+  item.dataset.ans = j;
+}
+
+function checkMC(t) {
+  let correct = 0;
+  MC[t].forEach((item, i) => {
+    const el = document.getElementById('mc-' + t + '-' + i);
+    const fb = document.getElementById('fb-mc-' + t + '-' + i);
+    const ans = el.dataset.ans;
+    if(ans === undefined) { fb.textContent = 'No respondiste esta pregunta.'; fb.className = 'feedback wrong show'; return; }
+    if(parseInt(ans) === item.a) { correct++; fb.className = 'feedback correct show'; fb.textContent = '✓ Correcto. ' + item.exp; }
+    else { fb.className = 'feedback wrong show'; fb.textContent = '✗ Incorrecto. La respuesta correcta es: ' + item.opts[item.a] + '. ' + item.exp; }
+  });
+  const sc = document.getElementById('score-mc-' + t);
+  sc.innerHTML = `<div class="score-num">${correct}/${MC[t].length}</div><p>${Math.round(correct/MC[t].length*100)}% de aciertos en opción múltiple</p>`;
+  sc.classList.add('show');
+  saveProgress(t, 'mc', correct, MC[t].length);
+}
+
+function renderDEV(t) {
+  const c = document.getElementById('dev-' + t);
+  if(!c || c.innerHTML) return;
+  c.innerHTML = DEV[t].map((item, i) => `
+    <div class="dev-item">
+      <p>${i+1}. ${item.q}</p>
+      <textarea placeholder="Escribí tu respuesta acá..."></textarea>
+      <button class="show-ans-btn" onclick="toggleModel(this)">Ver respuesta modelo</button>
+      <div class="model-ans"><strong>Respuesta modelo:</strong><br>${item.model}</div>
+    </div>`).join('');
+}
+
+function toggleModel(btn) {
+  const m = btn.nextElementSibling;
+  m.classList.toggle('show');
+  btn.textContent = m.classList.contains('show') ? 'Ocultar respuesta' : 'Ver respuesta modelo';
+}
+
+function saveProgress(topic, type, score, total) {
+  if(!progress[topic]) progress[topic] = {};
+  progress[topic][type] = { score, total, pct: Math.round(score/total*100) };
+  localStorage.setItem('tecprog', JSON.stringify(progress));
+  updateDashboard();
+}
+
+function updateDashboard() {
+  ['t1','t2','t3','t4','t5','t6'].forEach(t => {
+    const tp = progress[t] || {};
+    const scores = Object.values(tp).map(s => s.pct);
+    const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b,0)/scores.length) : 0;
+    const pf = document.getElementById('pf-' + t);
+    const pp = document.getElementById('pp-' + t);
+    if(pf) pf.style.width = avg + '%';
+    if(pp) pp.textContent = avg + '% completado';
+  });
+}
+
+function startExam(num) {
+  currentExam = num;
+  document.getElementById('examMenu').style.display = 'none';
+  document.getElementById('examContainer').style.display = 'block';
+  document.getElementById('resultBox').classList.remove('show');
+  document.getElementById('examTitle').textContent = 'Examen Simulacro N° ' + (num+1);
+  const qs = EXAMS[num];
+  document.getElementById('examQuestions').innerHTML = qs.map((q,i) => `
+    <div class="exam-q">
+      <p>${i+1}. ${q.q}</p>
+      ${q.opts.map((o,j) => `<label><input type="radio" name="eq${i}" value="${j}"> ${String.fromCharCode(65+j)}. ${o}</label>`).join('')}
+    </div>`).join('');
+  examSeconds = 40*60;
+  clearInterval(examTimer);
+  examTimer = setInterval(() => {
+    examSeconds--;
+    const m = Math.floor(examSeconds/60), s = examSeconds%60;
+    document.getElementById('examTimer').textContent = m + ':' + (s<10?'0':'') + s;
+    if(examSeconds <= 0) { clearInterval(examTimer); submitExam(); }
+  }, 1000);
+}
+
+function submitExam() {
+  clearInterval(examTimer);
+  const qs = EXAMS[currentExam];
+  let correct = 0;
+  qs.forEach((q,i) => {
+    const sel = document.querySelector('input[name="eq'+i+'"]:checked');
+    if(sel && parseInt(sel.value) === q.a) correct++;
+  });
+  const pct = Math.round(correct/qs.length*100);
+  const pass = pct >= 60;
+  const rb = document.getElementById('resultBox');
+  rb.innerHTML = `
+    <div class="result-num">${correct}/${qs.length}</div>
+    <p style="font-size:1.5rem;font-weight:700">${pct}%</p>
+    <p class="result-msg ${pass?'result-pass':'result-fail'}">${pass ? '¡Aprobaste! 🎉 Muy bien, seguí así.' : 'No aprobaste esta vez. Repasá los temas y volvé a intentarlo.'}</p>
+    <p style="margin-top:8px;font-size:.85rem;color:#666">Aprobás con 60% o más</p>
+    <button class="restart-btn" onclick="document.getElementById('examMenu').style.display='block';document.getElementById('examContainer').style.display='none'">Volver a exámenes</button>`;
+  rb.classList.add('show');
+  document.querySelector('.submit-exam-btn').style.display = 'none';
+}
+
+updateDashboard();
+</script>
+</body>
+</html>
